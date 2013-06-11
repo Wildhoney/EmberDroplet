@@ -117,13 +117,14 @@ window.EmberDropletController = Ember.Mixin.create({
         }.bind(file), false);
 
         // Set all of the necessary request headers.
-        request.setRequestHeader('Content-Type', 'multipart/form-data');
         request.setRequestHeader('X-File-Name', fileObject.name);
-        request.setRequestHeader('X-File-Size', fileObject.length);
+        request.setRequestHeader('X-File-Size', fileObject.size);
         request.setRequestHeader('X-File-Type', fileObject.type);
 
         // Finally we can send the file!
-        request.send(fileObject);
+        var formData = new FormData();
+        formData.append('file', fileObject);
+        request.send(formData);
 
     },
 

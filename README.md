@@ -38,3 +38,8 @@ In addition to the methods, `EmberDropletController` also has the following comp
 
 Additional computed properties can be added to your controller that implements the mixin. To add additional computed properties,
 please refer to the protected `_filesByProperties` method in the mixin.
+
+Example
+-------------
+
+The example uses the Node.js server to upload files, which is available in `example/node-server`. Simply run: `node server` to create it.
