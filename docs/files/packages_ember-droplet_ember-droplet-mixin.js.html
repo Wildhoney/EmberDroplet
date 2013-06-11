@@ -143,12 +143,12 @@ window.EmberDropletController = Ember.Mixin.create({
     },
 
     /**
-     * @method removeFile
+     * @method deleteFile
      * @param file
-     * Removes a file from the collection.
+     * Deletes a file from the collection.
      * @return {Object}
      */
-    removeFile: function(file) {
+    deleteFile: function(file) {
         Ember.set(file, &#x27;deleted&#x27;, true);
         return file;
     },
@@ -209,13 +209,14 @@ window.EmberDropletController = Ember.Mixin.create({
         }.bind(file), false);
 
         // Set all of the necessary request headers.
-        request.setRequestHeader(&#x27;Content-Type&#x27;, &#x27;multipart/form-data&#x27;);
         request.setRequestHeader(&#x27;X-File-Name&#x27;, fileObject.name);
-        request.setRequestHeader(&#x27;X-File-Size&#x27;, fileObject.length);
+        request.setRequestHeader(&#x27;X-File-Size&#x27;, fileObject.size);
         request.setRequestHeader(&#x27;X-File-Type&#x27;, fileObject.type);
 
         // Finally we can send the file!
-        request.send(fileObject);
+        var formData = new FormData();
+        formData.append(&#x27;file&#x27;, fileObject);
+        request.send(formData);
 
     },
 

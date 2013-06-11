@@ -41,7 +41,7 @@
 
                 <div {{bindAttr class="className :file"}}>
                     {{name}}
-                    <a class="remove" {{action "removeFile" this}}>Remove File</a>
+                    <a class="remove" {{action "deleteFile" this}}>Remove File</a>
                     {{view view.ImagePreview imageBinding="this"}}
                 </div>
 
