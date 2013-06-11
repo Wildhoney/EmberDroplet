@@ -1,0 +1,470 @@
+{
+    "project": {
+        "name": "EmberDroplet"
+    },
+    "files": {
+        "packages\\ember-droplet\\ember-droplet-mixin.js": {
+            "name": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "modules": {
+                "App": 1
+            },
+            "classes": {
+                "EmberDropletController": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "packages\\ember-droplet\\ember-droplet-view.js": {
+            "name": "packages\\ember-droplet\\ember-droplet-view.js",
+            "modules": {},
+            "classes": {
+                "EmberDropletView": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        }
+    },
+    "modules": {
+        "App": {
+            "name": "App",
+            "submodules": {},
+            "classes": {
+                "EmberDropletController": 1,
+                "EmberDropletView": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "line": 1,
+            "type": "Ember.Mixin",
+            "extends": "Ember.Mixin"
+        }
+    },
+    "classes": {
+        "EmberDropletController": {
+            "name": "EmberDropletController",
+            "shortname": "EmberDropletController",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "App",
+            "namespace": "",
+            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "line": 1
+        },
+        "EmberDropletView": {
+            "name": "EmberDropletView",
+            "shortname": "EmberDropletView",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "App",
+            "namespace": "",
+            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "line": 1
+        }
+    },
+    "classitems": [
+        {
+            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "line": 9,
+            "itemtype": "property",
+            "name": "mimeTypes",
+            "type": "{Array}",
+            "class": "EmberDropletController",
+            "module": "App"
+        },
+        {
+            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "line": 15,
+            "itemtype": "property",
+            "name": "files",
+            "type": "{Array}\nContains a list of files, both valid, deleted, and invalid.",
+            "class": "EmberDropletController",
+            "module": "App"
+        },
+        {
+            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "line": 22,
+            "itemtype": "method",
+            "name": "addValidFile",
+            "params": [
+                {
+                    "name": "file",
+                    "description": "\nAdds a valid file to the collection.",
+                    "type": "File"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Void"
+            },
+            "class": "EmberDropletController",
+            "module": "App"
+        },
+        {
+            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "line": 32,
+            "itemtype": "method",
+            "name": "addInvalidFile",
+            "params": [
+                {
+                    "name": "file",
+                    "description": "\nAdds an invalid file to the collection.",
+                    "type": "File"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Void"
+            },
+            "class": "EmberDropletController",
+            "module": "App"
+        },
+        {
+            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "line": 42,
+            "itemtype": "method",
+            "name": "removeFile",
+            "params": [
+                {
+                    "name": "file!~YUIDOC_LINE~!Removes",
+                    "description": "a file from the collection."
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Void"
+            },
+            "class": "EmberDropletController",
+            "module": "App"
+        },
+        {
+            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "line": 52,
+            "itemtype": "method",
+            "name": "clearAllFiles\nClears all of the files from the collection.",
+            "return": {
+                "description": "",
+                "type": "Void"
+            },
+            "class": "EmberDropletController",
+            "module": "App"
+        },
+        {
+            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "line": 61,
+            "itemtype": "method",
+            "name": "uploadAllFiles\nUploads all of the files that haven't been uploaded yet, or you can optionally\nspecify a list of specific files to be uploaded.",
+            "return": {
+                "description": "",
+                "type": "Void"
+            },
+            "class": "EmberDropletController",
+            "module": "App"
+        },
+        {
+            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "line": 79,
+            "itemtype": "method",
+            "name": "uploadFile",
+            "params": [
+                {
+                    "name": "file",
+                    "description": "\nUploads a single file.",
+                    "type": "File"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Void"
+            },
+            "class": "EmberDropletController",
+            "module": "App"
+        },
+        {
+            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "line": 118,
+            "itemtype": "method",
+            "name": "_addFile",
+            "params": [
+                {
+                    "name": "file",
+                    "description": "",
+                    "type": "File"
+                },
+                {
+                    "name": "valid",
+                    "description": "\nAdds a file based on whether it's valid or invalid.",
+                    "type": "Boolean"
+                }
+            ],
+            "access": "private",
+            "tagname": "",
+            "class": "EmberDropletController",
+            "module": "App"
+        },
+        {
+            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "line": 136,
+            "itemtype": "property",
+            "name": "validFiles\nFinds a list of files that aren't deleted, and are of a valid MIME type.",
+            "return": {
+                "description": "",
+                "type": "Array"
+            },
+            "class": "EmberDropletController",
+            "module": "App"
+        },
+        {
+            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "line": 145,
+            "itemtype": "property",
+            "name": "invalidFiles\nFinds a list of files that have an unsupported MIME type.",
+            "return": {
+                "description": "",
+                "type": "Array"
+            },
+            "class": "EmberDropletController",
+            "module": "App"
+        },
+        {
+            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "line": 154,
+            "itemtype": "property",
+            "name": "uploadedFiles\nFinds a list of files that have been successfully uploaded.",
+            "return": {
+                "description": "",
+                "type": "Array"
+            },
+            "class": "EmberDropletController",
+            "module": "App"
+        },
+        {
+            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "line": 163,
+            "itemtype": "property",
+            "name": "deletedFiles\nFinds a list of files that have been deleted by the user.",
+            "return": {
+                "description": "",
+                "type": "Array"
+            },
+            "class": "EmberDropletController",
+            "module": "App"
+        },
+        {
+            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "line": 172,
+            "itemtype": "method",
+            "name": "_filesByProperties",
+            "params": [
+                {
+                    "name": "maps",
+                    "description": "\nAccepts a map of properties that each file must have.",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Array"
+            },
+            "access": "private",
+            "tagname": "",
+            "class": "EmberDropletController",
+            "module": "App"
+        },
+        {
+            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "line": 9,
+            "itemtype": "property",
+            "name": "classNames",
+            "type": "{Array}",
+            "default": "['droppable']",
+            "class": "EmberDropletView",
+            "module": "App"
+        },
+        {
+            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "line": 16,
+            "itemtype": "property",
+            "name": "ImagePreview",
+            "type": "{Ember.View}",
+            "class": "EmberDropletView",
+            "module": "App"
+        },
+        {
+            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "line": 22,
+            "itemtype": "property",
+            "name": "tagName",
+            "type": "{String}",
+            "default": "\"img\"",
+            "class": "EmberDropletView",
+            "module": "App"
+        },
+        {
+            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "line": 29,
+            "itemtype": "property",
+            "name": "attributeBindings",
+            "type": "{Array}",
+            "default": "['src']",
+            "class": "EmberDropletView",
+            "module": "App"
+        },
+        {
+            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "line": 36,
+            "itemtype": "property",
+            "name": "src",
+            "type": "{String}",
+            "default": "null",
+            "class": "EmberDropletView",
+            "module": "App"
+        },
+        {
+            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "line": 43,
+            "itemtype": "property",
+            "name": "image",
+            "type": "{String}",
+            "default": "null",
+            "class": "EmberDropletView",
+            "module": "App"
+        },
+        {
+            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "line": 50,
+            "itemtype": "method",
+            "name": "didInsertElement\nInvoked when the view is inserted into the DOM.",
+            "return": {
+                "description": "",
+                "type": "Void"
+            },
+            "class": "EmberDropletView",
+            "module": "App"
+        },
+        {
+            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "line": 92,
+            "itemtype": "method",
+            "name": "drop",
+            "params": [
+                {
+                    "name": "event",
+                    "description": "\nInvoked when the user drops a file onto the droppable area.",
+                    "type": "jQuery.Event"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Boolean"
+            },
+            "class": "EmberDropletView",
+            "module": "App"
+        },
+        {
+            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "line": 103,
+            "itemtype": "method",
+            "name": "traverseFiles",
+            "params": [
+                {
+                    "name": "files",
+                    "description": "\nAccepts a FileList object, and traverses them to determine if they're valid, adding them\nas either valid or invalid.",
+                    "type": "FileList"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Boolean"
+            },
+            "class": "EmberDropletView",
+            "module": "App"
+        },
+        {
+            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "line": 144,
+            "itemtype": "method",
+            "name": "_preventDefaultBehaviour",
+            "params": [
+                {
+                    "name": "event",
+                    "description": "\nPrevents default behaviour and propagation on nodes where it's undesirable.",
+                    "type": "jQuery.Event"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Void"
+            },
+            "access": "private",
+            "tagname": "",
+            "class": "EmberDropletView",
+            "module": "App"
+        },
+        {
+            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "line": 156,
+            "itemtype": "method",
+            "name": "dragOver",
+            "params": [
+                {
+                    "name": "event",
+                    "description": "",
+                    "type": "jQuery.Event"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Void"
+            },
+            "class": "EmberDropletView",
+            "module": "App"
+        },
+        {
+            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "line": 165,
+            "itemtype": "method",
+            "name": "dragEnter",
+            "params": [
+                {
+                    "name": "event",
+                    "description": "",
+                    "type": "jQuery.Event"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Void"
+            },
+            "class": "EmberDropletView",
+            "module": "App"
+        },
+        {
+            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "line": 174,
+            "itemtype": "method",
+            "name": "dragLeave",
+            "params": [
+                {
+                    "name": "event",
+                    "description": "",
+                    "type": "jQuery.Event"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Void"
+            },
+            "class": "EmberDropletView",
+            "module": "App"
+        }
+    ],
+    "warnings": []
+}

@@ -1,0 +1,67 @@
+* {
+    font-family: Arial, Tahoma, Helvetica, sans-serif;
+    font-size: 12px;
+    box-sizing: border-box;
+}
+
+a {
+    color: #a266bb;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+a:active {
+    color: black;
+}
+
+h1 {
+    font-size: 16px;
+}
+
+div.droppable {
+    background-color: #efefef;
+    width: 70%;
+    height: 70%;
+    padding: 20px;
+    box-shadow: inset 0 0 25px rgba(0, 0, 0, .05);
+    border: 1px solid lightgrey;
+}
+
+div.droppable div.file {
+    border: 1px solid rgba(0, 0, 0, .15);
+    margin: 0 20px 20px 0;
+    background-color: white;
+    float: left;
+    width: 100px;
+    height: 100px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, .15);
+    position: relative;
+    overflow: hidden;
+    border: 4px solid white;
+}
+
+div.droppable a.remove {
+    position: absolute;
+    background: rgba(0, 0, 0, .55);
+    width: 100%;
+    bottom: 0;
+    color: white;
+    font-size: 11px;
+    height: 25px;
+    line-height: 25px;
+    padding: 0 8px 0 8px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+div.droppable div.file img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+div.droppable div.file.extension-txt {
+    background: white url('./../document.png') no-repeat center center;
+}

@@ -1,0 +1,55 @@
+<html>
+<head>
+
+    <title>EmberDragDrop by Wildhoney</title>
+
+    <link rel="stylesheet" type="text/css" href="styles/default.css" />
+
+    <script type="text/javascript" src="../lib/jquery-1.10.1.js"></script>
+    <script type="text/javascript" src="../lib/handlebars-1.0.rc.4.js"></script>
+    <script type="text/javascript" src="../lib/ember-1.0.0-rc.5.js"></script>
+
+    <script type="text/javascript" src="scripts/default.js"></script>
+    <script type="text/javascript" src="../packages/ember-droplet/ember-droplet-mixin.js"></script>
+    <script type="text/javascript" src="../packages/ember-droplet/ember-droplet-view.js"></script>
+    <script type="text/javascript" src="scripts/model.js"></script>
+    <script type="text/javascript" src="scripts/controller.js"></script>
+    <script type="text/javascript" src="scripts/view.js"></script>
+
+</head>
+<body>
+
+    <script type="text/x-handlebars">
+        {{outlet}}
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="index">
+
+        <h1>Upload Files ({{files.length}} in total)</h1>
+        <h2>
+            Valid: {{validFiles.length}} &ndash;
+            Invalid: {{invalidFiles.length}} &ndash;
+            Uploaded: {{uploadedFiles.length}} &ndash;
+            Deleted: {{deletedFiles.length}} &ndash;
+            <a {{action "uploadAllFiles"}}>Upload All</a> &ndash;
+            <a {{action "clearAllFiles"}}>Clear All</a>
+        </h2>
+
+        {{#view view.DragDrop}}
+
+            {{#each controller.validFiles}}
+
+                <div {{bindAttr class="className :file"}}>
+                    {{name}}
+                    <a class="remove" {{action "removeFile" this}}>Remove File</a>
+                    {{view view.ImagePreview imageBinding="this"}}
+                </div>
+
+            {{/each}}
+
+        {{/view}}
+
+    </script>
+
+</body>
+</html>
