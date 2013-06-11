@@ -20,33 +20,45 @@ window.EmberDropletController = Ember.Mixin.create({
     files: [],
 
     /**
+     * @constructor
+     * @method init
+     * Clears the file array for each instantiation.
+     * @return {void}
+     */
+    init: function() {
+        Ember.set(this, 'files', []);
+        this._super();
+    },
+
+    /**
      * @method addValidFile
      * @param file {File}
      * Adds a valid file to the collection.
-     * @return {void}
+     * @return {Object}
      */
     addValidFile: function(file) {
-        this._addFile(file, true);
+        return this._addFile(file, true);
     },
 
     /**
      * @method addInvalidFile
      * @param file {File}
      * Adds an invalid file to the collection.
-     * @return {void}
+     * @return {Object}
      */
     addInvalidFile: function(file) {
-        this._addFile(file, false);
+        return this._addFile(file, false);
     },
 
     /**
      * @method removeFile
      * @param file
      * Removes a file from the collection.
-     * @return {void}
+     * @return {Object}
      */
     removeFile: function(file) {
         Ember.set(file, 'deleted', true);
+        return file;
     },
 
     /**
@@ -120,6 +132,7 @@ window.EmberDropletController = Ember.Mixin.create({
      * @param file {File}
      * @param valid {Boolean}
      * Adds a file based on whether it's valid or invalid.
+     * @return {Object}
      * @private
      */
     _addFile: function(file, valid) {
@@ -130,6 +143,9 @@ window.EmberDropletController = Ember.Mixin.create({
         // Create the record with its default parameters, and then add it to the collection.
         var record = { file: file, valid: valid, uploaded: false, deleted: false, className: className };
         Ember.get(this, 'files').pushObject(record);
+
+        // Voila!
+        return record;
 
     },
 
@@ -149,7 +165,7 @@ window.EmberDropletController = Ember.Mixin.create({
      */
     invalidFiles: Ember.computed(function() {
         return this._filesByProperties({ valid: false });
-    }).property('files.length'),
+    }).property('files.length', 'files.@each.deleted'),
 
     /**
      * @property uploadedFiles

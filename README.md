@@ -10,7 +10,7 @@ For the time being, please refer to the example.
 Features
 -------------
 
- * Drag &amp; drop HTML5 uploading;
+ * Upload with HTML5's drag and drop;
  * MIME type restrictions on permitted file types;
  * Instant image previews upon dropping;
  * Specifies extension in class name to allow for icons for different file types;
