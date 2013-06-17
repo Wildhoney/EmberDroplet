@@ -26,7 +26,7 @@ The `EmberDropletController` exposes the following public methods:
  * `addInvalidFile` &ndash; Same as above, but a file that isn't allowed by its MIME type;
  * `deleteFile` &ndash; Deletes a specified file by its object;
  * `clearAllFiles` &ndash; Clears all files, including uploaded files;
- * `uploadAllFiles` &ndash; Uploads all valid files;
+ * `uploadAllFiles` &ndash; Uploads all valid files &ndash; returns a <a href="http://api.jquery.com/deferred.promise/" target="_blank">jQuery promise</a>;
 
 In addition to the methods, `EmberDropletController` also has the following computed properties for convenience:
 
