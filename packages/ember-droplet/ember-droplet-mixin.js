@@ -19,6 +19,10 @@ window.EmberDropletController = Ember.Mixin.create({
      */
     files: [],
 
+    /**
+     * @property uploadStatus
+     * @type {Object}
+     */
     uploadStatus: { uploading: false, percentComplete: 0 },
 
     /**

@@ -42,3 +42,9 @@ Example
 -------------
 
 The example uses the Node.js server to upload files, which is available in `example/node-server`. Simply run: `node server` to create it.
+
+
+View Mixin
+-------------
+
+In order to use `EmberDroplet` it's not necessary for you to implement the `EmberDropletView` mixin into your view. However, if you don't, then you'll need to communicate with the `EmberDropletController` mixin yourself. `EmberDropletView` also comes bundled with a `ImagePreview` sub-view which allows image uploads to be previewed immediately.
