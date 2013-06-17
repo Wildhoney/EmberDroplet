@@ -75,12 +75,13 @@ window.EmberDropletController = Ember.Mixin.create({
     /**
      * @method uploadAllFiles
      * Uploads all of the files that haven't been uploaded yet, but are valid files.
-     * @return {void}
+     * @return {Object} jQuery promise.
      */
     uploadAllFiles: function() {
 
-        // Here we go!
-        var url = Ember.get(this, 'dropletUrl');
+        // Find the URL, set the uploading status, and create our promise.
+        var url         = Ember.get(this, 'dropletUrl'),
+            deferred    = new jQuery.Deferred();
         Ember.set(this, 'uploadStatus.uploading', true);
 
         // Assert that we have the URL specified in the controller that implements the mixin.
@@ -111,8 +112,11 @@ window.EmberDropletController = Ember.Mixin.create({
                 Ember.set(file, 'uploaded', true);
             });
 
-            // Last of all we want to revert the upload status.
+            // We want to revert the upload status.
             Ember.set(this, 'uploadStatus.uploading', false);
+
+            // Last of all we can resolve the promise!
+            deferred.resolve();
 
         }.bind(this), false);
 
@@ -132,6 +136,9 @@ window.EmberDropletController = Ember.Mixin.create({
         // Set the request size, and then we can upload the files!
         request.setRequestHeader('X-File-Size', overallSize);
         request.send(formData);
+
+        // Return the promise.
+        return deferred.promise();
 
     },
 
