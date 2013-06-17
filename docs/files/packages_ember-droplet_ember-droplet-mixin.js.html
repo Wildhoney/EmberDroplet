@@ -191,7 +191,6 @@ window.EmberDropletController = Ember.Mixin.create({
             formData.append(&#x27;file&#x27;, file.file);
         }, this);
 
-<<<<<<< HEAD
 
         request.addEventListener(&#x27;load&#x27;, function() {
             // Set the &#x60;uploaded&#x60; parameter to true once we&#x27;ve successfully // uploaded the files.
@@ -202,16 +201,6 @@ window.EmberDropletController = Ember.Mixin.create({
 
         // Set the request size, and then we can upload the files!
         request.setRequestHeader(&#x27;X-File-Size&#x27;, overallSize);
-=======
-        // Set all of the necessary request headers.
-        request.setRequestHeader(&#x27;X-File-Name&#x27;, fileObject.name);
-        request.setRequestHeader(&#x27;X-File-Size&#x27;, fileObject.size);
-        request.setRequestHeader(&#x27;X-File-Type&#x27;, fileObject.type);
-
-        // Finally we can send the file!
-        var formData = new FormData();
-        formData.append(&#x27;file&#x27;, fileObject);
->>>>>>> 66ce0fde399b455dd09f9c639f9ce0e138dd5a60
         request.send(formData);
 
     },
