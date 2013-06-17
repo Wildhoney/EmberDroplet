@@ -164,29 +164,10 @@ window.EmberDropletController = Ember.Mixin.create({
 
     /**
      * @method uploadAllFiles
-     * Uploads all of the files that haven&#x27;t been uploaded yet, or you can optionally
-     * specify a list of specific files to be uploaded.
+     * Uploads all of the files that haven&#x27;t been uploaded yet, but are valid files.
      * @return {void}
      */
-    uploadAllFiles: function(files) {
-
-        // If we&#x27;ve not specified the &#x60;files&#x60;, then we need to get a list of valid files.
-        files = (files || Ember.get(this, &#x27;validFiles&#x27;));
-
-        // Iterate over each file, and upload it.
-        Ember.EnumerableUtils.forEach(files, function(file) {
-            this.uploadFile(file);
-        }, this);
-
-    },
-
-    /**
-     * @method uploadFile
-     * @param file {File}
-     * Uploads a single file.
-     * @return {void}
-     */
-    uploadFile: function(file) {
+    uploadAllFiles: function() {
 
         var url = Ember.get(this, &#x27;dropletUrl&#x27;);
 
@@ -197,25 +178,30 @@ window.EmberDropletController = Ember.Mixin.create({
         var request = new XMLHttpRequest();
         request.open(&#x27;post&#x27;, url, true);
 
-        // Specify what we&#x27;re after inside of the file object.
-        var fileObject = file.file;
+        // Prepare the form data, and the request headers.
+        var formData    = new FormData(),
+            overallSize = 0;
+
+        // Find the list of valid files to upload.
+        var files = Ember.get(this, &#x27;validFiles&#x27;);
+
+        // Iterate over each file, and upload it.
+        Ember.EnumerableUtils.forEach(files, function(file) {
+            overallSize += file.size;
+            formData.append(&#x27;file&#x27;, file.file);
+        }, this);
+
 
         request.addEventListener(&#x27;load&#x27;, function() {
+            // Set the &#x60;uploaded&#x60; parameter to true once we&#x27;ve successfully // uploaded the files.
+            Ember.EnumerableUtils.forEach(files, function(file) {
+                Ember.set(file, &#x27;uploaded&#x27;, true);
+            });
+        }.bind(files), false);
 
-            // Set the &#x60;uploaded&#x60; parameter to true once we&#x27;ve successfully
-            // uploaded the file.
-            Ember.set(file, &#x27;uploaded&#x27;, true);
-
-        }.bind(file), false);
-
-        // Set all of the necessary request headers.
-        request.setRequestHeader(&#x27;Content-Type&#x27;, &#x27;multipart/form-data&#x27;);
-        request.setRequestHeader(&#x27;X-File-Name&#x27;, fileObject.name);
-        request.setRequestHeader(&#x27;X-File-Size&#x27;, fileObject.length);
-        request.setRequestHeader(&#x27;X-File-Type&#x27;, fileObject.type);
-
-        // Finally we can send the file!
-        request.send(fileObject);
+        // Set the request size, and then we can upload the files!
+        request.setRequestHeader(&#x27;X-File-Size&#x27;, overallSize);
+        request.send(formData);
 
     },
 

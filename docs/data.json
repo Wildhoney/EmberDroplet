@@ -173,7 +173,7 @@
             "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
             "line": 73,
             "itemtype": "method",
-            "name": "uploadAllFiles\nUploads all of the files that haven't been uploaded yet, or you can optionally\nspecify a list of specific files to be uploaded.",
+            "name": "uploadAllFiles\nUploads all of the files that haven't been uploaded yet, but are valid files.",
             "return": {
                 "description": "",
                 "type": "Void"
@@ -183,26 +183,7 @@
         },
         {
             "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
-            "line": 91,
-            "itemtype": "method",
-            "name": "uploadFile",
-            "params": [
-                {
-                    "name": "file",
-                    "description": "\nUploads a single file.",
-                    "type": "File"
-                }
-            ],
-            "return": {
-                "description": "",
-                "type": "Void"
-            },
-            "class": "EmberDropletController",
-            "module": "App"
-        },
-        {
-            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
-            "line": 130,
+            "line": 116,
             "itemtype": "method",
             "name": "_addFile",
             "params": [
@@ -228,7 +209,7 @@
         },
         {
             "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
-            "line": 152,
+            "line": 138,
             "itemtype": "property",
             "name": "validFiles\nFinds a list of files that aren't deleted, and are of a valid MIME type.",
             "return": {
@@ -240,7 +221,7 @@
         },
         {
             "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
-            "line": 161,
+            "line": 147,
             "itemtype": "property",
             "name": "invalidFiles\nFinds a list of files that have an unsupported MIME type.",
             "return": {
@@ -252,7 +233,7 @@
         },
         {
             "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
-            "line": 170,
+            "line": 156,
             "itemtype": "property",
             "name": "uploadedFiles\nFinds a list of files that have been successfully uploaded.",
             "return": {
@@ -264,7 +245,7 @@
         },
         {
             "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
-            "line": 179,
+            "line": 165,
             "itemtype": "property",
             "name": "deletedFiles\nFinds a list of files that have been deleted by the user.",
             "return": {
@@ -276,7 +257,7 @@
         },
         {
             "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
-            "line": 188,
+            "line": 174,
             "itemtype": "method",
             "name": "_filesByProperties",
             "params": [

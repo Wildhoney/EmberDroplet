@@ -1,7 +1,9 @@
 var express         = require('express'),
     app             = express(),
     fileSystem      = require('fs'),
-    server          = require('http').createServer(app).listen(8888);
+    server          = require('http').createServer(app).listen(8888),
+    promisedIo      = require('promised-io/promise'),
+    Deferred        = promisedIo.Deferred;
 
 // Configuration.
 app.configure(function(){
@@ -20,15 +22,34 @@ app.all('*', function(request, response, next) {
 // Responsible for handling the file upload.
 app.post('/upload', function(request, response) {
 
-    var file = request.files.file;
+    var files       = request.files.file,
+        numFiles    = files.length,
+        promises    = [];
 
-    fileSystem.readFile(file.path, function (error, data) {
+    var uploadFile = function(file) {
 
-        var filePath = __dirname + '/uploaded-files/' + file.name;
-        fileSystem.writeFile(filePath, data);
-        response.send({ filename: file.name, success: true });
+        var deferred = new Deferred();
+
+        fileSystem.readFile(file.path, function (error, data) {
+            var filePath = __dirname + '/uploaded-files/' + file.name;
+            fileSystem.writeFile(filePath, data);
+            deferred.resolve(file.name);
+        });
+
+        return deferred.promise;
+
+    };
+
+    promises = [];
+
+    for (var index = 0; index <= numFiles; index++) if (files.hasOwnProperty(index)) {
+        var promise = uploadFile(files[index]);
+        promises.push(promise);
+    }
+
+    promisedIo.all(promises).then(function(files) {
+        response.send({ files: files, success: true });
         response.end();
-
     });
 
 });
