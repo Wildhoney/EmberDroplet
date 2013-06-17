@@ -34,6 +34,9 @@
             <a {{action "uploadAllFiles"}}>Upload All</a> &ndash;
             <a {{action "clearAllFiles"}}>Clear All</a>
         </h2>
+        {{#if uploadStatus.uploading}}
+            <h3>Uploaded Percentage: {{uploadStatus.percentComplete}}%</h3>
+        {{/if}}
 
         {{#view view.DragDrop}}
 

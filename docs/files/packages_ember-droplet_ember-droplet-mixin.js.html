@@ -111,6 +111,8 @@ window.EmberDropletController = Ember.Mixin.create({
      */
     files: [],
 
+    uploadStatus: { uploading: false, percentComplete: 0 },
+
     /**
      * @constructor
      * @method init
@@ -169,7 +171,9 @@ window.EmberDropletController = Ember.Mixin.create({
      */
     uploadAllFiles: function() {
 
+        // Here we go!
         var url = Ember.get(this, &#x27;dropletUrl&#x27;);
+        Ember.set(this, &#x27;uploadStatus.uploading&#x27;, true);
 
         // Assert that we have the URL specified in the controller that implements the mixin.
         Ember.assert(&#x27;You must specify the &#x60;dropletUrl&#x60; parameter in order to upload files.&#x27;, !!url);
@@ -187,17 +191,35 @@ window.EmberDropletController = Ember.Mixin.create({
 
         // Iterate over each file, and upload it.
         Ember.EnumerableUtils.forEach(files, function(file) {
-            overallSize += file.size;
+            overallSize += file.file.size;
             formData.append(&#x27;file&#x27;, file.file);
         }, this);
 
-
+        // Once the files have been successfully uploaded.
         request.addEventListener(&#x27;load&#x27;, function() {
+
             // Set the &#x60;uploaded&#x60; parameter to true once we&#x27;ve successfully // uploaded the files.
             Ember.EnumerableUtils.forEach(files, function(file) {
                 Ember.set(file, &#x27;uploaded&#x27;, true);
             });
-        }.bind(files), false);
+
+            // Last of all we want to revert the upload status.
+            Ember.set(this, &#x27;uploadStatus.uploading&#x27;, false);
+
+        }.bind(this), false);
+
+        request.upload.addEventListener(&#x27;progress&#x27;, function (event) {
+
+            if (!event.lengthComputable) {
+                // There&#x27;s not much we can do if the request is not computable.
+                return;
+            }
+
+            // Calculate the percentage remaining.
+            var percentageLoaded = (event.loaded / overallSize) * 100;
+            Ember.set(this, &#x27;uploadStatus.percentComplete&#x27;, Math.round(percentageLoaded));
+
+        }.bind(this), false);
 
         // Set the request size, and then we can upload the files!
         request.setRequestHeader(&#x27;X-File-Size&#x27;, overallSize);

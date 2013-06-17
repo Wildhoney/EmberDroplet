@@ -19,6 +19,8 @@ window.EmberDropletController = Ember.Mixin.create({
      */
     files: [],
 
+    uploadStatus: { uploading: false, percentComplete: 0 },
+
     /**
      * @constructor
      * @method init
@@ -77,7 +79,9 @@ window.EmberDropletController = Ember.Mixin.create({
      */
     uploadAllFiles: function() {
 
+        // Here we go!
         var url = Ember.get(this, 'dropletUrl');
+        Ember.set(this, 'uploadStatus.uploading', true);
 
         // Assert that we have the URL specified in the controller that implements the mixin.
         Ember.assert('You must specify the `dropletUrl` parameter in order to upload files.', !!url);
@@ -95,17 +99,35 @@ window.EmberDropletController = Ember.Mixin.create({
 
         // Iterate over each file, and upload it.
         Ember.EnumerableUtils.forEach(files, function(file) {
-            overallSize += file.size;
+            overallSize += file.file.size;
             formData.append('file', file.file);
         }, this);
 
-
+        // Once the files have been successfully uploaded.
         request.addEventListener('load', function() {
+
             // Set the `uploaded` parameter to true once we've successfully // uploaded the files.
             Ember.EnumerableUtils.forEach(files, function(file) {
                 Ember.set(file, 'uploaded', true);
             });
-        }.bind(files), false);
+
+            // Last of all we want to revert the upload status.
+            Ember.set(this, 'uploadStatus.uploading', false);
+
+        }.bind(this), false);
+
+        request.upload.addEventListener('progress', function (event) {
+
+            if (!event.lengthComputable) {
+                // There's not much we can do if the request is not computable.
+                return;
+            }
+
+            // Calculate the percentage remaining.
+            var percentageLoaded = (event.loaded / overallSize) * 100;
+            Ember.set(this, 'uploadStatus.percentComplete', Math.round(percentageLoaded));
+
+        }.bind(this), false);
 
         // Set the request size, and then we can upload the files!
         request.setRequestHeader('X-File-Size', overallSize);
