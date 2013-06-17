@@ -24,7 +24,7 @@ The `EmberDropletController` exposes the following public methods:
 
  * `addValidFile` &ndash; Adds a file that is allowed by its MIME type;
  * `addInvalidFile` &ndash; Same as above, but a file that isn't allowed by its MIME type;
- * `removeFile` &ndash; Removes a specified file by its object;
+ * `deleteFile` &ndash; Deletes a specified file by its object;
  * `clearAllFiles` &ndash; Clears all files, including uploaded files;
  * `uploadAllFiles` &ndash; Uploads all valid files;
 

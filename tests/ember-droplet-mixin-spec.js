@@ -37,9 +37,9 @@ describe('Ember Crossfilter', function() {
             expect(Ember.get(controller, 'deletedFiles.length')).toEqual(0);
         });
 
-        it('Can remove a file from the list', function() {
+        it('Can delete a file from the list', function() {
             var file = controller.addValidFile({ name: 'MyFile.png' });
-            controller.removeFile(file);
+            controller.deleteFile(file);
             expect(Ember.get(controller, 'validFiles.length')).toEqual(0);
             expect(Ember.get(controller, 'invalidFiles.length')).toEqual(0);
             expect(Ember.get(controller, 'uploadedFiles.length')).toEqual(0);

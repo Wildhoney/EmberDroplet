@@ -51,12 +51,12 @@ window.EmberDropletController = Ember.Mixin.create({
     },
 
     /**
-     * @method removeFile
+     * @method deleteFile
      * @param file
-     * Removes a file from the collection.
+     * Deletes a file from the collection.
      * @return {Object}
      */
-    removeFile: function(file) {
+    deleteFile: function(file) {
         Ember.set(file, 'deleted', true);
         return file;
     },
