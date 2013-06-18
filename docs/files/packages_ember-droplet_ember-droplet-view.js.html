@@ -41,8 +41,6 @@
         <div id="api-tabview-panel">
             <ul id="api-classes" class="apis classes">
             
-                <li><a href="../classes/DropletPreview.html">DropletPreview</a></li>
-            
                 <li><a href="../classes/DropletView.html">DropletView</a></li>
             
                 <li><a href="../classes/EmberDropletController.html">EmberDropletController</a></li>
@@ -106,6 +104,82 @@ window.DropletView = Ember.View.extend({
      * @default [&#x27;droppable&#x27;]
      */
     classNames: [&#x27;droppable&#x27;],
+
+    /**
+     * @property ImagePreview
+     * @type {Ember.View}
+     */
+    ImagePreview: Ember.View.extend({
+
+        /**
+         * @property tagName
+         * @type {String}
+         * @default &quot;img&quot;
+         */
+        tagName: &#x27;img&#x27;,
+
+        /**
+         * @property attributeBindings
+         * @type {Array}
+         * @default [&#x27;src&#x27;]
+         */
+        attributeBindings: [&#x27;src&#x27;],
+
+        /**
+         * @property src
+         * @type {String}
+         * @default null
+         */
+        src: null,
+
+        /**
+         * @property image
+         * @type {String}
+         * @default null
+         */
+        image: null,
+
+        /**
+         * @method didInsertElement
+         * Invoked when the view is inserted into the DOM.
+         * @return {void}
+         */
+        didInsertElement: function() {
+
+            // Initialise the FileReader, and find the image that was passed into
+            // the view when instantiating it.
+            var reader  = new FileReader(),
+                image   = Ember.get(this, &#x27;image.file&#x27;);
+
+            // Ensure that the file we&#x27;re dealing with is an image.
+            if (!image.type.match(/^image\//i)) {
+
+                // If it isn&#x27;t then we&#x27;ll need to destroy the view immediately.
+                this.destroy();
+                return;
+
+            }
+
+            // Invoked when the image preview has been loaded.
+            reader.onload = function (event) {
+
+                if (this.get(&#x27;isDestroyed&#x27;) === true) {
+                    // If the view has already been destroyed, then we can&#x27;t
+                    // load in the image preview.
+                    return;
+                }
+
+                // Otherwise we&#x27;re free to set the SRC attribute to the image&#x27;s data.
+                Ember.set(this, &#x27;src&#x27;, event.target.result);
+
+            }.bind(this);
+
+            // Begin the reading of the image.
+            reader.readAsDataURL(image);
+
+        }
+
+    }),
 
     /**
      * @method drop
