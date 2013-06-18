@@ -1,14 +1,21 @@
 {
-    "name": "EmberDroplet",
-    "version": "0.1.0",
-    "author": "Adam Timberlake",
-
-    "devDependencies": {
-        "grunt": "~0.4.1"
-    },
-
-    "repository": {
-        "type": "git",
-        "url": "git://github.com:Wildhoney/EmberDroplet.git"
-    }
+  "name": "EmberDroplet",
+  "version": "0.1.0",
+  "author": "Adam Timberlake",
+  "dependencies": {
+    "express": "~3.2.6",
+    "grunt": "~0.4.1",
+    "promised-io": "~0.3.3",
+    "grunt-contrib-jasmine": "~0.5.1",
+    "grunt-contrib-jshint": "~0.6.0",
+    "grunt-contrib-yuidoc": "~0.4.0",
+    "grunt-contrib-uglify": "~0.2.2"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com:Wildhoney/EmberDroplet.git"
+  }
 }
