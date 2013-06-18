@@ -95,13 +95,11 @@ window.DropletController = Ember.Mixin.create({
         var request = new XMLHttpRequest();
         request.open('post', url, true);
 
-        // Prepare the form data, and the request headers.
-        var formData    = new FormData(),
-            overallSize = 0;
+        // Create a new form data instance.
+        var formData = new FormData();
 
         // Iterate over each file, and upload it.
         Ember.EnumerableUtils.forEach(Ember.get(this, 'validFiles'), function(file) {
-            overallSize += file.file.size;
             formData.append('file', file.file);
         }, this);
 
@@ -111,12 +109,25 @@ window.DropletController = Ember.Mixin.create({
         this._addErrorListener(request.upload, deferred);
 
         // Set the request size, and then we can upload the files!
-        request.setRequestHeader('X-File-Size', overallSize);
+        request.setRequestHeader('X-File-Size', this._getSize());
         request.send(formData);
 
         // Return the promise.
         return deferred.promise();
 
+    },
+
+    /**
+     * Determine the size of the request.
+     * @return {Number}
+     * @private
+     */
+    _getSize: function() {
+        var size = 0;
+        Ember.EnumerableUtils.forEach(Ember.get(this, 'validFiles'), function(file) {
+            size += file.file.size;
+        });
+        return size;
     },
 
     /**
@@ -186,7 +197,7 @@ window.DropletController = Ember.Mixin.create({
             }
 
             // Calculate the percentage remaining.
-            var percentageLoaded = (event.loaded / overallSize) * 100;
+            var percentageLoaded = (event.loaded / this._getSize()) * 100;
             Ember.set(this, 'uploadStatus.percentComplete', Math.round(percentageLoaded));
 
         }.bind(this), false);
