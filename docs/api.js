@@ -1,8 +1,9 @@
 YUI.add("yuidoc-meta", function(Y) {
    Y.YUIDoc = { meta: {
     "classes": [
-        "EmberDropletController",
-        "EmberDropletView"
+        "DropletPreview",
+        "DropletView",
+        "EmberDropletController"
     ],
     "modules": [
         "App"

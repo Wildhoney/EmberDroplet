@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>packages\ember-droplet\ember-droplet-view.js - EmberDroplet</title>
+    <title>packages\ember-droplet\ember-droplet-preview.js - EmberDroplet</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -88,114 +88,84 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1 class="file-heading">File: packages\ember-droplet\ember-droplet-view.js</h1>
+                        <h1 class="file-heading">File: packages\ember-droplet\ember-droplet-preview.js</h1>
 
 <div class="file">
     <pre class="code prettyprint linenums">
 /**
  * @module App
- * @class DropletView
+ * @class DropletPreview
  * @type Ember.View
  * @extends Ember.View
  */
-window.DropletView = Ember.View.extend({
+window.DropletPreview = Ember.View.extend({
 
     /**
-     * @property classNames
+     * @property tagName
+     * @type {String}
+     * @default &quot;img&quot;
+     */
+    tagName: &#x27;img&#x27;,
+
+    /**
+     * @property attributeBindings
      * @type {Array}
-     * @default [&#x27;droppable&#x27;]
+     * @default [&#x27;src&#x27;]
      */
-    classNames: [&#x27;droppable&#x27;],
+    attributeBindings: [&#x27;src&#x27;],
 
     /**
-     * @method drop
-     * @param event {jQuery.Event}
-     * Invoked when the user drops a file onto the droppable area.
-     * @return {Boolean}
+     * @property src
+     * @type {String}
+     * @default null
      */
-    drop: function(event) {
-        this._preventDefaultBehaviour(event);
-        return this.traverseFiles(event.dataTransfer.files);
-    },
+    src: null,
 
     /**
-     * @method traverseFiles
-     * @param files {FileList}
-     * Accepts a FileList object, and traverses them to determine if they&#x27;re valid, adding them
-     * as either valid or invalid.
-     * @return {boolean}
+     * @property image
+     * @type {String}
+     * @default null
      */
-    traverseFiles: function(files) {
+    image: null,
 
-        // Find the controller, and the &#x60;mimeTypes&#x60; property.
-        var controller  = Ember.get(this, &#x27;controller&#x27;),
-            mimeTypes   = Ember.get(controller, &#x27;mimeTypes&#x27;);
+    /**
+     * @method didInsertElement
+     * Invoked when the view is inserted into the DOM.
+     * @return {void}
+     */
+    didInsertElement: function() {
 
-        // Assert that we have the &#x60;mineTypes&#x60; property, and that it&#x27;s an array.
-        Ember.assert(&#x27;&#x60;mimeTypes&#x60; is undefined. Does your controller implement the &#x60;EmberDropletController&#x60; mixin?&#x27;, !!mimeTypes);
-        Ember.assert(&#x27;&#x60;mimeTypes&#x60; is not an array. It should be an array of valid MIME types.&#x27;, !!Ember.isArray(mimeTypes));
+        // Initialise the FileReader, and find the image that was passed into
+        // the view when instantiating it.
+        var reader  = new FileReader(),
+            image   = Ember.get(this, &#x27;image.file&#x27;);
 
-        for (var index = 0, numFiles = files.length; index &lt; numFiles; index++) {
+        // Ensure that the file we&#x27;re dealing with is an image.
+        if (!image.type.match(/^image\//i)) {
 
-            if (!files.hasOwnProperty(index)) {
-                continue;
-            }
-
-            var file = files[index];
-
-            // Determine if the file is valid based on its MIME type.
-            if ($.inArray(file.type, mimeTypes) === -1) {
-                // If it isn&#x27;t valid, then we&#x27;ll add it as an invalid file.
-                controller.addInvalidFile(file);
-                continue;
-            }
-
-            // Otherwise the file has a valid MIME type, and therefore be added as a good file.
-            controller.addValidFile(file);
+            // If it isn&#x27;t then we&#x27;ll need to destroy the view immediately.
+            this.destroy();
+            return;
 
         }
 
-        return true;
+        // Invoked when the image preview has been loaded.
+        reader.onload = function (event) {
 
-    },
+            if (this.get(&#x27;isDestroyed&#x27;) === true) {
+                // If the view has already been destroyed, then we can&#x27;t
+                // load in the image preview.
+                return;
+            }
 
-    /**
-     * @method _preventDefaultBehaviour
-     * @param event {jQuery.Event}
-     * Prevents default behaviour and propagation on nodes where it&#x27;s undesirable.
-     * @return {void}
-     * @private
-     */
-    _preventDefaultBehaviour: function(event) {
-        event.preventDefault();
-        event.stopPropagation();
-    },
+            // Otherwise we&#x27;re free to set the SRC attribute to the image&#x27;s data.
+            Ember.set(this, &#x27;src&#x27;, event.target.result);
 
-    /**
-     * @method dragOver
-     * @param event {jQuery.Event}
-     * @return {void}
-     */
-    dragOver: function(event) {
-        this._preventDefaultBehaviour(event);
-    },
+        }.bind(this);
 
-    /**
-     * @method dragEnter
-     * @param event {jQuery.Event}
-     * @return {void}
-     */
-    dragEnter: function(event) {
-        this._preventDefaultBehaviour(event);
-    },
+        // Begin the reading of the image.
+        reader.readAsDataURL(image);
 
-    /**
-     * @method dragLeave
-     * @param event {jQuery.Event}
-     * @return {void}
-     */
-    dragLeave: function(event) {
-        this._preventDefaultBehaviour(event);
     }
 
 });

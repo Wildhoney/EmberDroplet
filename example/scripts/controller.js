@@ -5,7 +5,7 @@
  * @type Ember.Controller
  * @extends Ember.ArrayController
  */
-App.IndexController = Ember.Controller.extend(EmberDropletController, {
+App.IndexController = Ember.Controller.extend(DropletController, {
 
     /**
      * @property dropletUrl

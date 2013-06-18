@@ -3,7 +3,7 @@ describe('Ember Crossfilter', function() {
 
     beforeEach(function() {
 
-        controller = Ember.Controller.extend(EmberDropletController, {
+        controller = Ember.Controller.extend(DropletController, {
 
         }).create();
 

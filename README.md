@@ -2,8 +2,8 @@ Ember Droplet
 =============
 
 Ember Droplet allows HTML5 drag and drop functionality in Ember straight out-of-the-box. Its philosophy is that it doesn't
-impose anything, and instead allows each individual developer to decide how it should work. I've provided a view &ndash; `EmberDropletView`
-that you're free to use in your views. However, most of the functionality exists in the controller mixin &dash; `EmberDropletController`).
+impose anything, and instead allows each individual developer to decide how it should work. I've provided a view &ndash; `DropletView`
+that you're free to use in your views. However, most of the functionality exists in the controller mixin &dash; `DropletController`).
 
 For the time being, please refer to the example.
 
@@ -20,7 +20,7 @@ Features
 Methods
 -------------
 
-The `EmberDropletController` exposes the following public methods:
+The `DropletController` exposes the following public methods:
 
  * `addValidFile` &ndash; Adds a file that is allowed by its MIME type;
  * `addInvalidFile` &ndash; Same as above, but a file that isn't allowed by its MIME type;
@@ -28,7 +28,7 @@ The `EmberDropletController` exposes the following public methods:
  * `clearAllFiles` &ndash; Clears all files, including uploaded files;
  * `uploadAllFiles` &ndash; Uploads all valid files &ndash; returns a <a href="http://api.jquery.com/deferred.promise/" target="_blank">jQuery promise</a>;
 
-In addition to the methods, `EmberDropletController` also has the following computed properties for convenience:
+In addition to the methods, `DropletController` also has the following computed properties for convenience:
 
  * `validFiles` &ndash; Provides a list of valid files;
  * `invalidFiles` &ndash; Provides a list of invalid files;
@@ -47,4 +47,6 @@ The example uses the Node.js server to upload files, which is available in `exam
 View Mixin
 -------------
 
-In order to use `EmberDroplet` it's not necessary for you to implement the `EmberDropletView` mixin into your view. However, if you don't, then you'll need to communicate with the `EmberDropletController` mixin yourself. `EmberDropletView` also comes bundled with a `ImagePreview` sub-view which allows image uploads to be previewed immediately.
+In order to use `EmberDroplet` it's not necessary for you to implement the `DropletView` mixin into your view. However, if you don't, then you'll need to communicate with the `DropletController` mixin yourself.
+
+There is also `DropletPreview` which allows image uploads to be previewed immediately.

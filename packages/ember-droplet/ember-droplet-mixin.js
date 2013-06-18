@@ -4,7 +4,7 @@
  * @type Ember.Mixin
  * @extends Ember.Mixin
  */
-window.EmberDropletController = Ember.Mixin.create({
+window.DropletController = Ember.Mixin.create({
 
     /**
      * @property mimeTypes
@@ -99,32 +99,86 @@ window.EmberDropletController = Ember.Mixin.create({
         var formData    = new FormData(),
             overallSize = 0;
 
-        // Find the list of valid files to upload.
-        var files = Ember.get(this, 'validFiles');
-
         // Iterate over each file, and upload it.
-        Ember.EnumerableUtils.forEach(files, function(file) {
+        Ember.EnumerableUtils.forEach(Ember.get(this, 'validFiles'), function(file) {
             overallSize += file.file.size;
             formData.append('file', file.file);
         }, this);
+
+        // Add all of the event listeners.
+        this._addProgressListener(request.upload);
+        this._addSuccessListener(request.upload, deferred);
+        this._addErrorListener(request.upload, deferred);
+
+        // Set the request size, and then we can upload the files!
+        request.setRequestHeader('X-File-Size', overallSize);
+        request.send(formData);
+
+        // Return the promise.
+        return deferred.promise();
+
+    },
+
+    /**
+     * @method _addSuccessListener
+     * @param request
+     * @param [deferred = null]
+     * @private
+     */
+    _addSuccessListener: function(request, deferred) {
 
         // Once the files have been successfully uploaded.
         request.addEventListener('load', function() {
 
             // Set the `uploaded` parameter to true once we've successfully // uploaded the files.
-            Ember.EnumerableUtils.forEach(files, function(file) {
+            Ember.EnumerableUtils.forEach(Ember.get(this, 'validFiles'), function(file) {
                 Ember.set(file, 'uploaded', true);
             });
 
             // We want to revert the upload status.
             Ember.set(this, 'uploadStatus.uploading', false);
 
-            // Last of all we can resolve the promise!
-            deferred.resolve();
+            if (deferred) {
+                // Last of all we can resolve the promise if it exists!
+                deferred.resolve();
+            }
 
         }.bind(this), false);
 
-        request.upload.addEventListener('progress', function (event) {
+    },
+
+    /**
+     * @method _addErrorListener
+     * @param request
+     * @param [deferred = null]
+     * @return {void}
+     * @private
+     */
+    _addErrorListener: function(request, deferred) {
+
+        request.addEventListener('error', function() {
+
+            // As an error occurred, we need to revert everything.
+            Ember.set(this, 'uploadStatus.uploading', false);
+
+            if (deferred) {
+                // Reject the promise if we have one.
+                deferred.reject();
+            }
+
+        }.bind(this));
+
+    },
+
+    /**
+     * @method _addProgressListener
+     * @param request
+     * @return {void}
+     * @private
+     */
+    _addProgressListener: function(request) {
+
+        request.addEventListener('progress', function (event) {
 
             if (!event.lengthComputable) {
                 // There's not much we can do if the request is not computable.
@@ -136,13 +190,6 @@ window.EmberDropletController = Ember.Mixin.create({
             Ember.set(this, 'uploadStatus.percentComplete', Math.round(percentageLoaded));
 
         }.bind(this), false);
-
-        // Set the request size, and then we can upload the files!
-        request.setRequestHeader('X-File-Size', overallSize);
-        request.send(formData);
-
-        // Return the promise.
-        return deferred.promise();
 
     },
 

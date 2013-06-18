@@ -1,10 +1,10 @@
 /**
  * @module App
- * @class EmberDropletView
+ * @class DropletView
  * @type Ember.View
  * @extends Ember.View
  */
-window.EmberDropletView = Ember.View.extend({
+window.DropletView = Ember.View.extend({
 
     /**
      * @property classNames

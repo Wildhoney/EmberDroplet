@@ -8,8 +8,8 @@ App.IndexView = Ember.View.extend({
 
     /**
      * @property DragDrop
-     * @type EmberDropletView
+     * @type DropletView
      */
-    DragDrop: EmberDropletView.extend()
+    DragDrop: DropletView.extend()
 
 });
