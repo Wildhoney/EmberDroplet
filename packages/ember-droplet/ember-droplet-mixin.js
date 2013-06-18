@@ -118,6 +118,70 @@ window.DropletController = Ember.Mixin.create({
     },
 
     /**
+     * @property validFiles
+     * Finds a list of files that aren't deleted, and are of a valid MIME type.
+     * @return {Array}
+     */
+    validFiles: Ember.computed(function() {
+        return this._filesByProperties({ valid: true, deleted: false, uploaded: false });
+    }).property('files.length', 'files.@each.deleted', 'files.@each.uploaded'),
+
+    /**
+     * @property invalidFiles
+     * Finds a list of files that have an unsupported MIME type.
+     * @return {Array}
+     */
+    invalidFiles: Ember.computed(function() {
+        return this._filesByProperties({ valid: false });
+    }).property('files.length', 'files.@each.deleted'),
+
+    /**
+     * @property uploadedFiles
+     * Finds a list of files that have been successfully uploaded.
+     * @return {Array}
+     */
+    uploadedFiles: Ember.computed(function() {
+        return this._filesByProperties({ uploaded: true });
+    }).property('files.length', 'files.@each.uploaded'),
+
+    /**
+     * @property deletedFiles
+     * Finds a list of files that have been deleted by the user.
+     * @return {Array}
+     */
+    deletedFiles: Ember.computed(function() {
+        return this._filesByProperties({ deleted: true });
+    }).property('files.length', 'files.@each.deleted'),
+
+    /**
+     * @method _filesByProperties
+     * @param maps {Object}
+     * Accepts a map of properties that each file must have.
+     * @return {Array}
+     * @private
+     */
+    _filesByProperties: function(maps) {
+
+        // Iterate over each of the files.
+        return Ember.get(this, 'files').filter(function(file) {
+
+            for (var property in maps) {
+
+                // If the current property doesn't match what we're after from the map,
+                // then the file is invalid.
+                if (file[property] !== maps[property]) {
+                    return false;
+                }
+
+            }
+
+            // Voila! We have a good file that matches our criteria.
+            return true;
+
+        });
+    },
+
+    /**
      * Determine the size of the request.
      * @return {Number}
      * @private
@@ -224,70 +288,6 @@ window.DropletController = Ember.Mixin.create({
         // Voila!
         return record;
 
-    },
-
-    /**
-     * @property validFiles
-     * Finds a list of files that aren't deleted, and are of a valid MIME type.
-     * @return {Array}
-     */
-    validFiles: Ember.computed(function() {
-        return this._filesByProperties({ valid: true, deleted: false, uploaded: false });
-    }).property('files.length', 'files.@each.deleted', 'files.@each.uploaded'),
-
-    /**
-     * @property invalidFiles
-     * Finds a list of files that have an unsupported MIME type.
-     * @return {Array}
-     */
-    invalidFiles: Ember.computed(function() {
-        return this._filesByProperties({ valid: false });
-    }).property('files.length', 'files.@each.deleted'),
-
-    /**
-     * @property uploadedFiles
-     * Finds a list of files that have been successfully uploaded.
-     * @return {Array}
-     */
-    uploadedFiles: Ember.computed(function() {
-        return this._filesByProperties({ uploaded: true });
-    }).property('files.length', 'files.@each.uploaded'),
-
-    /**
-     * @property deletedFiles
-     * Finds a list of files that have been deleted by the user.
-     * @return {Array}
-     */
-    deletedFiles: Ember.computed(function() {
-        return this._filesByProperties({ deleted: true });
-    }).property('files.length', 'files.@each.deleted'),
-
-    /**
-     * @method _filesByProperties
-     * @param maps {Object}
-     * Accepts a map of properties that each file must have.
-     * @return {Array}
-     * @private
-     */
-    _filesByProperties: function(maps) {
-
-        // Iterate over each of the files.
-        return Ember.get(this, 'files').filter(function(file) {
-
-            for (var property in maps) {
-
-                // If the current property doesn't match what we're after from the map,
-                // then the file is invalid.
-                if (file[property] !== maps[property]) {
-                    return false;
-                }
-
-            }
-
-            // Voila! We have a good file that matches our criteria.
-            return true;
-
-        });
     }
 
 });
