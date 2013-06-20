@@ -3,7 +3,7 @@ Ember Droplet
 
 Ember Droplet allows HTML5 drag and drop functionality in Ember straight out-of-the-box. Its philosophy is that it doesn't
 impose anything, and instead allows each individual developer to decide how it should work. I've provided a view &ndash; `DropletView`
-that you're free to use in your views. However, most of the functionality exists in the controller mixin &dash; `DropletController`).
+that you're free to use in your views. However, most of the functionality exists in the controller mixin &ndash; `DropletController`).
 
 For the time being, please refer to the example.
 
