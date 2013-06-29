@@ -92,12 +92,13 @@ window.DropletView = Ember.View.extend({
     /**
      * @method drop
      * @param event {jQuery.Event}
+     * @param [files = []] {Array}
      * Invoked when the user drops a file onto the droppable area.
      * @return {Boolean}
      */
-    drop: function(event) {
+    drop: function(event, files) {
         this._preventDefaultBehaviour(event);
-        return this.traverseFiles(event.dataTransfer.files);
+        return this.traverseFiles(event.dataTransfer.files || files);
     },
 
     /**
