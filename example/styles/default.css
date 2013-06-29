@@ -1,7 +1,11 @@
 * {
-    font-family: Arial, Tahoma, Helvetica, sans-serif;
+    font-family: "Open Sans", Arial, Tahoma, Helvetica, sans-serif;
     font-size: 12px;
     box-sizing: border-box;
+}
+
+body {
+    padding: 10px 30px;
 }
 
 a {
@@ -15,16 +19,59 @@ a:active {
 }
 
 h1 {
-    font-size: 16px;
+    font-size: 28px;
+    font-weight: 100;
+    float: left;
+    overflow: hidden;
+}
+
+ul.counts {
+    overflow: hidden;
+    list-style-type: none;
+    margin: 22px 0 0 20px;
+    float: left;
+}
+
+ul.counts li {
+    float: left;
+    overflow: hidden;
+    margin-right: 15px;
+    padding: 0 10px 0 10px;
+    border-radius: 20px;
+}
+
+ul.counts li.valid {
+    background-color: #e4f5d0;
+}
+
+ul.counts li.invalid {
+    background-color: #f5f2d0;
+}
+
+ul.counts li.uploaded {
+    background-color: #d0e6f5;
+}
+
+ul.counts li.deleted {
+    background-color: #f5d0df;
+}
+
+div.buttons {
+    clear: both;
+    float: left;
+    margin-bottom: 18px;
+    overflow: hidden;
 }
 
 div.droppable {
-    background-color: #efefef;
+    clear: both;
+    overflow: hidden;
+    background-color: #f6f6f6;
     width: 70%;
     height: 70%;
     padding: 20px;
-    box-shadow: inset 0 0 25px rgba(0, 0, 0, .05);
-    border: 1px solid lightgrey;
+    box-shadow: inset 0 0 125px rgba(0, 0, 0, .1);
+    border: 1px solid rgba(0, 0, 0, .15);
 }
 
 div.droppable div.file {

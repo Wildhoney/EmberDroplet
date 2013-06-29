@@ -3,7 +3,9 @@
 
     <title>EmberDragDrop by Wildhoney</title>
 
+    <link rel="stylesheet" type="text/css" href="styles/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="styles/default.css" />
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
 
     <script type="text/javascript" src="../lib/jquery-1.10.1.js"></script>
     <script type="text/javascript" src="../lib/handlebars-1.0.rc.4.js"></script>
@@ -13,7 +15,6 @@
     <script type="text/javascript" src="scripts/default.js"></script>
     <script type="text/javascript" src="../packages/ember-droplet/ember-droplet-mixin.js"></script>
     <script type="text/javascript" src="../packages/ember-droplet/ember-droplet-view.js"></script>
-    <script type="text/javascript" src="../packages/ember-droplet/ember-droplet-preview.js"></script>
     <script type="text/javascript" src="scripts/model.js"></script>
     <script type="text/javascript" src="scripts/controller.js"></script>
     <script type="text/javascript" src="scripts/view.js"></script>
@@ -28,14 +29,19 @@
     <script type="text/x-handlebars" data-template-name="index">
 
         <h1>Upload Files ({{files.length}} in total)</h1>
-        <h2>
-            Valid: {{validFiles.length}} &ndash;
-            Invalid: {{invalidFiles.length}} &ndash;
-            Uploaded: {{uploadedFiles.length}} &ndash;
-            Deleted: {{deletedFiles.length}} &ndash;
-            <a {{action "uploadAllFiles"}}>Upload All</a> &ndash;
-            <a {{action "clearAllFiles"}}>Clear All</a>
-        </h2>
+
+        <ul class="counts">
+            <li class="valid">Valid: {{validFiles.length}}</li>
+            <li class="invalid">Invalid: {{invalidFiles.length}}</li>
+            <li class="uploaded">Uploaded: {{uploadedFiles.length}}</li>
+            <li class="deleted">Deleted: {{deletedFiles.length}}</li>
+        </ul>
+
+        <div class="btn-group buttons">
+            <button class="btn" {{action "uploadAllFiles"}}>Upload All</button>
+            <button class="btn" {{action "clearAllFiles"}}>Clear</button>
+        </div>
+
         {{#if uploadStatus.uploading}}
             <h3>Uploaded Percentage: {{uploadStatus.percentComplete}}%</h3>
         {{/if}}
