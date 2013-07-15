@@ -66,6 +66,7 @@ div.buttons {
 div.droppable {
     clear: both;
     overflow: hidden;
+    position: relative;
     background-color: #f6f6f6;
     width: 70%;
     height: 70%;
@@ -75,7 +76,6 @@ div.droppable {
 }
 
 div.droppable div.file {
-    border: 1px solid rgba(0, 0, 0, .15);
     margin: 0 20px 20px 0;
     background-color: white;
     float: left;
@@ -111,4 +111,10 @@ div.droppable div.file img {
 
 div.droppable div.file.extension-txt {
     background: white url('./../document.png') no-repeat center center;
+}
+
+div.droppable input.files {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
 }

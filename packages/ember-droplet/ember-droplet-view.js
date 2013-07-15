@@ -90,6 +90,58 @@ window.DropletView = Ember.View.extend({
     }),
 
     /**
+     * @property MultipleInput
+     * @type {Ember.View}
+     */
+    MultipleInput: Ember.View.extend({
+
+        /**
+         * @property tagName
+         * @type {String}
+         * @default "input"
+         */
+        tagName: 'input',
+
+        /**
+         * @property classNames
+         * @type {String}
+         * @default "files"
+         */
+        classNames: 'files',
+
+        /**
+         * @property attributeBindings
+         * @type {Array}
+         */
+        attributeBindings: ['type', 'multiple'],
+
+        /**
+         * @property file
+         * @type {String}
+         * @default "file"
+         */
+        type: 'file',
+
+        /**
+         * @property multiple
+         * @type {String}
+         * @default "multiple"
+         */
+        multiple: 'multiple',
+
+        /**
+         * @method change
+         * Invoked when the content of the INPUT changes.
+         * @return {Boolean}
+         */
+        change: function() {
+            var files = this.get('element').files;
+            return this.get('parentView').traverseFiles(files);
+        }
+
+    }),
+
+    /**
      * @method drop
      * @param event {jQuery.Event}
      * @param [files = []] {Array}
