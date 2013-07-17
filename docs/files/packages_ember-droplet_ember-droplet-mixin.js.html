@@ -115,7 +115,7 @@ window.DropletController = Ember.Mixin.create({
      * @property uploadStatus
      * @type {Object}
      */
-    uploadStatus: { uploading: false, percentComplete: 0 },
+    uploadStatus: { uploading: false, percentComplete: 0, error: false },
 
     /**
      * @constructor
@@ -178,7 +178,9 @@ window.DropletController = Ember.Mixin.create({
         // Find the URL, set the uploading status, and create our promise.
         var url         = Ember.get(this, &#x27;dropletUrl&#x27;),
             deferred    = new jQuery.Deferred();
+
         Ember.set(this, &#x27;uploadStatus.uploading&#x27;, true);
+        Ember.set(this, &#x27;uploadStatus.error&#x27;, false);
 
         // Assert that we have the URL specified in the controller that implements the mixin.
         Ember.assert(&#x27;You must specify the &#x60;dropletUrl&#x60; parameter in order to upload files.&#x27;, !!url);
@@ -327,6 +329,7 @@ window.DropletController = Ember.Mixin.create({
 
             // As an error occurred, we need to revert everything.
             Ember.set(this, &#x27;uploadStatus.uploading&#x27;, false);
+            Ember.set(this, &#x27;uploadStatus.error&#x27;, true);
 
             if (deferred) {
                 // Reject the promise if we have one.

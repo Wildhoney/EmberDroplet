@@ -48,6 +48,10 @@
 
         {{#view view.DragDrop}}
 
+            {{#if uploadStatus.error}}
+                <div class="error">An error occurred during the upload process. Please try again later.</div>
+            {{/if}}
+
             {{#each controller.validFiles}}
 
                 <div {{bindAttr class="className :file"}}>

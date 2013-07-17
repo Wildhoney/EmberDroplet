@@ -81,6 +81,14 @@ div.droppable {
     border: 1px solid rgba(0, 0, 0, .15);
 }
 
+div.droppable div.error {
+    position: absolute;
+    background-color: lightgrey;
+    padding: 2px 10px 2px 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .05);
+    z-index: 103;
+}
+
 div.droppable div.file {
     margin: 0 20px 20px 0;
     background-color: white;
