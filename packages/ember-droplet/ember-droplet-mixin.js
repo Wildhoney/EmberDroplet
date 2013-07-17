@@ -282,7 +282,7 @@ window.DropletController = Ember.Mixin.create({
     _addFile: function(file, valid) {
 
         // Extract the file's extension which allows us to style accordingly.
-        var className = 'extension-%@'.fmt(file.name.match(/\.(.+)$/i)[1]);
+        var className = 'extension-%@'.fmt(file.name.match(/\.(.+)$/i)[1]).toLowerCase();
 
         // Create the record with its default parameters, and then add it to the collection.
         var record = { file: file, valid: valid, uploaded: false, deleted: false, className: className };
