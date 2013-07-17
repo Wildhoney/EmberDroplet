@@ -92,7 +92,7 @@ div.droppable div.error {
 
 div.droppable div.file {
     margin: 0 20px 20px 0;
-    background-color: white;
+    background: white url('./../loading.gif') center 35% no-repeat;
     float: left;
     width: 100px;
     height: 100px;
