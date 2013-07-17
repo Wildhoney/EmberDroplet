@@ -83,7 +83,8 @@ div.droppable {
 
 div.droppable div.error {
     position: absolute;
-    background-color: lightgrey;
+    color: white;
+    background-color: darkgray;
     padding: 2px 10px 2px 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, .05);
     z-index: 103;
