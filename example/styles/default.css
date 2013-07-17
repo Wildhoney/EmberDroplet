@@ -63,6 +63,12 @@ div.buttons {
     overflow: hidden;
 }
 
+h3.uploading-percentage {
+    clear: both;
+    font-size: 15px;
+    font-weight: 100;
+}
+
 div.droppable {
     clear: both;
     overflow: hidden;
