@@ -5,6 +5,7 @@ node_js:
 
 before_script:
   - npm -q install
+  - npm -q install -g grunt-cli
 
 script:
   - grunt test
