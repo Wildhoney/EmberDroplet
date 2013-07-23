@@ -85,7 +85,7 @@ describe('Ember Crossfilter', function() {
             expect(controller.get('invalidFiles.length')).toEqual(1);
 
         });
-        
+
     });
 
 });
