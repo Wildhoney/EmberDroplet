@@ -5,6 +5,7 @@
     "latedef": true,
     "newcap": true,
     "noarg": true,
+    "globals": { "Ember": false },
     "sub": true,
     "undef": false,
     "boss": true,
