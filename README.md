@@ -12,6 +12,8 @@ For the time being, please refer to the example.
 Features
 -------------
 
+<img src="http://i.imgur.com/D07KQOl.png" alt="EmberDroplet Screenshot" />
+
  * Upload with HTML5's drag and drop;
  * MIME type restrictions on permitted file types;
  * Instant image previews upon dropping;
