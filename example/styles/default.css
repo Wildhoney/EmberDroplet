@@ -2,134 +2,145 @@
     font-family: "Open Sans", Arial, Tahoma, Helvetica, sans-serif;
     font-size: 12px;
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-    padding: 10px 30px;
-}
-
-a {
-    color: #a266bb;
-    text-decoration: underline;
-    cursor: pointer;
-}
-
-a:active {
-    color: black;
+    padding: 30px;
 }
 
 h1 {
-    font-size: 28px;
-    font-weight: 100;
-    float: left;
-    overflow: hidden;
+    font-family: "Lato", sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 22px;
 }
 
 ul.counts {
-    overflow: hidden;
     list-style-type: none;
-    margin: 22px 0 0 20px;
-    float: left;
+    overflow: hidden;
 }
 
 ul.counts li {
     float: left;
     overflow: hidden;
+    font-family: "Times New Roman", serif;
+    font-style: italic;
+    letter-spacing: 0.125em;
     margin-right: 15px;
-    padding: 0 10px 0 10px;
-    border-radius: 20px;
-}
-
-ul.counts li.valid {
-    background-color: #e4f5d0;
-}
-
-ul.counts li.invalid {
-    background-color: #f5f2d0;
-}
-
-ul.counts li.uploaded {
-    background-color: #d0e6f5;
-}
-
-ul.counts li.deleted {
-    background-color: #f5d0df;
 }
 
 div.buttons {
-    clear: both;
-    float: left;
-    margin-bottom: 18px;
     overflow: hidden;
+    margin: 15px 0;
 }
 
 h3.uploading-percentage {
-    clear: both;
-    font-size: 15px;
-    font-weight: 100;
+    margin-bottom: 15px;
+}
+
+div.buttons button.btn {
+    float: left;
+    margin-right: 10px;
+    background-color: lightseagreen;
+    border: 0;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 2px;
+    cursor: pointer;
+    -webkit-transition: all 1s;
+}
+
+div.buttons button.btn:hover {
+    background-color: black;
 }
 
 div.droppable {
-    clear: both;
-    overflow: hidden;
+    background-color: #eee;
+    height: 300px;
+    width: 620px;
     position: relative;
-    background-color: #f6f6f6;
-    width: 70%;
-    height: 70%;
     padding: 20px;
-    box-shadow: inset 0 0 125px rgba(0, 0, 0, .1);
-    border: 1px solid rgba(0, 0, 0, .15);
 }
 
-div.droppable div.error {
+div.droppable:after {
+    content: "Drop your files here, petal.";
+    font-family: "Times New Roman", serif;
+    color: darkgray;
+    font-size: 14px;
+    font-style: italic;
     position: absolute;
-    color: white;
-    background-color: darkgray;
-    padding: 2px 10px 2px 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, .05);
-    z-index: 103;
+    top: 20px;
+    left: 20px;
 }
 
 div.droppable div.file {
-    margin: 0 20px 20px 0;
-    background: white url('./../loading.gif') center 35% no-repeat;
-    float: left;
     width: 100px;
     height: 100px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, .15);
-    position: relative;
     overflow: hidden;
-    border: 4px solid white;
+    background-color: white;
+    float: left;
+    position: relative;
+    margin: 0 20px 20px 0;
+    z-index: 20001;
+    box-shadow: 0 0 15px rgba(0, 0, 0, .35);
 }
 
-div.droppable a.remove {
+div.droppable div.file:nth-of-type(5n+5) {
+    margin-right: 0;
+}
+
+div.droppable div.file:after {
+    content: "";
     position: absolute;
-    background: rgba(0, 0, 0, .55);
-    width: 100%;
-    bottom: 0;
-    color: white;
-    font-size: 11px;
-    height: 25px;
-    line-height: 25px;
-    padding: 0 8px 0 8px;
-    cursor: pointer;
-    z-index: 1;
+    width: 100px;
+    box-sizing: border-box;
+    z-index: 20001;
+    height: 100px;
+    border: 3px solid rgba(0, 0, 0, .25);
+    left: 0;
+    top: 0;
 }
 
 div.droppable div.file img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100px;
+    height: 100px;
 }
 
-div.droppable div.file.extension-txt {
-    background: white url('./../document.png') no-repeat center center;
+div.droppable div.file a.remove {
+    position: absolute;
+    background-color: rgba(0, 0, 0, .45);
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 20px;
+    line-height: 20px;
+    color: white;
+    font-family: "Lato", sans-serif;
+    padding: 0 6px;
+    font-weight: 100;
+    z-index: 30001;
+    cursor: pointer;
 }
 
 div.droppable input.files {
     position: absolute;
-    right: 10px;
-    bottom: 10px;
+    bottom: 20px;
+    right: 20px;
+    font-family: "Times New Roman", serif;
+    font-style: italic;
+    color: darkgray;
+}
+
+div.droppable div.error {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 20005;
+    background-color: crimson;
+    color: white;
+    padding: 10px 20px;
+    font-family: "Lato", sans-serif;
+    text-transform: uppercase;
 }
