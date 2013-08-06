@@ -15,6 +15,7 @@ window.DropletController = Ember.Mixin.create({
     /**
      * @property files
      * @type {Array}
+     * @default []
      * Contains a list of files, both valid, deleted, and invalid.
      */
     files: [],
@@ -100,7 +101,7 @@ window.DropletController = Ember.Mixin.create({
         // Create a new form data instance.
         var formData = new FormData();
 
-        // Iterate over each file, and upload it.
+        // Iterate over each file, and append it to the form data.
         Ember.EnumerableUtils.forEach(Ember.get(this, 'validFiles'), function(file) {
             formData.append('file', file.file);
         }, this);
@@ -181,19 +182,26 @@ window.DropletController = Ember.Mixin.create({
             return true;
 
         });
+
     },
 
     /**
+     * @method _getSize
      * Determine the size of the request.
      * @return {Number}
      * @private
      */
     _getSize: function() {
+
         var size = 0;
+
+        // Iterate over all of the files to determine the size of all valid files.
         Ember.EnumerableUtils.forEach(Ember.get(this, 'validFiles'), function(file) {
             size += file.file.size;
         });
+
         return size;
+
     },
 
     /**
