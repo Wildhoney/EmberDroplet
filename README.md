@@ -9,10 +9,10 @@ that you're free to use in your views. However, most of the functionality exists
 
 For the time being, please refer to the example.
 
+<img src="http://i.imgur.com/D07KQOl.png" alt="EmberDroplet Screenshot" />
+
 Features
 -------------
-
-<img src="http://i.imgur.com/D07KQOl.png" alt="EmberDroplet Screenshot" />
 
  * Upload with HTML5's drag and drop;
  * MIME type restrictions on permitted file types;
