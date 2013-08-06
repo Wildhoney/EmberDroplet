@@ -3,8 +3,8 @@
         "name": "EmberDroplet"
     },
     "files": {
-        "packages\\ember-droplet\\ember-droplet-mixin.js": {
-            "name": "packages\\ember-droplet\\ember-droplet-mixin.js",
+        "packages/ember-droplet/ember-droplet-mixin.js": {
+            "name": "packages/ember-droplet/ember-droplet-mixin.js",
             "modules": {
                 "App": 1
             },
@@ -14,8 +14,8 @@
             "fors": {},
             "namespaces": {}
         },
-        "packages\\ember-droplet\\ember-droplet-view.js": {
-            "name": "packages\\ember-droplet\\ember-droplet-view.js",
+        "packages/ember-droplet/ember-droplet-view.js": {
+            "name": "packages/ember-droplet/ember-droplet-view.js",
             "modules": {},
             "classes": {
                 "DropletView": 1
@@ -35,7 +35,7 @@
             "fors": {},
             "namespaces": {},
             "tag": "module",
-            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "file": "packages/ember-droplet/ember-droplet-view.js",
             "line": 1,
             "type": "Ember.Mixin",
             "extends": "Ember.Mixin"
@@ -52,7 +52,7 @@
             "extension_for": [],
             "module": "App",
             "namespace": "",
-            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "file": "packages/ember-droplet/ember-droplet-mixin.js",
             "line": 1
         },
         "DropletView": {
@@ -65,13 +65,13 @@
             "extension_for": [],
             "module": "App",
             "namespace": "",
-            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "file": "packages/ember-droplet/ember-droplet-view.js",
             "line": 1
         }
     },
     "classitems": [
         {
-            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "file": "packages/ember-droplet/ember-droplet-mixin.js",
             "line": 9,
             "itemtype": "property",
             "name": "mimeTypes",
@@ -80,7 +80,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "file": "packages/ember-droplet/ember-droplet-mixin.js",
             "line": 15,
             "itemtype": "property",
             "name": "files",
@@ -89,7 +89,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "file": "packages/ember-droplet/ember-droplet-mixin.js",
             "line": 22,
             "itemtype": "property",
             "name": "uploadStatus",
@@ -98,7 +98,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "file": "packages/ember-droplet/ember-droplet-mixin.js",
             "line": 28,
             "is_constructor": 1,
             "itemtype": "method",
@@ -111,7 +111,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "file": "packages/ember-droplet/ember-droplet-mixin.js",
             "line": 39,
             "itemtype": "method",
             "name": "addValidFile",
@@ -130,7 +130,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "file": "packages/ember-droplet/ember-droplet-mixin.js",
             "line": 49,
             "itemtype": "method",
             "name": "addInvalidFile",
@@ -149,7 +149,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "file": "packages/ember-droplet/ember-droplet-mixin.js",
             "line": 59,
             "itemtype": "method",
             "name": "deleteFile",
@@ -167,7 +167,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "file": "packages/ember-droplet/ember-droplet-mixin.js",
             "line": 70,
             "itemtype": "method",
             "name": "clearAllFiles\nClears all of the files from the collection.",
@@ -179,7 +179,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "file": "packages/ember-droplet/ember-droplet-mixin.js",
             "line": 79,
             "itemtype": "method",
             "name": "uploadAllFiles\nUploads all of the files that haven't been uploaded yet, but are valid files.",
@@ -191,7 +191,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "file": "packages/ember-droplet/ember-droplet-mixin.js",
             "line": 122,
             "itemtype": "property",
             "name": "validFiles\nFinds a list of files that aren't deleted, and are of a valid MIME type.",
@@ -203,7 +203,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "file": "packages/ember-droplet/ember-droplet-mixin.js",
             "line": 131,
             "itemtype": "property",
             "name": "invalidFiles\nFinds a list of files that have an unsupported MIME type.",
@@ -215,7 +215,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "file": "packages/ember-droplet/ember-droplet-mixin.js",
             "line": 140,
             "itemtype": "property",
             "name": "uploadedFiles\nFinds a list of files that have been successfully uploaded.",
@@ -227,7 +227,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "file": "packages/ember-droplet/ember-droplet-mixin.js",
             "line": 149,
             "itemtype": "property",
             "name": "deletedFiles\nFinds a list of files that have been deleted by the user.",
@@ -239,7 +239,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "file": "packages/ember-droplet/ember-droplet-mixin.js",
             "line": 158,
             "itemtype": "method",
             "name": "_filesByProperties",
@@ -260,7 +260,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "file": "packages/ember-droplet/ember-droplet-mixin.js",
             "line": 186,
             "description": "Determine the size of the request.",
             "return": {
@@ -273,7 +273,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "file": "packages/ember-droplet/ember-droplet-mixin.js",
             "line": 199,
             "itemtype": "method",
             "name": "_addSuccessListener",
@@ -293,7 +293,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "file": "packages/ember-droplet/ember-droplet-mixin.js",
             "line": 227,
             "itemtype": "method",
             "name": "_addErrorListener",
@@ -317,7 +317,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "file": "packages/ember-droplet/ember-droplet-mixin.js",
             "line": 251,
             "itemtype": "method",
             "name": "_addProgressListener",
@@ -337,7 +337,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-mixin.js",
+            "file": "packages/ember-droplet/ember-droplet-mixin.js",
             "line": 274,
             "itemtype": "method",
             "name": "_addFile",
@@ -363,7 +363,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "file": "packages/ember-droplet/ember-droplet-view.js",
             "line": 9,
             "itemtype": "property",
             "name": "classNames",
@@ -373,7 +373,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "file": "packages/ember-droplet/ember-droplet-view.js",
             "line": 16,
             "itemtype": "property",
             "name": "ImagePreview",
@@ -382,7 +382,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "file": "packages/ember-droplet/ember-droplet-view.js",
             "line": 22,
             "itemtype": "property",
             "name": "tagName",
@@ -392,7 +392,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "file": "packages/ember-droplet/ember-droplet-view.js",
             "line": 29,
             "itemtype": "property",
             "name": "attributeBindings",
@@ -402,7 +402,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "file": "packages/ember-droplet/ember-droplet-view.js",
             "line": 36,
             "itemtype": "property",
             "name": "src",
@@ -412,7 +412,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "file": "packages/ember-droplet/ember-droplet-view.js",
             "line": 43,
             "itemtype": "property",
             "name": "image",
@@ -422,7 +422,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "file": "packages/ember-droplet/ember-droplet-view.js",
             "line": 50,
             "itemtype": "method",
             "name": "didInsertElement\nInvoked when the view is inserted into the DOM.",
@@ -434,7 +434,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "file": "packages/ember-droplet/ember-droplet-view.js",
             "line": 92,
             "itemtype": "property",
             "name": "MultipleInput",
@@ -443,7 +443,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "file": "packages/ember-droplet/ember-droplet-view.js",
             "line": 98,
             "itemtype": "property",
             "name": "tagName",
@@ -453,7 +453,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "file": "packages/ember-droplet/ember-droplet-view.js",
             "line": 105,
             "itemtype": "property",
             "name": "classNames",
@@ -463,7 +463,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "file": "packages/ember-droplet/ember-droplet-view.js",
             "line": 112,
             "itemtype": "property",
             "name": "attributeBindings",
@@ -472,7 +472,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "file": "packages/ember-droplet/ember-droplet-view.js",
             "line": 118,
             "itemtype": "property",
             "name": "file",
@@ -482,7 +482,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "file": "packages/ember-droplet/ember-droplet-view.js",
             "line": 125,
             "itemtype": "property",
             "name": "multiple",
@@ -492,7 +492,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "file": "packages/ember-droplet/ember-droplet-view.js",
             "line": 132,
             "itemtype": "method",
             "name": "change\nInvoked when the content of the INPUT changes.",
@@ -504,7 +504,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "file": "packages/ember-droplet/ember-droplet-view.js",
             "line": 144,
             "itemtype": "method",
             "name": "drop",
@@ -528,7 +528,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "file": "packages/ember-droplet/ember-droplet-view.js",
             "line": 156,
             "itemtype": "method",
             "name": "traverseFiles",
@@ -547,7 +547,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "file": "packages/ember-droplet/ember-droplet-view.js",
             "line": 197,
             "itemtype": "method",
             "name": "_preventDefaultBehaviour",
@@ -568,7 +568,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "file": "packages/ember-droplet/ember-droplet-view.js",
             "line": 209,
             "itemtype": "method",
             "name": "dragOver",
@@ -587,7 +587,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "file": "packages/ember-droplet/ember-droplet-view.js",
             "line": 218,
             "itemtype": "method",
             "name": "dragEnter",
@@ -606,7 +606,7 @@
             "module": "App"
         },
         {
-            "file": "packages\\ember-droplet\\ember-droplet-view.js",
+            "file": "packages/ember-droplet/ember-droplet-view.js",
             "line": 227,
             "itemtype": "method",
             "name": "dragLeave",
@@ -628,7 +628,7 @@
     "warnings": [
         {
             "message": "Missing item type\nDetermine the size of the request.",
-            "line": " packages\\ember-droplet\\ember-droplet-mixin.js:186"
+            "line": " packages/ember-droplet/ember-droplet-mixin.js:186"
         }
     ]
 }
