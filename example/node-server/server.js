@@ -32,7 +32,7 @@ app.post('/upload', function(request, response) {
 
         fileSystem.readFile(file.path, function (error, data) {
             var filePath = __dirname + '/uploaded-files/' + file.name;
-            fileSystem.writeFile(filePath, data);
+            fileSystem.writeFile(filePath, data, function() {});
             deferred.resolve(file.name);
         });
 
