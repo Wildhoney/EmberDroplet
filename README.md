@@ -54,3 +54,10 @@ View Mixin
 In order to use `EmberDroplet` it's not necessary for you to implement the `DropletView` mixin into your view. However, if you don't, then you'll need to communicate with the `DropletController` mixin yourself.
 
 There is also `DropletPreview` which allows image uploads to be previewed immediately.
+
+Testing
+-------------
+
+<img src="http://pivotal.github.io/jasmine/images/jasmine_logo.png" alt="Jasmine" />
+
+All of the related tests are written in Jasmine, and can be run with `grunt test` (assuming you have `grunt` installed &ndash; `npm install grunt -g`). You'll also need to run `npm install` to install the project's dependencies.
