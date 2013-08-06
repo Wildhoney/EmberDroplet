@@ -85,6 +85,10 @@ div.droppable div.file {
     margin: 0 20px 20px 0;
     z-index: 20001;
     box-shadow: 0 0 15px rgba(0, 0, 0, .35);
+    transition: all .45s;
+    -o-transition: all .45s;
+    -moz-transition: all .45s;
+    -webkit-transition: all .45s;
 }
 
 div.droppable div.file:nth-of-type(5n+5) {
@@ -143,4 +147,11 @@ div.droppable div.error {
     padding: 10px 20px;
     font-family: "Lato", sans-serif;
     text-transform: uppercase;
+}
+
+div.droppable:hover div.file:hover {
+    transform: scale(1.1);
+    -o-transform: scale(1.1);
+    -moz-transform: scale(1.1);
+    -webkit-transform: scale(1.1);
 }
