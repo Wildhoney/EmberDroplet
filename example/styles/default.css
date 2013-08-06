@@ -78,13 +78,12 @@ div.droppable:after {
 div.droppable div.file {
     width: 100px;
     height: 100px;
-    overflow: hidden;
     background-color: white;
     float: left;
     position: relative;
     margin: 0 20px 20px 0;
     z-index: 20001;
-    box-shadow: 0 0 15px rgba(0, 0, 0, .35);
+    box-shadow: 0 0 15px rgba(0, 0, 0, .15);
     transition: all .45s;
     -o-transition: all .45s;
     -moz-transition: all .45s;
