@@ -40,8 +40,6 @@ app.post('/upload', function(request, response) {
 
     };
 
-    promises = [];
-
     for (var index = 0; index <= numFiles; index++) if (files.hasOwnProperty(index)) {
         var promise = uploadFile(files[index]);
         promises.push(promise);
