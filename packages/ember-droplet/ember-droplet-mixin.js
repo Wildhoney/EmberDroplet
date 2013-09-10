@@ -170,6 +170,10 @@ window.DropletController = Ember.Mixin.create({
 
             for (var property in maps) {
 
+                if (!maps.hasOwnProperty(property)) {
+                    continue;
+                }
+
                 // If the current property doesn't match what we're after from the map,
                 // then the file is invalid.
                 if (file[property] !== maps[property]) {
