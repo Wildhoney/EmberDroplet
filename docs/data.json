@@ -262,7 +262,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 188,
+            "line": 192,
             "itemtype": "method",
             "name": "_getSize\nDetermine the size of the request.",
             "return": {
@@ -276,7 +276,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 207,
+            "line": 211,
             "itemtype": "method",
             "name": "_addSuccessListener",
             "params": [
@@ -296,7 +296,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 235,
+            "line": 239,
             "itemtype": "method",
             "name": "_addErrorListener",
             "params": [
@@ -320,7 +320,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 259,
+            "line": 263,
             "itemtype": "method",
             "name": "_addProgressListener",
             "params": [
@@ -340,7 +340,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 282,
+            "line": 286,
             "itemtype": "method",
             "name": "_addFile",
             "params": [
