@@ -42,6 +42,38 @@ In addition to the methods, `DropletController` also has the following computed 
 Additional computed properties can be added to your controller that implements the mixin. To add additional computed properties,
 please refer to the protected `_filesByProperties` method in the mixin.
 
+Getting Started
+-------------
+
+In order to begin using EmberDroplet, you need a controller. Within your controller you can implement the `DropletController` mixin, which will give you access to all methods defined in it.
+
+```javascript
+App.IndexController = Ember.Controller.extend(DropletController, {
+
+});
+```
+
+Properties that can be defined in your controller to interact with the mixin are as follows:
+
+ * `dropletUrl`: URL in which the Node.js <em>(default)</em> or Apache/Nginx server is running on;
+ * `mimeTypes`: Enumeration of valid MIME types. Can be appended using `concatenatedProperties` (see example);
+
+Now that your controller is using the mixin, it's time for your view to interact with your controller and its related mixin. For this we recommend using the in-built view, but it's not essential. In order to create your own, please refer to the example. The simplest way to use the in-built view is to embed it into your template.
+
+```javascript
+App.IndexView = Ember.View.extend({
+
+    /**
+     * @property DragDrop
+     * @type DropletView
+     */
+    DragDrop: DropletView.extend()
+
+});
+```
+
+Once you have the property `DragDrop` defined, the view and all of its related functionality can be output into the DOM using `{{view.DragDrop}}`. It's worth bearing in mind that this view is quite abstract in order to be customisable &ndash; see index.html for an example.
+
 Example
 -------------
 
