@@ -47,7 +47,6 @@ Example
 
 The example uses the Node.js server to upload files, which is available in `example/node-server`. Simply run: `node server` to create it.
 
-
 View Mixin
 -------------
 
