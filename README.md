@@ -79,6 +79,10 @@ Example
 
 The example uses the Node.js server to upload files, which is available in `example/node-server`. Simply run: `node server` to create it.
 
+<h3>Vagrant</h3>
+
+As an alternative, if you have Vagrant installed then you can simply issue the `vagrant up` command and the Node.js server will be available on port 8888.
+
 View Mixin
 -------------
 
