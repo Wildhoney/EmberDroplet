@@ -550,7 +550,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-view.js",
-            "line": 199,
+            "line": 197,
             "itemtype": "method",
             "name": "_preventDefaultBehaviour",
             "params": [
@@ -571,7 +571,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-view.js",
-            "line": 211,
+            "line": 209,
             "itemtype": "method",
             "name": "dragOver",
             "params": [
@@ -590,7 +590,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-view.js",
-            "line": 220,
+            "line": 218,
             "itemtype": "method",
             "name": "dragEnter",
             "params": [
@@ -609,7 +609,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-view.js",
-            "line": 229,
+            "line": 227,
             "itemtype": "method",
             "name": "dragLeave",
             "params": [

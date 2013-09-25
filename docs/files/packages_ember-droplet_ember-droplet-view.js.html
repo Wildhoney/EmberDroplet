@@ -258,8 +258,6 @@ window.DropletView = Ember.View.extend({
         var controller  = Ember.get(this, &#x27;controller&#x27;),
             mimeTypes   = Ember.get(controller, &#x27;mimeTypes&#x27;);
 
-        console.log(mimeTypes);
-
         // Assert that we have the &#x60;mineTypes&#x60; property, and that it&#x27;s an array.
         Ember.assert(&#x27;&#x60;mimeTypes&#x60; is undefined. Does your controller implement the &#x60;EmberDropletController&#x60; mixin?&#x27;, !!mimeTypes);
         Ember.assert(&#x27;&#x60;mimeTypes&#x60; is not an array. It should be an array of valid MIME types.&#x27;, !!Ember.isArray(mimeTypes));
