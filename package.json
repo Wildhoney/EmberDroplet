@@ -1,6 +1,6 @@
 {
   "name": "EmberDroplet",
-  "version": "0.1.0",
+  "version": "0.0.2",
   "author": "Adam Timberlake",
   "dependencies": {
     "express": "~3.2.6",
