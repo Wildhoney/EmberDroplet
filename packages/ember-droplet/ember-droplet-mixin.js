@@ -38,85 +38,93 @@ window.DropletController = Ember.Mixin.create({
     },
 
     /**
-     * @method addValidFile
-     * @param file {File}
-     * Adds a valid file to the collection.
-     * @return {Object}
+     * @property actions
+     * @type {Object}
      */
-    addValidFile: function(file) {
-        return this._addFile(file, true);
-    },
+    actions: {
 
-    /**
-     * @method addInvalidFile
-     * @param file {File}
-     * Adds an invalid file to the collection.
-     * @return {Object}
-     */
-    addInvalidFile: function(file) {
-        return this._addFile(file, false);
-    },
+        /**
+         * @method addValidFile
+         * @param file {File}
+         * Adds a valid file to the collection.
+         * @return {Object}
+         */
+        addValidFile: function(file) {
+            return this._addFile(file, true);
+        },
 
-    /**
-     * @method deleteFile
-     * @param file
-     * Deletes a file from the collection.
-     * @return {Object}
-     */
-    deleteFile: function(file) {
-        Ember.set(file, 'deleted', true);
-        return file;
-    },
+        /**
+         * @method addInvalidFile
+         * @param file {File}
+         * Adds an invalid file to the collection.
+         * @return {Object}
+         */
+        addInvalidFile: function(file) {
+            return this._addFile(file, false);
+        },
 
-    /**
-     * @method clearAllFiles
-     * Clears all of the files from the collection.
-     * @return {void}
-     */
-    clearAllFiles: function() {
-        Ember.set(this, 'files', []);
-    },
+        /**
+         * @method deleteFile
+         * @param file
+         * Deletes a file from the collection.
+         * @return {Object}
+         */
+        deleteFile: function(file) {
+            Ember.set(file, 'deleted', true);
+            return file;
+        },
 
-    /**
-     * @method uploadAllFiles
-     * Uploads all of the files that haven't been uploaded yet, but are valid files.
-     * @return {Object} jQuery promise.
-     */
-    uploadAllFiles: function() {
+        /**
+         * @method clearAllFiles
+         * Clears all of the files from the collection.
+         * @return {void}
+         */
+        clearAllFiles: function() {
+            Ember.set(this, 'files', []);
+        },
 
-        // Find the URL, set the uploading status, and create our promise.
-        var url         = Ember.get(this, 'dropletUrl'),
-            deferred    = new jQuery.Deferred();
+        /**
+         * @method uploadAllFiles
+         * Uploads all of the files that haven't been uploaded yet, but are valid files.
+         * @return {Object} jQuery promise.
+         */
+        uploadAllFiles: function() {
 
-        Ember.set(this, 'uploadStatus.uploading', true);
-        Ember.set(this, 'uploadStatus.error', false);
+            // Find the URL, set the uploading status, and create our promise.
+            var url         = Ember.get(this, 'dropletUrl'),
+                deferred    = new jQuery.Deferred();
 
-        // Assert that we have the URL specified in the controller that implements the mixin.
-        Ember.assert('You must specify the `dropletUrl` parameter in order to upload files.', !!url);
+            Ember.set(this, 'uploadStatus.uploading', true);
+            Ember.set(this, 'uploadStatus.error', false);
 
-        // Create a new XHR request object.
-        var request = new XMLHttpRequest();
-        request.open('post', url, true);
+            // Assert that we have the URL specified in the controller that implements the mixin.
+            Ember.assert('You must specify the `dropletUrl` parameter in order to upload files.', !!url);
 
-        // Create a new form data instance.
-        var formData = new FormData();
+            // Create a new XHR request object.
+            var request = new XMLHttpRequest();
+            request.open('post', url, true);
 
-        // Iterate over each file, and append it to the form data.
-        Ember.EnumerableUtils.forEach(Ember.get(this, 'validFiles'), function(file) {
-            formData.append('file', file.file);
-        }, this);
+            // Create a new form data instance.
+            var formData = new FormData();
 
-        // Add all of the event listeners.
-        this._addProgressListener(request.upload);
-        this._addSuccessListener(request.upload, deferred);
-        this._addErrorListener(request.upload, deferred);
+            // Iterate over each file, and append it to the form data.
+            Ember.EnumerableUtils.forEach(Ember.get(this, 'validFiles'), function(file) {
+                formData.append('file', file.file);
+            }, this);
 
-        // Set the request size, and then we can upload the files!
-        request.setRequestHeader('X-File-Size', this._getSize());
-        request.send(formData);
+            // Add all of the event listeners.
+            this._addProgressListener(request.upload);
+            this._addSuccessListener(request.upload, deferred);
+            this._addErrorListener(request.upload, deferred);
 
-        // Return the promise.
-        return deferred.promise();
+            // Set the request size, and then we can upload the files!
+            request.setRequestHeader('X-File-Size', this._getSize());
+            request.send(formData);
+
+            // Return the promise.
+            return deferred.promise();
+
+        }
 
     },
 

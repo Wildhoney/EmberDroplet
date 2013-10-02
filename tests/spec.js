@@ -21,7 +21,7 @@ describe('Ember Crossfilter', function() {
 
         it('Can add a valid file to the list', function() {
             var file = { name: 'MyFile.png' };
-            controller.addValidFile(file);
+            controller.send('addValidFile', file);
             expect(Ember.get(controller, 'validFiles.length')).toEqual(1);
             expect(Ember.get(controller, 'invalidFiles.length')).toEqual(0);
             expect(Ember.get(controller, 'uploadedFiles.length')).toEqual(0);
@@ -30,7 +30,7 @@ describe('Ember Crossfilter', function() {
 
         it('Can add an invalid file to the list', function() {
             var file = { name: 'MyFile.xml' };
-            controller.addInvalidFile(file);
+            controller.send('addInvalidFile', file);
             expect(Ember.get(controller, 'validFiles.length')).toEqual(0);
             expect(Ember.get(controller, 'invalidFiles.length')).toEqual(1);
             expect(Ember.get(controller, 'uploadedFiles.length')).toEqual(0);
@@ -38,8 +38,9 @@ describe('Ember Crossfilter', function() {
         });
 
         it('Can delete a file from the list', function() {
-            var file = controller.addValidFile({ name: 'MyFile.png' });
-            controller.deleteFile(file);
+            controller.send('addValidFile', { name: 'MyFile.png' });
+            var file = controller.files[0];
+            controller.send('deleteFile', file);
             expect(Ember.get(controller, 'validFiles.length')).toEqual(0);
             expect(Ember.get(controller, 'invalidFiles.length')).toEqual(0);
             expect(Ember.get(controller, 'uploadedFiles.length')).toEqual(0);
@@ -47,10 +48,10 @@ describe('Ember Crossfilter', function() {
         });
 
         it('Can clear all files from the list', function() {
-            controller.addValidFile({ name: 'MyFile.png' });
-            controller.addValidFile({ name: 'AnotherFile.xml' });
-            controller.addValidFile({ name: 'LoveLetter.txt' });
-            controller.clearAllFiles();
+            controller.send('addValidFile', { name: 'MyFile.png' });
+            controller.send('addValidFile', { name: 'AnotherFile.xml' });
+            controller.send('addValidFile', { name: 'LoveLetter.txt' });
+            controller.send('clearAllFiles');
             expect(Ember.get(controller, 'files.length')).toEqual(0);
             expect(Ember.get(controller, 'validFiles.length')).toEqual(0);
             expect(Ember.get(controller, 'invalidFiles.length')).toEqual(0);

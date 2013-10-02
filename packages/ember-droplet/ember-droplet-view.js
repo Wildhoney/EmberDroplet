@@ -181,12 +181,12 @@ window.DropletView = Ember.View.extend({
             // Determine if the file is valid based on its MIME type.
             if ($.inArray(file.type, mimeTypes) === -1) {
                 // If it isn't valid, then we'll add it as an invalid file.
-                controller.addInvalidFile(file);
+                controller.send('addInvalidFile', file);
                 continue;
             }
 
             // Otherwise the file has a valid MIME type, and therefore be added as a good file.
-            controller.addValidFile(file);
+            controller.send('addValidFile', file);
 
         }
 
