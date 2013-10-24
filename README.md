@@ -2,6 +2,10 @@ Ember Droplet
 =============
 
 <img src="https://api.travis-ci.org/Wildhoney/EmberDroplet.png" alt="Travis" />
+&nbsp;
+<img src="https://badge.fury.io/js/ember-droplet.png" />
+
+Install via npm: `npm install ember-droplet`.
 
 Ember Droplet allows HTML5 drag and drop functionality in Ember straight out-of-the-box. Its philosophy is that it doesn't
 impose anything, and instead allows each individual developer to decide how it should work. I've provided a view &ndash; `DropletView`

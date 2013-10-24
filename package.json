@@ -1,5 +1,5 @@
 {
-  "name": "EmberDroplet",
+  "name": "ember-droplet",
   "version": "0.0.2",
   "author": "Adam Timberlake",
   "dependencies": {
@@ -18,5 +18,42 @@
   "repository": {
     "type": "git",
     "url": "git://github.com:Wildhoney/EmberDroplet.git"
-  }
+  },
+  "description": "Ember HTML5 file uploading with drag & drop and image/file preview.",
+  "bugs": {
+    "url": "https://github.com/Wildhoney/EmberDroplet/issues"
+  },
+  "main": "Gruntfile.js",
+  "directories": {
+    "doc": "docs",
+    "example": "example",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "grunt test"
+  },
+  "keywords": [
+    "HTML5",
+    "drag",
+    "and",
+    "drop",
+    "drag",
+    "and",
+    "drop",
+    "image",
+    "upload",
+    "HTML5",
+    "file",
+    "upload",
+    "ember",
+    "drag",
+    "and",
+    "drop",
+    "ember",
+    "image",
+    "upload",
+    "ember",
+    "HTML5"
+  ],
+  "license": "BSD-2-Clause"
 }
