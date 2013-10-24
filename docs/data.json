@@ -1,6 +1,6 @@
 {
     "project": {
-        "name": "EmberDroplet"
+        "name": "ember-droplet"
     },
     "files": {
         "packages/ember-droplet/ember-droplet-mixin.js": {
@@ -114,6 +114,15 @@
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
             "line": 40,
+            "itemtype": "property",
+            "name": "actions",
+            "type": "{Object}",
+            "class": "EmberDropletController",
+            "module": "App"
+        },
+        {
+            "file": "packages/ember-droplet/ember-droplet-mixin.js",
+            "line": 46,
             "itemtype": "method",
             "name": "addValidFile",
             "params": [
@@ -132,7 +141,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 50,
+            "line": 56,
             "itemtype": "method",
             "name": "addInvalidFile",
             "params": [
@@ -151,7 +160,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 60,
+            "line": 66,
             "itemtype": "method",
             "name": "deleteFile",
             "params": [
@@ -169,7 +178,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 71,
+            "line": 77,
             "itemtype": "method",
             "name": "clearAllFiles\nClears all of the files from the collection.",
             "return": {
@@ -181,7 +190,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 80,
+            "line": 86,
             "itemtype": "method",
             "name": "uploadAllFiles\nUploads all of the files that haven't been uploaded yet, but are valid files.",
             "return": {
@@ -193,7 +202,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 123,
+            "line": 131,
             "itemtype": "property",
             "name": "validFiles\nFinds a list of files that aren't deleted, and are of a valid MIME type.",
             "return": {
@@ -205,7 +214,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 132,
+            "line": 140,
             "itemtype": "property",
             "name": "invalidFiles\nFinds a list of files that have an unsupported MIME type.",
             "return": {
@@ -217,7 +226,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 141,
+            "line": 149,
             "itemtype": "property",
             "name": "uploadedFiles\nFinds a list of files that have been successfully uploaded.",
             "return": {
@@ -229,7 +238,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 150,
+            "line": 158,
             "itemtype": "property",
             "name": "deletedFiles\nFinds a list of files that have been deleted by the user.",
             "return": {
@@ -241,7 +250,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 159,
+            "line": 167,
             "itemtype": "method",
             "name": "_filesByProperties",
             "params": [
@@ -262,7 +271,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 192,
+            "line": 200,
             "itemtype": "method",
             "name": "_getSize\nDetermine the size of the request.",
             "return": {
@@ -276,7 +285,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 211,
+            "line": 219,
             "itemtype": "method",
             "name": "_addSuccessListener",
             "params": [
@@ -296,7 +305,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 239,
+            "line": 247,
             "itemtype": "method",
             "name": "_addErrorListener",
             "params": [
@@ -320,7 +329,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 263,
+            "line": 271,
             "itemtype": "method",
             "name": "_addProgressListener",
             "params": [
@@ -340,7 +349,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 286,
+            "line": 294,
             "itemtype": "method",
             "name": "_addFile",
             "params": [

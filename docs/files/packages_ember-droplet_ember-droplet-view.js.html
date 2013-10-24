@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>packages/ember-droplet/ember-droplet-view.js - EmberDroplet</title>
+    <title>packages/ember-droplet/ember-droplet-view.js - ember-droplet</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -15,7 +15,7 @@
     <div id="hd" class="yui3-g header">
         <div class="yui3-u-3-4">
             
-                <h1><img src="../assets/css/logo.png" title="EmberDroplet"></h1>
+                <h1><img src="../assets/css/logo.png" title="ember-droplet"></h1>
             
         </div>
         <div class="yui3-u-1-4 version">
@@ -273,12 +273,12 @@ window.DropletView = Ember.View.extend({
             // Determine if the file is valid based on its MIME type.
             if ($.inArray(file.type, mimeTypes) === -1) {
                 // If it isn&#x27;t valid, then we&#x27;ll add it as an invalid file.
-                controller.addInvalidFile(file);
+                controller.send(&#x27;addInvalidFile&#x27;, file);
                 continue;
             }
 
             // Otherwise the file has a valid MIME type, and therefore be added as a good file.
-            controller.addValidFile(file);
+            controller.send(&#x27;addValidFile&#x27;, file);
 
         }
 

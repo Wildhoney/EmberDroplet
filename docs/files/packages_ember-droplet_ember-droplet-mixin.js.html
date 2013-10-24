@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>packages/ember-droplet/ember-droplet-mixin.js - EmberDroplet</title>
+    <title>packages/ember-droplet/ember-droplet-mixin.js - ember-droplet</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -15,7 +15,7 @@
     <div id="hd" class="yui3-g header">
         <div class="yui3-u-3-4">
             
-                <h1><img src="../assets/css/logo.png" title="EmberDroplet"></h1>
+                <h1><img src="../assets/css/logo.png" title="ember-droplet"></h1>
             
         </div>
         <div class="yui3-u-1-4 version">
@@ -130,85 +130,93 @@ window.DropletController = Ember.Mixin.create({
     },
 
     /**
-     * @method addValidFile
-     * @param file {File}
-     * Adds a valid file to the collection.
-     * @return {Object}
+     * @property actions
+     * @type {Object}
      */
-    addValidFile: function(file) {
-        return this._addFile(file, true);
-    },
+    actions: {
 
-    /**
-     * @method addInvalidFile
-     * @param file {File}
-     * Adds an invalid file to the collection.
-     * @return {Object}
-     */
-    addInvalidFile: function(file) {
-        return this._addFile(file, false);
-    },
+        /**
+         * @method addValidFile
+         * @param file {File}
+         * Adds a valid file to the collection.
+         * @return {Object}
+         */
+        addValidFile: function(file) {
+            return this._addFile(file, true);
+        },
 
-    /**
-     * @method deleteFile
-     * @param file
-     * Deletes a file from the collection.
-     * @return {Object}
-     */
-    deleteFile: function(file) {
-        Ember.set(file, &#x27;deleted&#x27;, true);
-        return file;
-    },
+        /**
+         * @method addInvalidFile
+         * @param file {File}
+         * Adds an invalid file to the collection.
+         * @return {Object}
+         */
+        addInvalidFile: function(file) {
+            return this._addFile(file, false);
+        },
 
-    /**
-     * @method clearAllFiles
-     * Clears all of the files from the collection.
-     * @return {void}
-     */
-    clearAllFiles: function() {
-        Ember.set(this, &#x27;files&#x27;, []);
-    },
+        /**
+         * @method deleteFile
+         * @param file
+         * Deletes a file from the collection.
+         * @return {Object}
+         */
+        deleteFile: function(file) {
+            Ember.set(file, &#x27;deleted&#x27;, true);
+            return file;
+        },
 
-    /**
-     * @method uploadAllFiles
-     * Uploads all of the files that haven&#x27;t been uploaded yet, but are valid files.
-     * @return {Object} jQuery promise.
-     */
-    uploadAllFiles: function() {
+        /**
+         * @method clearAllFiles
+         * Clears all of the files from the collection.
+         * @return {void}
+         */
+        clearAllFiles: function() {
+            Ember.set(this, &#x27;files&#x27;, []);
+        },
 
-        // Find the URL, set the uploading status, and create our promise.
-        var url         = Ember.get(this, &#x27;dropletUrl&#x27;),
-            deferred    = new jQuery.Deferred();
+        /**
+         * @method uploadAllFiles
+         * Uploads all of the files that haven&#x27;t been uploaded yet, but are valid files.
+         * @return {Object} jQuery promise.
+         */
+        uploadAllFiles: function() {
 
-        Ember.set(this, &#x27;uploadStatus.uploading&#x27;, true);
-        Ember.set(this, &#x27;uploadStatus.error&#x27;, false);
+            // Find the URL, set the uploading status, and create our promise.
+            var url         = Ember.get(this, &#x27;dropletUrl&#x27;),
+                deferred    = new jQuery.Deferred();
 
-        // Assert that we have the URL specified in the controller that implements the mixin.
-        Ember.assert(&#x27;You must specify the &#x60;dropletUrl&#x60; parameter in order to upload files.&#x27;, !!url);
+            Ember.set(this, &#x27;uploadStatus.uploading&#x27;, true);
+            Ember.set(this, &#x27;uploadStatus.error&#x27;, false);
 
-        // Create a new XHR request object.
-        var request = new XMLHttpRequest();
-        request.open(&#x27;post&#x27;, url, true);
+            // Assert that we have the URL specified in the controller that implements the mixin.
+            Ember.assert(&#x27;You must specify the &#x60;dropletUrl&#x60; parameter in order to upload files.&#x27;, !!url);
 
-        // Create a new form data instance.
-        var formData = new FormData();
+            // Create a new XHR request object.
+            var request = new XMLHttpRequest();
+            request.open(&#x27;post&#x27;, url, true);
 
-        // Iterate over each file, and append it to the form data.
-        Ember.EnumerableUtils.forEach(Ember.get(this, &#x27;validFiles&#x27;), function(file) {
-            formData.append(&#x27;file&#x27;, file.file);
-        }, this);
+            // Create a new form data instance.
+            var formData = new FormData();
 
-        // Add all of the event listeners.
-        this._addProgressListener(request.upload);
-        this._addSuccessListener(request.upload, deferred);
-        this._addErrorListener(request.upload, deferred);
+            // Iterate over each file, and append it to the form data.
+            Ember.EnumerableUtils.forEach(Ember.get(this, &#x27;validFiles&#x27;), function(file) {
+                formData.append(&#x27;file&#x27;, file.file);
+            }, this);
 
-        // Set the request size, and then we can upload the files!
-        request.setRequestHeader(&#x27;X-File-Size&#x27;, this._getSize());
-        request.send(formData);
+            // Add all of the event listeners.
+            this._addProgressListener(request.upload);
+            this._addSuccessListener(request.upload, deferred);
+            this._addErrorListener(request.upload, deferred);
 
-        // Return the promise.
-        return deferred.promise();
+            // Set the request size, and then we can upload the files!
+            request.setRequestHeader(&#x27;X-File-Size&#x27;, this._getSize());
+            request.send(formData);
+
+            // Return the promise.
+            return deferred.promise();
+
+        }
 
     },
 
