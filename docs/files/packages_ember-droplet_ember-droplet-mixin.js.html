@@ -105,6 +105,14 @@ window.DropletController = Ember.Mixin.create({
     mimeTypes: [&#x27;image/jpeg&#x27;, &#x27;image/jpg&#x27;, &#x27;image/gif&#x27;, &#x27;image/png&#x27;, &#x27;text/plain&#x27;],
 
     /**
+     * @property requestHeaders
+     * @type {Object}
+     * Contains a list of headers to be included in the request made by
+     * uploadAllFiles()
+     */
+    requestHeaders: {},
+
+    /**
      * @property files
      * @type {Array}
      * @default []
@@ -211,6 +219,12 @@ window.DropletController = Ember.Mixin.create({
 
             // Set the request size, and then we can upload the files!
             request.setRequestHeader(&#x27;X-File-Size&#x27;, this._getSize());
+
+            for (var key in this.get(&#x27;requestHeaders&#x27;)) {
+                request.setRequestHeader(
+                    key, this.get(&#x27;requestHeaders&#x27;)[key]);
+            }
+
             request.send(formData);
 
             // Return the promise.
