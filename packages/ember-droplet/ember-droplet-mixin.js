@@ -94,13 +94,19 @@ window.DropletController = Ember.Mixin.create({
         /**
          * @method uploadAllFiles
          * Uploads all of the files that haven't been uploaded yet, but are valid files.
-         * @return {Object} jQuery promise.
+         * @return {Object|Boolean} jQuery promise, or false if there are no files to upload.
          */
         uploadAllFiles: function() {
 
+            if (Ember.get(this, 'validFiles').length === 0) {
+                // Determine if there are even files to upload.
+                return false;
+            }
+
             // Find the URL, set the uploading status, and create our promise.
-            var url         = Ember.get(this, 'dropletUrl'),
-                deferred    = new jQuery.Deferred();
+            var url             = Ember.get(this, 'dropletUrl'),
+                deferred        = new jQuery.Deferred(),
+                requestHeaders  = this.get('requestHeaders');
 
             Ember.set(this, 'uploadStatus.uploading', true);
             Ember.set(this, 'uploadStatus.error', false);
@@ -122,15 +128,26 @@ window.DropletController = Ember.Mixin.create({
 
             // Add all of the event listeners.
             this._addProgressListener(request.upload);
-            this._addSuccessListener(request.upload, deferred);
+            this._addSuccessListener(request, deferred);
             this._addErrorListener(request.upload, deferred);
 
+            // Resolve the promise when we've finished uploading all the files.
+            request.onreadystatechange = function() {
+
+                if (request.readyState === 4) {
+                    var files = JSON.parse(request.responseText);
+                    deferred.resolve(files);
+                }
+
+            };
             // Set the request size, and then we can upload the files!
             request.setRequestHeader('X-File-Size', this._getSize());
 
-            for (var key in this.get('requestHeaders')) {
-                request.setRequestHeader(
-                    key, this.get('requestHeaders')[key]);
+            // Assign any request headers specified in the controller.
+            for (var index in requestHeaders) {
+                if (requestHeaders.hasOwnProperty(index)) {
+                    request.setRequestHeader(index, requestHeaders[index]);
+                }
             }
 
             request.send(formData);
@@ -233,13 +250,12 @@ window.DropletController = Ember.Mixin.create({
     /**
      * @method _addSuccessListener
      * @param request
-     * @param [deferred = null]
      * @private
      */
-    _addSuccessListener: function(request, deferred) {
+    _addSuccessListener: function(request) {
 
         // Once the files have been successfully uploaded.
-        request.addEventListener('load', function() {
+        request.addEventListener('load', function(data) {
 
             // Set the `uploaded` parameter to true once we've successfully // uploaded the files.
             Ember.EnumerableUtils.forEach(Ember.get(this, 'validFiles'), function(file) {
@@ -248,11 +264,6 @@ window.DropletController = Ember.Mixin.create({
 
             // We want to revert the upload status.
             Ember.set(this, 'uploadStatus.uploading', false);
-
-            if (deferred) {
-                // Last of all we can resolve the promise if it exists!
-                deferred.resolve();
-            }
 
         }.bind(this), false);
 
