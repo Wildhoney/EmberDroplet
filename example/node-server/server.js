@@ -19,10 +19,15 @@ app.all('*', function(request, response, next) {
     next();
 });
 
+// Responsible for the call to OPTIONS.
+app.options('/upload', function(request, response) {
+    response.send(200);
+});
+
 // Responsible for handling the file upload.
 app.post('/upload', function(request, response) {
 
-    var files       = request.files.file,
+    var files       = request.files,
         numFiles    = files.length,
         promises    = [];
 
@@ -40,8 +45,9 @@ app.post('/upload', function(request, response) {
 
     };
 
-    for (var index = 0; index <= numFiles; index++) if (files.hasOwnProperty(index)) {
-        var promise = uploadFile(files[index]);
+    for (var index in request.files) if (request.files.hasOwnProperty(index)) {
+        var file = request.files[index];
+        var promise = uploadFile(file);
         promises.push(promise);
     }
 
