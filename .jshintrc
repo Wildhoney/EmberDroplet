@@ -1,13 +1,26 @@
 {
-    "curly": true,
-    "eqeqeq": true,
-    "immed": true,
-    "latedef": true,
-    "newcap": true,
-    "noarg": true,
-    "sub": true,
-    "undef": false,
-    "boss": true,
-    "eqnull": true,
-    "node": true
+    "camelcase"     : true,
+    "curly"         : true,
+    "eqeqeq"        : true,
+    "forin"         : true,
+    "immed"         : true,
+    "latedef"       : true,
+    "newcap"        : true,
+    "noarg"         : true,
+    "strict"        : false,
+    "trailing"      : true,
+    "undef"         : false,
+    "unused"        : true,
+    "maxparams"     : 10,
+    "maxdepth"      : 5,
+    "maxstatements" : 25,
+    "maxcomplexity" : 10,
+
+    "asi"           : true,
+    "eqnull"        : true,
+    "funcscope"     : true,
+    "sub"           : true,
+
+    "browser"       : true,
+    "jquery"        : true
 }

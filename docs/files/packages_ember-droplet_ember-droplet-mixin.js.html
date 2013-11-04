@@ -301,14 +301,14 @@ window.DropletController = Ember.Mixin.create({
 
             for (var property in maps) {
 
-                if (!maps.hasOwnProperty(property)) {
-                    continue;
-                }
+                if (maps.hasOwnProperty(property)) {
 
-                // If the current property doesn&#x27;t match what we&#x27;re after from the map,
-                // then the file is invalid.
-                if (file[property] !== maps[property]) {
-                    return false;
+                    // If the current property doesn&#x27;t match what we&#x27;re after from the map,
+                    // then the file is invalid.
+                    if (file[property] !== maps[property]) {
+                        return false;
+                    }
+
                 }
 
             }
@@ -347,7 +347,7 @@ window.DropletController = Ember.Mixin.create({
     _addSuccessListener: function(request) {
 
         // Once the files have been successfully uploaded.
-        request.addEventListener(&#x27;load&#x27;, function(data) {
+        request.addEventListener(&#x27;load&#x27;, function() {
 
             // Set the &#x60;uploaded&#x60; parameter to true once we&#x27;ve successfully // uploaded the files.
             Ember.EnumerableUtils.forEach(Ember.get(this, &#x27;validFiles&#x27;), function(file) {
