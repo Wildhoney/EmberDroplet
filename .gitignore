@@ -1,5 +1,7 @@
 /.idea
 .idea
+/.grunt
+.grunt
 /node_modules
 node_modules
 bower_components
