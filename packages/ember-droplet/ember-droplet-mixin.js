@@ -128,7 +128,7 @@ window.DropletController = Ember.Mixin.create({
 
             // Add all of the event listeners.
             this._addProgressListener(request.upload);
-            this._addSuccessListener(request, deferred);
+            this._addSuccessListener(request.upload, deferred);
             this._addErrorListener(request.upload, deferred);
 
             // Resolve the promise when we've finished uploading all the files.
