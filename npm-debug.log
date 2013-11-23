@@ -1,0 +1,256 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'node', '/usr/local/bin/npm', 'publish' ]
+2 info using npm@1.3.11
+3 info using node@v0.10.18
+4 verbose publish [ '.' ]
+5 verbose cache add [ '.', null ]
+6 verbose cache add name=undefined spec="." args=[".",null]
+7 verbose parsed url { protocol: null,
+7 verbose parsed url   slashes: null,
+7 verbose parsed url   auth: null,
+7 verbose parsed url   host: null,
+7 verbose parsed url   port: null,
+7 verbose parsed url   hostname: null,
+7 verbose parsed url   hash: null,
+7 verbose parsed url   search: null,
+7 verbose parsed url   query: null,
+7 verbose parsed url   pathname: '.',
+7 verbose parsed url   path: '.',
+7 verbose parsed url   href: '.' }
+8 silly lockFile 3a52ce78- .
+9 verbose lock . /Users/Wildhoney/.npm/3a52ce78-.lock
+10 verbose tar pack [ '/var/folders/x1/1qs6hn2n0_1_3f6rdcp0854h0000gn/T/npm-34965-7oYQUKcY/1384729763344-0.8772954470477998/tmp.tgz',
+10 verbose tar pack   '.' ]
+11 verbose tarball /var/folders/x1/1qs6hn2n0_1_3f6rdcp0854h0000gn/T/npm-34965-7oYQUKcY/1384729763344-0.8772954470477998/tmp.tgz
+12 verbose folder .
+13 info prepublish ember-droplet@0.1.0
+14 silly lockFile 1f1177db-tar tar://.
+15 verbose lock tar://. /Users/Wildhoney/.npm/1f1177db-tar.lock
+16 silly lockFile ac52e9d4-63344-0-8772954470477998-tmp-tgz tar:///var/folders/x1/1qs6hn2n0_1_3f6rdcp0854h0000gn/T/npm-34965-7oYQUKcY/1384729763344-0.8772954470477998/tmp.tgz
+17 verbose lock tar:///var/folders/x1/1qs6hn2n0_1_3f6rdcp0854h0000gn/T/npm-34965-7oYQUKcY/1384729763344-0.8772954470477998/tmp.tgz /Users/Wildhoney/.npm/ac52e9d4-63344-0-8772954470477998-tmp-tgz.lock
+18 silly lockFile 1f1177db-tar tar://.
+19 silly lockFile 1f1177db-tar tar://.
+20 silly lockFile ac52e9d4-63344-0-8772954470477998-tmp-tgz tar:///var/folders/x1/1qs6hn2n0_1_3f6rdcp0854h0000gn/T/npm-34965-7oYQUKcY/1384729763344-0.8772954470477998/tmp.tgz
+21 silly lockFile ac52e9d4-63344-0-8772954470477998-tmp-tgz tar:///var/folders/x1/1qs6hn2n0_1_3f6rdcp0854h0000gn/T/npm-34965-7oYQUKcY/1384729763344-0.8772954470477998/tmp.tgz
+22 verbose tar unpack /var/folders/x1/1qs6hn2n0_1_3f6rdcp0854h0000gn/T/npm-34965-7oYQUKcY/1384729763344-0.8772954470477998/tmp.tgz
+23 silly lockFile f120cf85-63344-0-8772954470477998-package tar:///var/folders/x1/1qs6hn2n0_1_3f6rdcp0854h0000gn/T/npm-34965-7oYQUKcY/1384729763344-0.8772954470477998/package
+24 verbose lock tar:///var/folders/x1/1qs6hn2n0_1_3f6rdcp0854h0000gn/T/npm-34965-7oYQUKcY/1384729763344-0.8772954470477998/package /Users/Wildhoney/.npm/f120cf85-63344-0-8772954470477998-package.lock
+25 silly lockFile ac52e9d4-63344-0-8772954470477998-tmp-tgz tar:///var/folders/x1/1qs6hn2n0_1_3f6rdcp0854h0000gn/T/npm-34965-7oYQUKcY/1384729763344-0.8772954470477998/tmp.tgz
+26 verbose lock tar:///var/folders/x1/1qs6hn2n0_1_3f6rdcp0854h0000gn/T/npm-34965-7oYQUKcY/1384729763344-0.8772954470477998/tmp.tgz /Users/Wildhoney/.npm/ac52e9d4-63344-0-8772954470477998-tmp-tgz.lock
+27 silly gunzTarPerm modes [ '755', '644' ]
+28 silly gunzTarPerm extractEntry package.json
+29 silly gunzTarPerm extractEntry .npmignore
+30 silly gunzTarPerm extractEntry README.md
+31 silly gunzTarPerm extractEntry Gruntfile.js
+32 silly gunzTarPerm extractEntry .travis.yml
+33 silly gunzTarPerm extractEntry Vagrantfile
+34 silly gunzTarPerm extractEntry bootstrap.sh
+35 silly gunzTarPerm extractEntry .jshintrc
+36 silly gunzTarPerm extractEntry dist/EmberDroplet.min.js
+37 silly gunzTarPerm extractEntry dist/ember-droplet.min.js
+38 silly gunzTarPerm extractEntry docs/api.js
+39 silly gunzTarPerm extractEntry docs/assets/css/external-small.png
+40 silly gunzTarPerm extractEntry docs/assets/css/logo.png
+41 silly gunzTarPerm extractEntry docs/assets/css/main.css
+42 silly gunzTarPerm extractEntry docs/assets/favicon.png
+43 silly gunzTarPerm extractEntry docs/assets/img/spinner.gif
+44 silly gunzTarPerm extractEntry docs/assets/index.html
+45 silly gunzTarPerm extractEntry docs/assets/js/api-filter.js
+46 silly gunzTarPerm extractEntry docs/assets/js/api-list.js
+47 silly gunzTarPerm extractEntry docs/assets/js/api-search.js
+48 silly gunzTarPerm extractEntry docs/assets/js/apidocs.js
+49 silly gunzTarPerm extractEntry docs/assets/js/yui-prettify.js
+50 silly gunzTarPerm extractEntry docs/assets/vendor/prettify/prettify-min.js
+51 silly gunzTarPerm extractEntry docs/assets/vendor/prettify/CHANGES.html
+52 silly gunzTarPerm extractEntry docs/assets/vendor/prettify/COPYING
+53 silly gunzTarPerm extractEntry docs/assets/vendor/prettify/README.html
+54 silly gunzTarPerm extractEntry docs/assets/vendor/prettify/prettify-min.css
+55 silly gunzTarPerm extractEntry docs/classes/DropletView.html
+56 silly gunzTarPerm extractEntry docs/classes/EmberDropletController.html
+57 silly gunzTarPerm extractEntry docs/classes/index.html
+58 silly gunzTarPerm extractEntry docs/data.json
+59 silly gunzTarPerm extractEntry docs/files/index.html
+60 silly gunzTarPerm extractEntry docs/files/packages_ember-droplet_ember-droplet-mixin.js.html
+61 silly gunzTarPerm extractEntry docs/files/packages_ember-droplet_ember-droplet-view.js.html
+62 silly gunzTarPerm extractEntry docs/index.html
+63 silly gunzTarPerm extractEntry docs/modules/App.html
+64 silly gunzTarPerm extractEntry docs/modules/index.html
+65 silly gunzTarPerm extractEntry example/document.png
+66 silly gunzTarPerm extractEntry example/index.html
+67 silly gunzTarPerm extractEntry example/loading.gif
+68 silly gunzTarPerm extractEntry example/node-server/server.js
+69 silly gunzTarPerm extractEntry example/node-server/uploaded-files/.empty
+70 silly gunzTarPerm extractEntry example/scripts/controller.js
+71 silly gunzTarPerm extractEntry example/scripts/default.js
+72 silly gunzTarPerm extractEntry example/scripts/view.js
+73 silly gunzTarPerm extractEntry example/styles/bootstrap.min.css
+74 silly gunzTarPerm extractEntry example/styles/default.css
+75 silly gunzTarPerm extractEntry packages/ember-droplet/ember-droplet-mixin.js
+76 silly gunzTarPerm extractEntry packages/ember-droplet/ember-droplet-view.js
+77 silly gunzTarPerm extractEntry tests/spec.js
+78 silly gunzTarPerm extractEntry tests/MIT.LICENSE
+79 silly gunzTarPerm extractEntry tests/index.html
+80 silly gunzTarPerm extractEntry bower.json
+81 silly lockFile f120cf85-63344-0-8772954470477998-package tar:///var/folders/x1/1qs6hn2n0_1_3f6rdcp0854h0000gn/T/npm-34965-7oYQUKcY/1384729763344-0.8772954470477998/package
+82 silly lockFile f120cf85-63344-0-8772954470477998-package tar:///var/folders/x1/1qs6hn2n0_1_3f6rdcp0854h0000gn/T/npm-34965-7oYQUKcY/1384729763344-0.8772954470477998/package
+83 silly lockFile ac52e9d4-63344-0-8772954470477998-tmp-tgz tar:///var/folders/x1/1qs6hn2n0_1_3f6rdcp0854h0000gn/T/npm-34965-7oYQUKcY/1384729763344-0.8772954470477998/tmp.tgz
+84 silly lockFile ac52e9d4-63344-0-8772954470477998-tmp-tgz tar:///var/folders/x1/1qs6hn2n0_1_3f6rdcp0854h0000gn/T/npm-34965-7oYQUKcY/1384729763344-0.8772954470477998/tmp.tgz
+85 verbose tar pack [ '/Users/Wildhoney/.npm/ember-droplet/0.1.0/package.tgz',
+85 verbose tar pack   '/var/folders/x1/1qs6hn2n0_1_3f6rdcp0854h0000gn/T/npm-34965-7oYQUKcY/1384729763344-0.8772954470477998/package' ]
+86 verbose tarball /Users/Wildhoney/.npm/ember-droplet/0.1.0/package.tgz
+87 verbose folder /var/folders/x1/1qs6hn2n0_1_3f6rdcp0854h0000gn/T/npm-34965-7oYQUKcY/1384729763344-0.8772954470477998/package
+88 silly lockFile f120cf85-63344-0-8772954470477998-package tar:///var/folders/x1/1qs6hn2n0_1_3f6rdcp0854h0000gn/T/npm-34965-7oYQUKcY/1384729763344-0.8772954470477998/package
+89 verbose lock tar:///var/folders/x1/1qs6hn2n0_1_3f6rdcp0854h0000gn/T/npm-34965-7oYQUKcY/1384729763344-0.8772954470477998/package /Users/Wildhoney/.npm/f120cf85-63344-0-8772954470477998-package.lock
+90 silly lockFile bacb54ca--ember-droplet-0-1-0-package-tgz tar:///Users/Wildhoney/.npm/ember-droplet/0.1.0/package.tgz
+91 verbose lock tar:///Users/Wildhoney/.npm/ember-droplet/0.1.0/package.tgz /Users/Wildhoney/.npm/bacb54ca--ember-droplet-0-1-0-package-tgz.lock
+92 silly lockFile f120cf85-63344-0-8772954470477998-package tar:///var/folders/x1/1qs6hn2n0_1_3f6rdcp0854h0000gn/T/npm-34965-7oYQUKcY/1384729763344-0.8772954470477998/package
+93 silly lockFile f120cf85-63344-0-8772954470477998-package tar:///var/folders/x1/1qs6hn2n0_1_3f6rdcp0854h0000gn/T/npm-34965-7oYQUKcY/1384729763344-0.8772954470477998/package
+94 silly lockFile bacb54ca--ember-droplet-0-1-0-package-tgz tar:///Users/Wildhoney/.npm/ember-droplet/0.1.0/package.tgz
+95 silly lockFile bacb54ca--ember-droplet-0-1-0-package-tgz tar:///Users/Wildhoney/.npm/ember-droplet/0.1.0/package.tgz
+96 silly lockFile e22f9d5f--npm-ember-droplet-0-1-0-package /Users/Wildhoney/.npm/ember-droplet/0.1.0/package
+97 verbose lock /Users/Wildhoney/.npm/ember-droplet/0.1.0/package /Users/Wildhoney/.npm/e22f9d5f--npm-ember-droplet-0-1-0-package.lock
+98 silly lockFile e22f9d5f--npm-ember-droplet-0-1-0-package /Users/Wildhoney/.npm/ember-droplet/0.1.0/package
+99 silly lockFile e22f9d5f--npm-ember-droplet-0-1-0-package /Users/Wildhoney/.npm/ember-droplet/0.1.0/package
+100 verbose tar unpack /Users/Wildhoney/.npm/ember-droplet/0.1.0/package.tgz
+101 silly lockFile e2e3b98f--npm-ember-droplet-0-1-0-package tar:///Users/Wildhoney/.npm/ember-droplet/0.1.0/package
+102 verbose lock tar:///Users/Wildhoney/.npm/ember-droplet/0.1.0/package /Users/Wildhoney/.npm/e2e3b98f--npm-ember-droplet-0-1-0-package.lock
+103 silly lockFile bacb54ca--ember-droplet-0-1-0-package-tgz tar:///Users/Wildhoney/.npm/ember-droplet/0.1.0/package.tgz
+104 verbose lock tar:///Users/Wildhoney/.npm/ember-droplet/0.1.0/package.tgz /Users/Wildhoney/.npm/bacb54ca--ember-droplet-0-1-0-package-tgz.lock
+105 silly gunzTarPerm modes [ '755', '644' ]
+106 silly gunzTarPerm extractEntry package.json
+107 silly gunzTarPerm extractEntry .npmignore
+108 silly gunzTarPerm extractEntry README.md
+109 silly gunzTarPerm extractEntry Gruntfile.js
+110 silly gunzTarPerm extractEntry bower.json
+111 silly gunzTarPerm extractEntry Vagrantfile
+112 silly gunzTarPerm extractEntry bootstrap.sh
+113 silly gunzTarPerm extractEntry .jshintrc
+114 silly gunzTarPerm extractEntry dist/EmberDroplet.min.js
+115 silly gunzTarPerm extractEntry dist/ember-droplet.min.js
+116 silly gunzTarPerm extractEntry docs/api.js
+117 silly gunzTarPerm extractEntry docs/assets/css/external-small.png
+118 silly gunzTarPerm extractEntry docs/assets/css/logo.png
+119 silly gunzTarPerm extractEntry docs/assets/css/main.css
+120 silly gunzTarPerm extractEntry docs/assets/favicon.png
+121 silly gunzTarPerm extractEntry docs/assets/img/spinner.gif
+122 silly gunzTarPerm extractEntry docs/assets/index.html
+123 silly gunzTarPerm extractEntry docs/assets/js/api-filter.js
+124 silly gunzTarPerm extractEntry docs/assets/js/api-list.js
+125 silly gunzTarPerm extractEntry docs/assets/js/api-search.js
+126 silly gunzTarPerm extractEntry docs/assets/js/apidocs.js
+127 silly gunzTarPerm extractEntry docs/assets/js/yui-prettify.js
+128 silly gunzTarPerm extractEntry docs/assets/vendor/prettify/prettify-min.js
+129 silly gunzTarPerm extractEntry docs/assets/vendor/prettify/CHANGES.html
+130 silly gunzTarPerm extractEntry docs/assets/vendor/prettify/COPYING
+131 silly gunzTarPerm extractEntry docs/assets/vendor/prettify/README.html
+132 silly gunzTarPerm extractEntry docs/assets/vendor/prettify/prettify-min.css
+133 silly gunzTarPerm extractEntry docs/classes/DropletView.html
+134 silly gunzTarPerm extractEntry docs/classes/EmberDropletController.html
+135 silly gunzTarPerm extractEntry docs/classes/index.html
+136 silly gunzTarPerm extractEntry docs/data.json
+137 silly gunzTarPerm extractEntry docs/files/index.html
+138 silly gunzTarPerm extractEntry docs/files/packages_ember-droplet_ember-droplet-mixin.js.html
+139 silly gunzTarPerm extractEntry docs/files/packages_ember-droplet_ember-droplet-view.js.html
+140 silly gunzTarPerm extractEntry docs/index.html
+141 silly gunzTarPerm extractEntry docs/modules/App.html
+142 silly gunzTarPerm extractEntry docs/modules/index.html
+143 silly gunzTarPerm extractEntry example/document.png
+144 silly gunzTarPerm extractEntry example/index.html
+145 silly gunzTarPerm extractEntry example/loading.gif
+146 silly gunzTarPerm extractEntry example/node-server/server.js
+147 silly gunzTarPerm extractEntry example/node-server/uploaded-files/.empty
+148 silly gunzTarPerm extractEntry example/scripts/controller.js
+149 silly gunzTarPerm extractEntry example/scripts/default.js
+150 silly gunzTarPerm extractEntry example/scripts/view.js
+151 silly gunzTarPerm extractEntry example/styles/bootstrap.min.css
+152 silly gunzTarPerm extractEntry example/styles/default.css
+153 silly gunzTarPerm extractEntry .travis.yml
+154 silly gunzTarPerm extractEntry packages/ember-droplet/ember-droplet-mixin.js
+155 silly gunzTarPerm extractEntry packages/ember-droplet/ember-droplet-view.js
+156 silly gunzTarPerm extractEntry tests/spec.js
+157 silly gunzTarPerm extractEntry tests/MIT.LICENSE
+158 silly gunzTarPerm extractEntry tests/index.html
+159 silly lockFile e2e3b98f--npm-ember-droplet-0-1-0-package tar:///Users/Wildhoney/.npm/ember-droplet/0.1.0/package
+160 silly lockFile e2e3b98f--npm-ember-droplet-0-1-0-package tar:///Users/Wildhoney/.npm/ember-droplet/0.1.0/package
+161 silly lockFile bacb54ca--ember-droplet-0-1-0-package-tgz tar:///Users/Wildhoney/.npm/ember-droplet/0.1.0/package.tgz
+162 silly lockFile bacb54ca--ember-droplet-0-1-0-package-tgz tar:///Users/Wildhoney/.npm/ember-droplet/0.1.0/package.tgz
+163 verbose chmod /Users/Wildhoney/.npm/ember-droplet/0.1.0/package.tgz 644
+164 verbose chown /Users/Wildhoney/.npm/ember-droplet/0.1.0/package.tgz [ 501, 20 ]
+165 silly lockFile 3a52ce78- .
+166 silly lockFile 3a52ce78- .
+167 silly publish { name: 'ember-droplet',
+167 silly publish   version: '0.1.0',
+167 silly publish   author: { name: 'Adam Timberlake' },
+167 silly publish   dependencies:
+167 silly publish    { express: '~3.2.6',
+167 silly publish      grunt: '~0.4.1',
+167 silly publish      'promised-io': '~0.3.4',
+167 silly publish      'grunt-contrib-jasmine': '~0.5.1',
+167 silly publish      'grunt-contrib-jshint': '~0.6.5',
+167 silly publish      'grunt-contrib-yuidoc': '~0.4.0',
+167 silly publish      'grunt-contrib-uglify': '~0.2.5',
+167 silly publish      bower: '~1.2.7' },
+167 silly publish   devDependencies: { grunt: '~0.4.1' },
+167 silly publish   repository:
+167 silly publish    { type: 'git',
+167 silly publish      url: 'git://github.com:Wildhoney/EmberDroplet.git' },
+167 silly publish   description: 'Ember HTML5 file uploading with drag & drop and image/file preview.',
+167 silly publish   bugs: { url: 'https://github.com/Wildhoney/EmberDroplet/issues' },
+167 silly publish   main: 'Gruntfile.js',
+167 silly publish   directories: { doc: 'docs', example: 'example', test: 'tests' },
+167 silly publish   scripts: { test: 'grunt test' },
+167 silly publish   keywords:
+167 silly publish    [ 'HTML5',
+167 silly publish      'drag',
+167 silly publish      'and',
+167 silly publish      'drop',
+167 silly publish      'drag',
+167 silly publish      'and',
+167 silly publish      'drop',
+167 silly publish      'image',
+167 silly publish      'upload',
+167 silly publish      'HTML5',
+167 silly publish      'file',
+167 silly publish      'upload',
+167 silly publish      'ember',
+167 silly publish      'drag',
+167 silly publish      'and',
+167 silly publish      'drop',
+167 silly publish      'ember',
+167 silly publish      'image',
+167 silly publish      'upload',
+167 silly publish      'ember',
+167 silly publish      'HTML5' ],
+167 silly publish   license: 'BSD-2-Clause',
+167 silly publish   readme: 'Ember Droplet\n=============\n\n<img src="https://api.travis-ci.org/Wildhoney/EmberDroplet.png" alt="Travis" />\n&nbsp;\n<img src="https://badge.fury.io/js/ember-droplet.png" />\n\nInstall via npm: `npm install ember-droplet`.\n\nEmber Droplet allows HTML5 drag and drop functionality in Ember straight out-of-the-box. Its philosophy is that it doesn\'t\nimpose anything, and instead allows each individual developer to decide how it should work. I\'ve provided a view &ndash; `DropletView`\nthat you\'re free to use in your views. However, most of the functionality exists in the controller mixin &ndash; `DropletController`).\n\nFor the time being, please refer to the example.\n\n<img src="http://i.imgur.com/D07KQOl.png" alt="EmberDroplet Screenshot" />\n\nFeatures\n-------------\n\n * Upload with HTML5\'s drag and drop;\n * MIME type restrictions on permitted file types;\n * Instant image previews upon dropping;\n * Specifies extension in class name to allow for icons for different file types;\n * Allows the deletion of files before they\'re uploaded;\n * Keeps a track of all files &ndash; even invalid files;\n\nMethods\n-------------\n\nThe `DropletController` exposes the following public methods:\n\n * `addValidFile` &ndash; Adds a file that is allowed by its MIME type;\n * `addInvalidFile` &ndash; Same as above, but a file that isn\'t allowed by its MIME type;\n * `deleteFile` &ndash; Deletes a specified file by its object;\n * `clearAllFiles` &ndash; Clears all files, including uploaded files;\n * `uploadAllFiles` &ndash; Uploads all valid files &ndash; returns a <a href="http://api.jquery.com/deferred.promise/" target="_blank">jQuery promise</a>;\n\nIn addition to the methods, `DropletController` also has the following computed properties for convenience:\n\n * `validFiles` &ndash; Provides a list of valid files;\n * `invalidFiles` &ndash; Provides a list of invalid files;\n * `uploadedFiles` &ndash; All uploaded files;\n * `deletedFiles` &ndash; All deleted files;\n\nAdditional computed properties can be added to your controller that implements the mixin. To add additional computed properties,\nplease refer to the protected `_filesByProperties` method in the mixin.\n\nGetting Started\n-------------\n\nIn order to begin using EmberDroplet, you need a controller. Within your controller you can implement the `DropletController` mixin, which will give you access to all methods defined in it.\n\n```javascript\nApp.IndexController = Ember.Controller.extend(DropletController, {\n\n});\n```\n\nProperties that can be defined in your controller to interact with the mixin are as follows:\n\n * `dropletUrl`: URL in which the Node.js <em>(default)</em> or Apache/Nginx server is running on;\n * `mimeTypes`: Enumeration of valid MIME types. Can be appended using `concatenatedProperties` (see example);\n\nNow that your controller is using the mixin, it\'s time for your view to interact with your controller and its related mixin. For this we recommend using the in-built view, but it\'s not essential. In order to create your own, please refer to the example. The simplest way to use the in-built view is to embed it into your template.\n\n```javascript\nApp.IndexView = Ember.View.extend({\n\n    /**\n     * @property DragDrop\n     * @type DropletView\n     */\n    DragDrop: DropletView.extend()\n\n});\n```\n\nOnce you have the property `DragDrop` defined, the view and all of its related functionality can be output into the DOM using `{{view.DragDrop}}`. It\'s worth bearing in mind that this view is quite abstract in order to be customisable &ndash; see index.html for an example.\n\nExample\n-------------\n\nThe example uses the Node.js server to upload files, which is available in `example/node-server`. Simply run: `node server` to create it.\n\n<h3>Vagrant</h3>\n\nAs an alternative, if you have Vagrant installed then you can simply issue the `vagrant up` command and the Node.js server will be available on port 8888.\n\nView Mixin\n-------------\n\nIn order to use `EmberDroplet` it\'s not necessary for you to implement the `DropletView` mixin into your view. However, if you don\'t, then you\'ll need to communicate with the `DropletController` mixin yourself.\n\nThere is also `DropletPreview` which allows image uploads to be previewed immediately.\n\nTesting\n-------------\n\nAll of the related tests are written in Jasmine, and can be run with `grunt test` (assuming you have `grunt` installed &ndash; `npm install grunt -g`). You\'ll also need to run `npm install` to install the project\'s dependencies.\n\n<img src="http://pivotal.github.io/jasmine/images/jasmine_logo.png" alt="Jasmine" />',
+167 silly publish   readmeFilename: 'README.md',
+167 silly publish   _id: 'ember-droplet@0.1.0',
+167 silly publish   dist: { shasum: 'bebb57a489d7278484b9f823024411bcb172a6bf' },
+167 silly publish   _from: '.' }
+168 verbose url raw ember-droplet
+169 verbose url resolving [ 'https://registry.npmjs.org/', './ember-droplet' ]
+170 verbose url resolved https://registry.npmjs.org/ember-droplet
+171 info trying registry request attempt 1 at 23:09:23
+172 http PUT https://registry.npmjs.org/ember-droplet
+173 http 409 https://registry.npmjs.org/ember-droplet
+174 verbose url raw ember-droplet
+175 verbose url resolving [ 'https://registry.npmjs.org/', './ember-droplet' ]
+176 verbose url resolved https://registry.npmjs.org/ember-droplet
+177 info trying registry request attempt 1 at 23:09:25
+178 http GET https://registry.npmjs.org/ember-droplet
+179 http 200 https://registry.npmjs.org/ember-droplet
+180 error publish fail Cannot publish over existing version.
+180 error publish fail Update the 'version' field in package.json and try again.
+180 error publish fail
+180 error publish fail If the previous version was published in error, see:
+180 error publish fail     npm help unpublish
+180 error publish fail
+180 error publish fail To automatically increment version numbers, see:
+180 error publish fail     npm help version
+181 error System Darwin 12.4.0
+182 error command "node" "/usr/local/bin/npm" "publish"
+183 error cwd /Users/Wildhoney/Webroot/EmberDroplet
+184 error node -v v0.10.18
+185 error npm -v 1.3.11
+186 error code EPUBLISHCONFLICT
+187 verbose exit [ 1, true ]
