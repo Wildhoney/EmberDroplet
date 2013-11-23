@@ -21,6 +21,14 @@ window.DropletController = Ember.Mixin.create({
     requestHeaders: {},
 
     /**
+     * @property postData
+     * @type {Object}
+     * Contains a dictonary of extra POST data to be included in the
+     * request made by uploadAllFiles()
+     */
+    postData: {},
+
+    /**
      * @property files
      * @type {Array}
      * @default []
@@ -106,6 +114,7 @@ window.DropletController = Ember.Mixin.create({
             // Find the URL, set the uploading status, and create our promise.
             var url             = Ember.get(this, 'dropletUrl'),
                 deferred        = new jQuery.Deferred(),
+                postData        = this.get('postData'),
                 requestHeaders  = this.get('requestHeaders');
 
             Ember.set(this, 'uploadStatus.uploading', true);
@@ -126,6 +135,13 @@ window.DropletController = Ember.Mixin.create({
                 formData.append('file', file.file);
             }, this);
 
+            // Add any extra POST data specified in the controller
+            for (var index in postData) {
+                if (postData.hasOwnProperty(index)) {
+                    formData.append(index, postData[index]);
+                }
+            }
+
             // Add all of the event listeners.
             this._addProgressListener(request.upload);
             this._addSuccessListener(request.upload, deferred);
@@ -144,7 +160,7 @@ window.DropletController = Ember.Mixin.create({
             request.setRequestHeader('X-File-Size', this._getSize());
 
             // Assign any request headers specified in the controller.
-            for (var index in requestHeaders) {
+            for (index in requestHeaders) {
                 if (requestHeaders.hasOwnProperty(index)) {
                     request.setRequestHeader(index, requestHeaders[index]);
                 }
