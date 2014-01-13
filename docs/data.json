@@ -93,7 +93,7 @@
             "line": 23,
             "itemtype": "property",
             "name": "postData",
-            "type": "{Object}\nContains a dictonary of extra POST data to be included in the\nrequest made by uploadAllFiles()",
+            "type": "{Object}\nContains a dictionary of extra POST data to be included in the\nrequest made by uploadAllFiles()",
             "class": "EmberDropletController",
             "module": "App"
         },

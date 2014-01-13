@@ -38,16 +38,27 @@ module.exports = function(grunt) {
                               './bower_components/ember/ember.js']
                 }
             }
+        },
+        concat: {
+            options: {
+                separator: ';',
+                stripBanners: true
+            },
+            dist: {
+                src: ['packages/ember-droplet/*.js'],
+                dest: 'dist/<%= pkg.name %>.js'
+            }
         }
     });
 
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-yuidoc');
     grunt.loadNpmTasks('grunt-contrib-jasmine');
 
-    grunt.registerTask('build', ['yuidoc', 'uglify']);
+    grunt.registerTask('build', ['yuidoc', 'concat', 'uglify']);
     grunt.registerTask('test', ['jshint', 'jasmine']);
-    grunt.registerTask('default', ['jshint', 'jasmine', 'yuidoc', 'uglify']);
+    grunt.registerTask('default', ['jshint', 'jasmine', 'yuidoc', 'concat', 'uglify']);
 
 };
