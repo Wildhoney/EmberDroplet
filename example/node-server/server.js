@@ -27,11 +27,15 @@ app.options('/upload', function(request, response) {
 // Responsible for handling the file upload.
 app.post('/upload', function(request, response) {
 
-    var files       = request.files,
-        numFiles    = files.length,
+    var files       = request.files.file,
         promises    = [];
 
-    var uploadFile = function(file) {
+    /**
+     * @method uploadFile
+     * @param file {Object}
+     * @return {Object}
+     */
+    var uploadFile = function uploadFile(file) {
 
         var deferred = new Deferred();
 
@@ -45,10 +49,20 @@ app.post('/upload', function(request, response) {
 
     };
 
-    for (var index in request.files) if (request.files.hasOwnProperty(index)) {
-        var file = request.files[index];
-        var promise = uploadFile(file);
+    if (!Array.isArray(files)) {
+
+        // We're dealing with only one file.
+        var promise = uploadFile(files);
         promises.push(promise);
+
+    } else {
+
+        // We're dealing with many files.
+        files.forEach(function(file) {
+            var promise = uploadFile(file);
+            promises.push(promise);
+        });
+
     }
 
     promisedIo.all(promises).then(function(files) {
