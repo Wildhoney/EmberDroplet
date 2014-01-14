@@ -90,242 +90,248 @@
 
 <div class="file">
     <pre class="code prettyprint linenums">
-/**
- * @module App
- * @class DropletView
- * @type Ember.View
- * @extends Ember.View
- */
-window.DropletView = Ember.View.extend({
+(function($window, $ember) {
+
+    &quot;use strict&quot;;
 
     /**
-     * @property classNames
-     * @type {Array}
-     * @default [&#x27;droppable&#x27;]
+     * @module App
+     * @class DropletView
+     * @type Ember.View
+     * @extends Ember.View
      */
-    classNames: [&#x27;droppable&#x27;],
-
-    /**
-     * @property ImagePreview
-     * @type {Ember.View}
-     */
-    ImagePreview: Ember.View.extend({
-
-        /**
-         * @property tagName
-         * @type {String}
-         * @default &quot;img&quot;
-         */
-        tagName: &#x27;img&#x27;,
-
-        /**
-         * @property attributeBindings
-         * @type {Array}
-         * @default [&#x27;src&#x27;]
-         */
-        attributeBindings: [&#x27;src&#x27;],
-
-        /**
-         * @property src
-         * @type {String}
-         * @default null
-         */
-        src: null,
-
-        /**
-         * @property image
-         * @type {String}
-         * @default null
-         */
-        image: null,
-
-        /**
-         * @method didInsertElement
-         * Invoked when the view is inserted into the DOM.
-         * @return {void}
-         */
-        didInsertElement: function() {
-
-            // Initialise the FileReader, and find the image that was passed into
-            // the view when instantiating it.
-            var reader  = new FileReader(),
-                image   = Ember.get(this, &#x27;image.file&#x27;);
-
-            // Ensure that the file we&#x27;re dealing with is an image.
-            if (!image.type.match(/^image\//i)) {
-
-                // If it isn&#x27;t then we&#x27;ll need to destroy the view immediately.
-                this.destroy();
-                return;
-
-            }
-
-            // Invoked when the image preview has been loaded.
-            reader.onload = function (event) {
-
-                if (this.get(&#x27;isDestroyed&#x27;) === true) {
-                    // If the view has already been destroyed, then we can&#x27;t
-                    // load in the image preview.
-                    return;
-                }
-
-                // Otherwise we&#x27;re free to set the SRC attribute to the image&#x27;s data.
-                Ember.set(this, &#x27;src&#x27;, event.target.result);
-
-            }.bind(this);
-
-            // Begin the reading of the image.
-            reader.readAsDataURL(image);
-
-        }
-
-    }),
-
-    /**
-     * @property MultipleInput
-     * @type {Ember.View}
-     */
-    MultipleInput: Ember.View.extend({
-
-        /**
-         * @property tagName
-         * @type {String}
-         * @default &quot;input&quot;
-         */
-        tagName: &#x27;input&#x27;,
+    $window.DropletView = $ember.View.extend({
 
         /**
          * @property classNames
-         * @type {String}
-         * @default &quot;files&quot;
-         */
-        classNames: &#x27;files&#x27;,
-
-        /**
-         * @property attributeBindings
          * @type {Array}
+         * @default [&#x27;droppable&#x27;]
          */
-        attributeBindings: [&#x27;type&#x27;, &#x27;multiple&#x27;],
+        classNames: [&#x27;droppable&#x27;],
 
         /**
-         * @property file
-         * @type {String}
-         * @default &quot;file&quot;
+         * @property ImagePreview
+         * @type {Ember.View}
          */
-        type: &#x27;file&#x27;,
+        ImagePreview: $ember.View.extend({
+
+            /**
+             * @property tagName
+             * @type {String}
+             * @default &quot;img&quot;
+             */
+            tagName: &#x27;img&#x27;,
+
+            /**
+             * @property attributeBindings
+             * @type {Array}
+             * @default [&#x27;src&#x27;]
+             */
+            attributeBindings: [&#x27;src&#x27;],
+
+            /**
+             * @property src
+             * @type {String}
+             * @default null
+             */
+            src: null,
+
+            /**
+             * @property image
+             * @type {String}
+             * @default null
+             */
+            image: null,
+
+            /**
+             * @method didInsertElement
+             * Invoked when the view is inserted into the DOM.
+             * @return {void}
+             */
+            didInsertElement: function() {
+
+                // Initialise the FileReader, and find the image that was passed into
+                // the view when instantiating it.
+                var reader  = new $window.FileReader(),
+                    image   = $ember.get(this, &#x27;image.file&#x27;);
+
+                // Ensure that the file we&#x27;re dealing with is an image.
+                if (!image.type.match(/^image\//i)) {
+
+                    // If it isn&#x27;t then we&#x27;ll need to destroy the view immediately.
+                    this.destroy();
+                    return;
+
+                }
+
+                // Invoked when the image preview has been loaded.
+                reader.onload = function (event) {
+
+                    if (this.get(&#x27;isDestroyed&#x27;) === true) {
+                        // If the view has already been destroyed, then we can&#x27;t
+                        // load in the image preview.
+                        return;
+                    }
+
+                    // Otherwise we&#x27;re free to set the SRC attribute to the image&#x27;s data.
+                    $ember.set(this, &#x27;src&#x27;, event.target.result);
+
+                }.bind(this);
+
+                // Begin the reading of the image.
+                reader.readAsDataURL(image);
+
+            }
+
+        }),
 
         /**
-         * @property multiple
-         * @type {String}
-         * @default &quot;multiple&quot;
+         * @property MultipleInput
+         * @type {Ember.View}
          */
-        multiple: &#x27;multiple&#x27;,
+        MultipleInput: $ember.View.extend({
+
+            /**
+             * @property tagName
+             * @type {String}
+             * @default &quot;input&quot;
+             */
+            tagName: &#x27;input&#x27;,
+
+            /**
+             * @property classNames
+             * @type {String}
+             * @default &quot;files&quot;
+             */
+            classNames: &#x27;files&#x27;,
+
+            /**
+             * @property attributeBindings
+             * @type {Array}
+             */
+            attributeBindings: [&#x27;type&#x27;, &#x27;multiple&#x27;],
+
+            /**
+             * @property file
+             * @type {String}
+             * @default &quot;file&quot;
+             */
+            type: &#x27;file&#x27;,
+
+            /**
+             * @property multiple
+             * @type {String}
+             * @default &quot;multiple&quot;
+             */
+            multiple: &#x27;multiple&#x27;,
+
+            /**
+             * @method change
+             * Invoked when the content of the INPUT changes.
+             * @return {Boolean}
+             */
+            change: function() {
+                var files = this.get(&#x27;element&#x27;).files;
+                return this.get(&#x27;parentView&#x27;).traverseFiles(files);
+            }
+
+        }),
 
         /**
-         * @method change
-         * Invoked when the content of the INPUT changes.
+         * @method drop
+         * @param event {jQuery.Event}
+         * @param [files = []] {Array}
+         * Invoked when the user drops a file onto the droppable area.
          * @return {Boolean}
          */
-        change: function() {
-            var files = this.get(&#x27;element&#x27;).files;
-            return this.get(&#x27;parentView&#x27;).traverseFiles(files);
-        }
+        drop: function(event, files) {
+            this._preventDefaultBehaviour(event);
+            return this.traverseFiles(event.dataTransfer.files || files);
+        },
 
-    }),
+        /**
+         * @method traverseFiles
+         * @param files {FileList}
+         * Accepts a FileList object, and traverses them to determine if they&#x27;re valid, adding them
+         * as either valid or invalid.
+         * @return {boolean}
+         */
+        traverseFiles: function(files) {
 
-    /**
-     * @method drop
-     * @param event {jQuery.Event}
-     * @param [files = []] {Array}
-     * Invoked when the user drops a file onto the droppable area.
-     * @return {Boolean}
-     */
-    drop: function(event, files) {
-        this._preventDefaultBehaviour(event);
-        return this.traverseFiles(event.dataTransfer.files || files);
-    },
+            // Find the controller, and the &#x60;mimeTypes&#x60; property.
+            var controller  = $ember.get(this, &#x27;controller&#x27;),
+                mimeTypes   = $ember.get(controller, &#x27;mimeTypes&#x27;);
 
-    /**
-     * @method traverseFiles
-     * @param files {FileList}
-     * Accepts a FileList object, and traverses them to determine if they&#x27;re valid, adding them
-     * as either valid or invalid.
-     * @return {boolean}
-     */
-    traverseFiles: function(files) {
+            // Assert that we have the &#x60;mineTypes&#x60; property, and that it&#x27;s an array.
+            $ember.assert(&#x27;&#x60;mimeTypes&#x60; is undefined. Does your controller implement the &#x60;$emberDropletController&#x60; mixin?&#x27;, !!mimeTypes);
+            $ember.assert(&#x27;&#x60;mimeTypes&#x60; is not an array. It should be an array of valid MIME types.&#x27;, !!$ember.isArray(mimeTypes));
 
-        // Find the controller, and the &#x60;mimeTypes&#x60; property.
-        var controller  = Ember.get(this, &#x27;controller&#x27;),
-            mimeTypes   = Ember.get(controller, &#x27;mimeTypes&#x27;);
+            for (var index = 0, numFiles = files.length; index &lt; numFiles; index++) {
 
-        // Assert that we have the &#x60;mineTypes&#x60; property, and that it&#x27;s an array.
-        Ember.assert(&#x27;&#x60;mimeTypes&#x60; is undefined. Does your controller implement the &#x60;EmberDropletController&#x60; mixin?&#x27;, !!mimeTypes);
-        Ember.assert(&#x27;&#x60;mimeTypes&#x60; is not an array. It should be an array of valid MIME types.&#x27;, !!Ember.isArray(mimeTypes));
+                if (!files.hasOwnProperty(index)) {
+                    continue;
+                }
 
-        for (var index = 0, numFiles = files.length; index &lt; numFiles; index++) {
+                var file = files[index];
 
-            if (!files.hasOwnProperty(index)) {
-                continue;
+                // Determine if the file is valid based on its MIME type.
+                if ($.inArray(file.type, mimeTypes) === -1) {
+                    // If it isn&#x27;t valid, then we&#x27;ll add it as an invalid file.
+                    controller.send(&#x27;addInvalidFile&#x27;, file);
+                    continue;
+                }
+
+                // Otherwise the file has a valid MIME type, and therefore be added as a good file.
+                controller.send(&#x27;addValidFile&#x27;, file);
+
             }
 
-            var file = files[index];
+            return true;
 
-            // Determine if the file is valid based on its MIME type.
-            if ($.inArray(file.type, mimeTypes) === -1) {
-                // If it isn&#x27;t valid, then we&#x27;ll add it as an invalid file.
-                controller.send(&#x27;addInvalidFile&#x27;, file);
-                continue;
-            }
+        },
 
-            // Otherwise the file has a valid MIME type, and therefore be added as a good file.
-            controller.send(&#x27;addValidFile&#x27;, file);
+        /**
+         * @method _preventDefaultBehaviour
+         * @param event {jQuery.Event}
+         * Prevents default behaviour and propagation on nodes where it&#x27;s undesirable.
+         * @return {void}
+         * @private
+         */
+        _preventDefaultBehaviour: function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+        },
 
+        /**
+         * @method dragOver
+         * @param event {jQuery.Event}
+         * @return {void}
+         */
+        dragOver: function(event) {
+            this._preventDefaultBehaviour(event);
+        },
+
+        /**
+         * @method dragEnter
+         * @param event {jQuery.Event}
+         * @return {void}
+         */
+        dragEnter: function(event) {
+            this._preventDefaultBehaviour(event);
+        },
+
+        /**
+         * @method dragLeave
+         * @param event {jQuery.Event}
+         * @return {void}
+         */
+        dragLeave: function(event) {
+            this._preventDefaultBehaviour(event);
         }
 
-        return true;
+    });
 
-    },
-
-    /**
-     * @method _preventDefaultBehaviour
-     * @param event {jQuery.Event}
-     * Prevents default behaviour and propagation on nodes where it&#x27;s undesirable.
-     * @return {void}
-     * @private
-     */
-    _preventDefaultBehaviour: function(event) {
-        event.preventDefault();
-        event.stopPropagation();
-    },
-
-    /**
-     * @method dragOver
-     * @param event {jQuery.Event}
-     * @return {void}
-     */
-    dragOver: function(event) {
-        this._preventDefaultBehaviour(event);
-    },
-
-    /**
-     * @method dragEnter
-     * @param event {jQuery.Event}
-     * @return {void}
-     */
-    dragEnter: function(event) {
-        this._preventDefaultBehaviour(event);
-    },
-
-    /**
-     * @method dragLeave
-     * @param event {jQuery.Event}
-     * @return {void}
-     */
-    dragLeave: function(event) {
-        this._preventDefaultBehaviour(event);
-    }
-
-});
+})(window, window.Ember);
     </pre>
 </div>
 

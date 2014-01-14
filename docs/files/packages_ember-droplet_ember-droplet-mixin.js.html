@@ -90,363 +90,369 @@
 
 <div class="file">
     <pre class="code prettyprint linenums">
-/**
- * @module App
- * @class EmberDropletController
- * @type Ember.Mixin
- * @extends Ember.Mixin
- */
-window.DropletController = Ember.Mixin.create({
+(function($window, $ember, $jQuery) {
+
+    &quot;use strict&quot;;
 
     /**
-     * @property mimeTypes
-     * @type {Array}
+     * @module App
+     * @class EmberDropletController
+     * @type Ember.Mixin
+     * @extends Ember.Mixin
      */
-    mimeTypes: [&#x27;image/jpeg&#x27;, &#x27;image/jpg&#x27;, &#x27;image/gif&#x27;, &#x27;image/png&#x27;, &#x27;text/plain&#x27;],
-
-    /**
-     * @property requestHeaders
-     * @type {Object}
-     * Contains a list of headers to be included in the request made by
-     * uploadAllFiles()
-     */
-    requestHeaders: {},
-
-    /**
-     * @property postData
-     * @type {Object}
-     * Contains a dictionary of extra POST data to be included in the
-     * request made by uploadAllFiles()
-     */
-    postData: {},
-
-    /**
-     * @property files
-     * @type {Array}
-     * @default []
-     * Contains a list of files, both valid, deleted, and invalid.
-     */
-    files: [],
-
-    /**
-     * @property uploadStatus
-     * @type {Object}
-     */
-    uploadStatus: { uploading: false, percentComplete: 0, error: false },
-
-    /**
-     * @constructor
-     * @method init
-     * Clears the file array for each instantiation.
-     * @return {void}
-     */
-    init: function() {
-        Ember.set(this, &#x27;files&#x27;, []);
-        this._super();
-    },
-
-    /**
-     * @property actions
-     * @type {Object}
-     */
-    actions: {
+    $window.DropletController = $ember.Mixin.create({
 
         /**
-         * @method addValidFile
-         * @param file {File}
-         * Adds a valid file to the collection.
-         * @return {Object}
+         * @property mimeTypes
+         * @type {Array}
          */
-        addValidFile: function(file) {
-            return this._addFile(file, true);
-        },
+        mimeTypes: [&#x27;image/jpeg&#x27;, &#x27;image/jpg&#x27;, &#x27;image/gif&#x27;, &#x27;image/png&#x27;, &#x27;text/plain&#x27;],
 
         /**
-         * @method addInvalidFile
-         * @param file {File}
-         * Adds an invalid file to the collection.
-         * @return {Object}
+         * @property requestHeaders
+         * @type {Object}
+         * Contains a list of headers to be included in the request made by
+         * uploadAllFiles()
          */
-        addInvalidFile: function(file) {
-            return this._addFile(file, false);
-        },
+        requestHeaders: {},
 
         /**
-         * @method deleteFile
-         * @param file
-         * Deletes a file from the collection.
-         * @return {Object}
+         * @property postData
+         * @type {Object}
+         * Contains a dictionary of extra POST data to be included in the
+         * request made by uploadAllFiles()
          */
-        deleteFile: function(file) {
-            Ember.set(file, &#x27;deleted&#x27;, true);
-            return file;
-        },
+        postData: {},
 
         /**
-         * @method clearAllFiles
-         * Clears all of the files from the collection.
+         * @property files
+         * @type {Array}
+         * @default []
+         * Contains a list of files, both valid, deleted, and invalid.
+         */
+        files: [],
+
+        /**
+         * @property uploadStatus
+         * @type {Object}
+         */
+        uploadStatus: { uploading: false, percentComplete: 0, error: false },
+
+        /**
+         * @constructor
+         * @method init
+         * Clears the file array for each instantiation.
          * @return {void}
          */
-        clearAllFiles: function() {
-            Ember.set(this, &#x27;files&#x27;, []);
+        init: function() {
+            $ember.set(this, &#x27;files&#x27;, []);
+            this._super();
         },
 
         /**
-         * @method uploadAllFiles
-         * Uploads all of the files that haven&#x27;t been uploaded yet, but are valid files.
-         * @return {Object|Boolean} jQuery promise, or false if there are no files to upload.
+         * @property actions
+         * @type {Object}
          */
-        uploadAllFiles: function() {
+        actions: {
 
-            if (Ember.get(this, &#x27;validFiles&#x27;).length === 0) {
-                // Determine if there are even files to upload.
-                return false;
+            /**
+             * @method addValidFile
+             * @param file {File}
+             * Adds a valid file to the collection.
+             * @return {Object}
+             */
+            addValidFile: function(file) {
+                return this._addFile(file, true);
+            },
+
+            /**
+             * @method addInvalidFile
+             * @param file {File}
+             * Adds an invalid file to the collection.
+             * @return {Object}
+             */
+            addInvalidFile: function(file) {
+                return this._addFile(file, false);
+            },
+
+            /**
+             * @method deleteFile
+             * @param file
+             * Deletes a file from the collection.
+             * @return {Object}
+             */
+            deleteFile: function(file) {
+                $ember.set(file, &#x27;deleted&#x27;, true);
+                return file;
+            },
+
+            /**
+             * @method clearAllFiles
+             * Clears all of the files from the collection.
+             * @return {void}
+             */
+            clearAllFiles: function() {
+                $ember.set(this, &#x27;files&#x27;, []);
+            },
+
+            /**
+             * @method uploadAllFiles
+             * Uploads all of the files that haven&#x27;t been uploaded yet, but are valid files.
+             * @return {Object|Boolean} jQuery promise, or false if there are no files to upload.
+             */
+            uploadAllFiles: function() {
+
+                if ($ember.get(this, &#x27;validFiles&#x27;).length === 0) {
+                    // Determine if there are even files to upload.
+                    return false;
+                }
+
+                // Find the URL, set the uploading status, and create our promise.
+                var url             = $ember.get(this, &#x27;dropletUrl&#x27;),
+                    deferred        = new $jQuery.Deferred(),
+                    postData        = this.get(&#x27;postData&#x27;),
+                    requestHeaders  = this.get(&#x27;requestHeaders&#x27;);
+
+                $ember.set(this, &#x27;uploadStatus.uploading&#x27;, true);
+                $ember.set(this, &#x27;uploadStatus.error&#x27;, false);
+
+                // Assert that we have the URL specified in the controller that implements the mixin.
+                $ember.assert(&#x27;You must specify the &#x60;dropletUrl&#x60; parameter in order to upload files.&#x27;, !!url);
+
+                // Create a new XHR request object.
+                var request = new $window.XMLHttpRequest();
+                request.open(&#x27;post&#x27;, url, true);
+
+                // Create a new form data instance.
+                var formData = new $window.FormData();
+
+                // Iterate over each file, and append it to the form data.
+                $ember.EnumerableUtils.forEach($ember.get(this, &#x27;validFiles&#x27;), function(file) {
+                    formData.append(&#x27;file&#x27;, file.file);
+                }, this);
+
+                // Add any extra POST data specified in the controller
+                for (var index in postData) {
+                    if (postData.hasOwnProperty(index)) {
+                        formData.append(index, postData[index]);
+                    }
+                }
+
+                // Add all of the event listeners.
+                this._addProgressListener(request.upload);
+                this._addSuccessListener(request.upload, deferred);
+                this._addErrorListener(request.upload, deferred);
+
+                // Resolve the promise when we&#x27;ve finished uploading all the files.
+                request.onreadystatechange = function() {
+
+                    if (request.readyState === 4) {
+                        var files = $window.JSON.parse(request.responseText);
+                        deferred.resolve(files);
+                    }
+
+                };
+                // Set the request size, and then we can upload the files!
+                request.setRequestHeader(&#x27;X-File-Size&#x27;, this._getSize());
+
+                // Assign any request headers specified in the controller.
+                for (index in requestHeaders) {
+                    if (requestHeaders.hasOwnProperty(index)) {
+                        request.setRequestHeader(index, requestHeaders[index]);
+                    }
+                }
+
+                request.send(formData);
+
+                // Return the promise.
+                return deferred.promise();
+
             }
 
-            // Find the URL, set the uploading status, and create our promise.
-            var url             = Ember.get(this, &#x27;dropletUrl&#x27;),
-                deferred        = new jQuery.Deferred(),
-                postData        = this.get(&#x27;postData&#x27;),
-                requestHeaders  = this.get(&#x27;requestHeaders&#x27;);
+        },
 
-            Ember.set(this, &#x27;uploadStatus.uploading&#x27;, true);
-            Ember.set(this, &#x27;uploadStatus.error&#x27;, false);
+        /**
+         * @property validFiles
+         * Finds a list of files that aren&#x27;t deleted, and are of a valid MIME type.
+         * @return {Array}
+         */
+        validFiles: $ember.computed(function() {
+            return this._filesByProperties({ valid: true, deleted: false, uploaded: false });
+        }).property(&#x27;files.length&#x27;, &#x27;files.@each.deleted&#x27;, &#x27;files.@each.uploaded&#x27;),
 
-            // Assert that we have the URL specified in the controller that implements the mixin.
-            Ember.assert(&#x27;You must specify the &#x60;dropletUrl&#x60; parameter in order to upload files.&#x27;, !!url);
+        /**
+         * @property invalidFiles
+         * Finds a list of files that have an unsupported MIME type.
+         * @return {Array}
+         */
+        invalidFiles: $ember.computed(function() {
+            return this._filesByProperties({ valid: false });
+        }).property(&#x27;files.length&#x27;, &#x27;files.@each.deleted&#x27;),
 
-            // Create a new XHR request object.
-            var request = new XMLHttpRequest();
-            request.open(&#x27;post&#x27;, url, true);
+        /**
+         * @property uploadedFiles
+         * Finds a list of files that have been successfully uploaded.
+         * @return {Array}
+         */
+        uploadedFiles: $ember.computed(function() {
+            return this._filesByProperties({ uploaded: true });
+        }).property(&#x27;files.length&#x27;, &#x27;files.@each.uploaded&#x27;),
 
-            // Create a new form data instance.
-            var formData = new FormData();
+        /**
+         * @property deletedFiles
+         * Finds a list of files that have been deleted by the user.
+         * @return {Array}
+         */
+        deletedFiles: $ember.computed(function() {
+            return this._filesByProperties({ deleted: true });
+        }).property(&#x27;files.length&#x27;, &#x27;files.@each.deleted&#x27;),
 
-            // Iterate over each file, and append it to the form data.
-            Ember.EnumerableUtils.forEach(Ember.get(this, &#x27;validFiles&#x27;), function(file) {
-                formData.append(&#x27;file&#x27;, file.file);
-            }, this);
+        /**
+         * @method _filesByProperties
+         * @param maps {Object}
+         * Accepts a map of properties that each file must have.
+         * @return {Array}
+         * @private
+         */
+        _filesByProperties: function(maps) {
 
-            // Add any extra POST data specified in the controller
-            for (var index in postData) {
-                if (postData.hasOwnProperty(index)) {
-                    formData.append(index, postData[index]);
-                }
-            }
+            // Iterate over each of the files.
+            return $ember.get(this, &#x27;files&#x27;).filter(function(file) {
 
-            // Add all of the event listeners.
-            this._addProgressListener(request.upload);
-            this._addSuccessListener(request.upload, deferred);
-            this._addErrorListener(request.upload, deferred);
+                for (var property in maps) {
 
-            // Resolve the promise when we&#x27;ve finished uploading all the files.
-            request.onreadystatechange = function() {
+                    if (maps.hasOwnProperty(property)) {
 
-                if (request.readyState === 4) {
-                    var files = JSON.parse(request.responseText);
-                    deferred.resolve(files);
-                }
+                        // If the current property doesn&#x27;t match what we&#x27;re after from the map,
+                        // then the file is invalid.
+                        if (file[property] !== maps[property]) {
+                            return false;
+                        }
 
-            };
-            // Set the request size, and then we can upload the files!
-            request.setRequestHeader(&#x27;X-File-Size&#x27;, this._getSize());
-
-            // Assign any request headers specified in the controller.
-            for (index in requestHeaders) {
-                if (requestHeaders.hasOwnProperty(index)) {
-                    request.setRequestHeader(index, requestHeaders[index]);
-                }
-            }
-
-            request.send(formData);
-
-            // Return the promise.
-            return deferred.promise();
-
-        }
-
-    },
-
-    /**
-     * @property validFiles
-     * Finds a list of files that aren&#x27;t deleted, and are of a valid MIME type.
-     * @return {Array}
-     */
-    validFiles: Ember.computed(function() {
-        return this._filesByProperties({ valid: true, deleted: false, uploaded: false });
-    }).property(&#x27;files.length&#x27;, &#x27;files.@each.deleted&#x27;, &#x27;files.@each.uploaded&#x27;),
-
-    /**
-     * @property invalidFiles
-     * Finds a list of files that have an unsupported MIME type.
-     * @return {Array}
-     */
-    invalidFiles: Ember.computed(function() {
-        return this._filesByProperties({ valid: false });
-    }).property(&#x27;files.length&#x27;, &#x27;files.@each.deleted&#x27;),
-
-    /**
-     * @property uploadedFiles
-     * Finds a list of files that have been successfully uploaded.
-     * @return {Array}
-     */
-    uploadedFiles: Ember.computed(function() {
-        return this._filesByProperties({ uploaded: true });
-    }).property(&#x27;files.length&#x27;, &#x27;files.@each.uploaded&#x27;),
-
-    /**
-     * @property deletedFiles
-     * Finds a list of files that have been deleted by the user.
-     * @return {Array}
-     */
-    deletedFiles: Ember.computed(function() {
-        return this._filesByProperties({ deleted: true });
-    }).property(&#x27;files.length&#x27;, &#x27;files.@each.deleted&#x27;),
-
-    /**
-     * @method _filesByProperties
-     * @param maps {Object}
-     * Accepts a map of properties that each file must have.
-     * @return {Array}
-     * @private
-     */
-    _filesByProperties: function(maps) {
-
-        // Iterate over each of the files.
-        return Ember.get(this, &#x27;files&#x27;).filter(function(file) {
-
-            for (var property in maps) {
-
-                if (maps.hasOwnProperty(property)) {
-
-                    // If the current property doesn&#x27;t match what we&#x27;re after from the map,
-                    // then the file is invalid.
-                    if (file[property] !== maps[property]) {
-                        return false;
                     }
 
                 }
 
-            }
+                // Voila! We have a good file that matches our criteria.
+                return true;
 
-            // Voila! We have a good file that matches our criteria.
-            return true;
-
-        });
-
-    },
-
-    /**
-     * @method _getSize
-     * Determine the size of the request.
-     * @return {Number}
-     * @private
-     */
-    _getSize: function() {
-
-        var size = 0;
-
-        // Iterate over all of the files to determine the size of all valid files.
-        Ember.EnumerableUtils.forEach(Ember.get(this, &#x27;validFiles&#x27;), function(file) {
-            size += file.file.size;
-        });
-
-        return size;
-
-    },
-
-    /**
-     * @method _addSuccessListener
-     * @param request
-     * @private
-     */
-    _addSuccessListener: function(request) {
-
-        // Once the files have been successfully uploaded.
-        request.addEventListener(&#x27;load&#x27;, function() {
-
-            // Set the &#x60;uploaded&#x60; parameter to true once we&#x27;ve successfully // uploaded the files.
-            Ember.EnumerableUtils.forEach(Ember.get(this, &#x27;validFiles&#x27;), function(file) {
-                Ember.set(file, &#x27;uploaded&#x27;, true);
             });
 
-            // We want to revert the upload status.
-            Ember.set(this, &#x27;uploadStatus.uploading&#x27;, false);
+        },
 
-        }.bind(this), false);
+        /**
+         * @method _getSize
+         * Determine the size of the request.
+         * @return {Number}
+         * @private
+         */
+        _getSize: function() {
 
-    },
+            var size = 0;
 
-    /**
-     * @method _addErrorListener
-     * @param request
-     * @param [deferred = null]
-     * @return {void}
-     * @private
-     */
-    _addErrorListener: function(request, deferred) {
+            // Iterate over all of the files to determine the size of all valid files.
+            $ember.EnumerableUtils.forEach($ember.get(this, &#x27;validFiles&#x27;), function(file) {
+                size += file.file.size;
+            });
 
-        request.addEventListener(&#x27;error&#x27;, function() {
+            return size;
 
-            // As an error occurred, we need to revert everything.
-            Ember.set(this, &#x27;uploadStatus.uploading&#x27;, false);
-            Ember.set(this, &#x27;uploadStatus.error&#x27;, true);
+        },
 
-            if (deferred) {
-                // Reject the promise if we have one.
-                deferred.reject();
-            }
+        /**
+         * @method _addSuccessListener
+         * @param request
+         * @private
+         */
+        _addSuccessListener: function(request) {
 
-        }.bind(this));
+            // Once the files have been successfully uploaded.
+            request.addEventListener(&#x27;load&#x27;, function() {
 
-    },
+                // Set the &#x60;uploaded&#x60; parameter to true once we&#x27;ve successfully // uploaded the files.
+                $ember.EnumerableUtils.forEach($ember.get(this, &#x27;validFiles&#x27;), function(file) {
+                    $ember.set(file, &#x27;uploaded&#x27;, true);
+                });
 
-    /**
-     * @method _addProgressListener
-     * @param request
-     * @return {void}
-     * @private
-     */
-    _addProgressListener: function(request) {
+                // We want to revert the upload status.
+                $ember.set(this, &#x27;uploadStatus.uploading&#x27;, false);
 
-        request.addEventListener(&#x27;progress&#x27;, function (event) {
+            }.bind(this), false);
 
-            if (!event.lengthComputable) {
-                // There&#x27;s not much we can do if the request is not computable.
-                return;
-            }
+        },
 
-            // Calculate the percentage remaining.
-            var percentageLoaded = (event.loaded / this._getSize()) * 100;
-            Ember.set(this, &#x27;uploadStatus.percentComplete&#x27;, Math.round(percentageLoaded));
+        /**
+         * @method _addErrorListener
+         * @param request
+         * @param [deferred = null]
+         * @return {void}
+         * @private
+         */
+        _addErrorListener: function(request, deferred) {
 
-        }.bind(this), false);
+            request.addEventListener(&#x27;error&#x27;, function() {
 
-    },
+                // As an error occurred, we need to revert everything.
+                $ember.set(this, &#x27;uploadStatus.uploading&#x27;, false);
+                $ember.set(this, &#x27;uploadStatus.error&#x27;, true);
 
-    /**
-     * @method _addFile
-     * @param file {File}
-     * @param valid {Boolean}
-     * Adds a file based on whether it&#x27;s valid or invalid.
-     * @return {Object}
-     * @private
-     */
-    _addFile: function(file, valid) {
+                if (deferred) {
+                    // Reject the promise if we have one.
+                    deferred.reject();
+                }
 
-        // Extract the file&#x27;s extension which allows us to style accordingly.
-        var className = &#x27;extension-%@&#x27;.fmt(file.name.match(/\.(.+)$/i)[1]).toLowerCase();
+            }.bind(this));
 
-        // Create the record with its default parameters, and then add it to the collection.
-        var record = { file: file, valid: valid, uploaded: false, deleted: false, className: className };
-        Ember.get(this, &#x27;files&#x27;).pushObject(record);
+        },
 
-        // Voila!
-        return record;
+        /**
+         * @method _addProgressListener
+         * @param request
+         * @return {void}
+         * @private
+         */
+        _addProgressListener: function(request) {
 
-    }
+            request.addEventListener(&#x27;progress&#x27;, function (event) {
 
-});
+                if (!event.lengthComputable) {
+                    // There&#x27;s not much we can do if the request is not computable.
+                    return;
+                }
+
+                // Calculate the percentage remaining.
+                var percentageLoaded = (event.loaded / this._getSize()) * 100;
+                $ember.set(this, &#x27;uploadStatus.percentComplete&#x27;, Math.round(percentageLoaded));
+
+            }.bind(this), false);
+
+        },
+
+        /**
+         * @method _addFile
+         * @param file {File}
+         * @param valid {Boolean}
+         * Adds a file based on whether it&#x27;s valid or invalid.
+         * @return {Object}
+         * @private
+         */
+        _addFile: function(file, valid) {
+
+            // Extract the file&#x27;s extension which allows us to style accordingly.
+            var className = &#x27;extension-%@&#x27;.fmt(file.name.match(/\.(.+)$/i)[1]).toLowerCase();
+
+            // Create the record with its default parameters, and then add it to the collection.
+            var record = { file: file, valid: valid, uploaded: false, deleted: false, className: className };
+            $ember.get(this, &#x27;files&#x27;).pushObject(record);
+
+            // Voila!
+            return record;
+
+        }
+
+    });
+
+})(window, window.Ember, window.jQuery);
     </pre>
 </div>
 
