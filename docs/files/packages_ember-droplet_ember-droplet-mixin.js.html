@@ -228,7 +228,7 @@
 
                 // Iterate over each file, and append it to the form data.
                 $ember.EnumerableUtils.forEach($ember.get(this, &#x27;validFiles&#x27;), function(file) {
-                    formData.append(&#x27;file&#x27;, file.file);
+                    formData.append(&#x27;files&#x27;, file.file);
                 }, this);
 
                 // Add any extra POST data specified in the controller
