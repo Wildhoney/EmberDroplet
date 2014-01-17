@@ -27,7 +27,7 @@ app.options('/upload', function(request, response) {
 // Responsible for handling the file upload.
 app.post('/upload', function(request, response) {
 
-    var files       = request.files.file,
+    var files       = request.files.files,
         promises    = [];
 
     /**
