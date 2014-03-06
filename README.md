@@ -1,11 +1,11 @@
 Ember Droplet
 =============
 
-**Demo**: http://wildhoney.io/ember-droplet/example/
-
 <img src="https://api.travis-ci.org/Wildhoney/EmberDroplet.png" alt="Travis" />
 &nbsp;
 <img src="https://badge.fury.io/js/ember-droplet.png" />
+
+**Demo**: http://wildhoney.io/ember-droplet/example/
 
 Install via npm: `npm install ember-droplet`.
 
