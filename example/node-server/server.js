@@ -1,7 +1,7 @@
 var express         = require('express'),
     app             = express(),
     fileSystem      = require('fs'),
-    server          = require('http').createServer(app).listen(8888),
+    server          = require('http').createServer(app).listen(8889),
     promisedIo      = require('promised-io/promise'),
     Deferred        = promisedIo.Deferred;
 

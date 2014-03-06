@@ -12,7 +12,7 @@ App.IndexController = Ember.Controller.extend(DropletController, {
      * @type {String}
      * Path that handles the file uploads.
      */
-    dropletUrl: 'http://127.0.0.1:8888/upload',
+    dropletUrl: 'http://127.0.0.1:8889/upload',
 
     /**
      * @property mimeTypes
