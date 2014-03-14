@@ -52,7 +52,7 @@
 
             {{#each controller.validFiles}}
 
-                <div {{bindAttr class="className :file"}}>
+                <div {{bind-attr class="className :file"}}>
                     {{name}}
                     <a class="remove" {{action "deleteFile" this}}>Discard.</a>
                     {{view view.ImagePreview imageBinding="this"}}
