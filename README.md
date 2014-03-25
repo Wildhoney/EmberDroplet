@@ -62,6 +62,7 @@ App.IndexController = Ember.Controller.extend(DropletController, {
 Properties that can be defined in your controller to interact with the mixin are as follows:
 
  * `dropletUrl`: URL in which the Node.js <em>(default)</em> or Apache/Nginx server is running on;
+ * `useArray`: For Ruby/PHP scripts you need to specify an array-like name &ndash; set to `true` for those cases;
  * `mimeTypes`: Enumeration of valid MIME types. Can be appended using `concatenatedProperties` (see example);
 
 Now that your controller is using the mixin, it's time for your view to interact with your controller and its related mixin. For this we recommend using the in-built view, but it's not essential. In order to create your own, please refer to the example. The simplest way to use the in-built view is to embed it into your template.
