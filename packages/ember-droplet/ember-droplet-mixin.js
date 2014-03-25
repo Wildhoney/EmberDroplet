@@ -134,9 +134,13 @@
                 // Create a new form data instance.
                 var formData = new $window.FormData();
 
+                // Node.js is clever enough to deduce an array of images, whereas Ruby/PHP require the
+                // specifying of an array-like name.
+                var fieldName = ($ember.get(this, 'useArray', false)) ? 'file[]' : 'file';
+
                 // Iterate over each file, and append it to the form data.
                 $ember.EnumerableUtils.forEach($ember.get(this, 'validFiles'), function(file) {
-                    formData.append('files', file.file);
+                    formData.append(fieldName, file.file);
                 }, this);
 
                 // Add any extra POST data specified in the controller
