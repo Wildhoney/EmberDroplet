@@ -228,7 +228,7 @@
 
                 // Node.js is clever enough to deduce an array of images, whereas Ruby/PHP require the
                 // specifying of an array-like name.
-                var fieldName = ($ember.get(this, &#x27;useArray&#x27;, false)) ? &#x27;file[]&#x27; : &#x27;file&#x27;;
+                var fieldName = ($ember.get(this, &#x27;useArray&#x27;, true)) ? &#x27;file[]&#x27; : &#x27;file&#x27;;
 
                 // Iterate over each file, and append it to the form data.
                 $ember.EnumerableUtils.forEach($ember.get(this, &#x27;validFiles&#x27;), function(file) {

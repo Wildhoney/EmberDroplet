@@ -15,6 +15,13 @@ App.IndexController = Ember.Controller.extend(DropletController, {
     dropletUrl: 'http://127.0.0.1:8889/upload',
 
     /**
+     * @property useArray
+     * @type {Boolean}
+     * @default false
+     */
+    useArray: false,
+
+    /**
      * @property mimeTypes
      * @type {Array}
      * Specifies the valid MIME types. Can used in an additive fashion by using the
