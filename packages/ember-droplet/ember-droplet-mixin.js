@@ -159,11 +159,18 @@
                 request.onreadystatechange = function() {
 
                     if (request.readyState === 4) {
+
+                        // Parse the response!
                         var files = $window.JSON.parse(request.responseText);
                         deferred.resolve(files);
+
+                        // Invoke the `didUploadFiles` callback if it exists.
+                        $ember.tryInvoke(this, 'didUploadFiles', [files.files]);
+
                     }
 
-                };
+                }.bind(this);
+
                 // Set the request size, and then we can upload the files!
                 request.setRequestHeader('X-File-Size', this._getSize());
 

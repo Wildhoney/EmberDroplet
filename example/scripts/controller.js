@@ -28,6 +28,15 @@ App.IndexController = Ember.Controller.extend(DropletController, {
      * Apply this property if you want your MIME types above to be appended to the white-list
      * as opposed to replacing the white-list entirely.
      */
-    concatenatedProperties: ['mimeTypes']
+    concatenatedProperties: ['mimeTypes'],
+
+    /**
+     * @method didUploadFiles
+     * @param response {Object}
+     * @return {void}
+     */
+    didUploadFiles: function(response) {
+        console.log(response);
+    }
 
 });
