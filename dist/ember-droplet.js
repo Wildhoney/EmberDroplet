@@ -161,11 +161,11 @@
                     if (request.readyState === 4) {
 
                         // Parse the response!
-                        var files = $window.JSON.parse(request.responseText);
-                        deferred.resolve(files);
+                        var response = $window.JSON.parse(request.responseText);
+                        deferred.resolve(response);
 
                         // Invoke the `didUploadFiles` callback if it exists.
-                        $ember.tryInvoke(this, 'didUploadFiles', [files.files]);
+                        $ember.tryInvoke(this, 'didUploadFiles', [response]);
 
                     }
 
