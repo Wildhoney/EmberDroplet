@@ -258,9 +258,10 @@
          */
         traverseFiles: function(files) {
 
-            // Find the controller, and the &#x60;mimeTypes&#x60; property.
+            // Find the controller, and the &#x60;mimeTypes&#x60; and &#x60;extensions&#x60; property.
             var controller  = $ember.get(this, &#x27;controller&#x27;),
-                mimeTypes   = $ember.get(controller, &#x27;mimeTypes&#x27;);
+                mimeTypes   = $ember.get(controller, &#x27;mimeTypes&#x27;),
+                extensions = $ember.get(controller, &#x27;extensions&#x27;);
 
             // Assert that we have the &#x60;mineTypes&#x60; property, and that it&#x27;s an array.
             $ember.assert(&#x27;&#x60;mimeTypes&#x60; is undefined. Does your controller implement the &#x60;$emberDropletController&#x60; mixin?&#x27;, !!mimeTypes);
@@ -268,20 +269,21 @@
 
             for (var index = 0, numFiles = files.length; index &lt; numFiles; index++) {
 
-                if (!files.hasOwnProperty(index)) {
+                if (!files.hasOwnProperty(index)&amp;&amp;(!(index in files))) {
                     continue;
                 }
 
-                var file = files[index];
+                var file = files[index],
+                    fileExt = file.name.split(&#x27;.&#x27;).pop();
 
-                // Determine if the file is valid based on its MIME type.
-                if ($.inArray(file.type, mimeTypes) === -1) {
+                // Determine if the file is valid based on its MIME type or extension.
+                if (($.inArray(file.type, mimeTypes) === -1)&amp;&amp;($.inArray(fileExt, extensions) === -1)) {
                     // If it isn&#x27;t valid, then we&#x27;ll add it as an invalid file.
                     controller.send(&#x27;addInvalidFile&#x27;, file);
                     continue;
                 }
 
-                // Otherwise the file has a valid MIME type, and therefore be added as a good file.
+                // Otherwise the file has a valid MIME type or extension, and therefore be added as a good file.
                 controller.send(&#x27;addValidFile&#x27;, file);
 
             }

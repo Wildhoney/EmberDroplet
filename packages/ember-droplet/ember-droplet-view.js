@@ -166,9 +166,10 @@
          */
         traverseFiles: function(files) {
 
-            // Find the controller, and the `mimeTypes` property.
+            // Find the controller, and the `mimeTypes` and `extensions` property.
             var controller  = $ember.get(this, 'controller'),
-                mimeTypes   = $ember.get(controller, 'mimeTypes');
+                mimeTypes   = $ember.get(controller, 'mimeTypes'),
+                extensions = $ember.get(controller, 'extensions');
 
             // Assert that we have the `mineTypes` property, and that it's an array.
             $ember.assert('`mimeTypes` is undefined. Does your controller implement the `$emberDropletController` mixin?', !!mimeTypes);
@@ -176,20 +177,21 @@
 
             for (var index = 0, numFiles = files.length; index < numFiles; index++) {
 
-                if (!files.hasOwnProperty(index)) {
+                if (!files.hasOwnProperty(index)&&(!(index in files))) {
                     continue;
                 }
 
-                var file = files[index];
+                var file = files[index],
+                    fileExt = file.name.split('.').pop();
 
-                // Determine if the file is valid based on its MIME type.
-                if ($.inArray(file.type, mimeTypes) === -1) {
+                // Determine if the file is valid based on its MIME type or extension.
+                if (($.inArray(file.type, mimeTypes) === -1)&&($.inArray(fileExt, extensions) === -1)) {
                     // If it isn't valid, then we'll add it as an invalid file.
                     controller.send('addInvalidFile', file);
                     continue;
                 }
 
-                // Otherwise the file has a valid MIME type, and therefore be added as a good file.
+                // Otherwise the file has a valid MIME type or extension, and therefore be added as a good file.
                 controller.send('addValidFile', file);
 
             }

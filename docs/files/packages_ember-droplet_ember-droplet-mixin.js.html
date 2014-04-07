@@ -109,6 +109,12 @@
         mimeTypes: [&#x27;image/jpeg&#x27;, &#x27;image/jpg&#x27;, &#x27;image/gif&#x27;, &#x27;image/png&#x27;, &#x27;text/plain&#x27;],
 
         /**
+         * @property extensions
+         * @type {Array}
+         */
+        extensions: [&#x27;jpeg&#x27;, &#x27;jpg&#x27;, &#x27;gif&#x27;, &#x27;png&#x27;],
+
+        /**
          * @property requestHeaders
          * @type {Object}
          * Contains a list of headers to be included in the request made by
@@ -268,7 +274,7 @@
 
                 // Assign any request headers specified in the controller.
                 for (index in requestHeaders) {
-                    if (requestHeaders.hasOwnProperty(index)) {
+                    if ((requestHeaders.hasOwnProperty(index)) || (index in requestHeaders)) {
                         request.setRequestHeader(index, requestHeaders[index]);
                     }
                 }
@@ -332,7 +338,7 @@
 
                 for (var property in maps) {
 
-                    if (maps.hasOwnProperty(property)) {
+                    if ((maps.hasOwnProperty(property)) || (property in maps)) {
 
                         // If the current property doesn&#x27;t match what we&#x27;re after from the map,
                         // then the file is invalid.
