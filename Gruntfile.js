@@ -33,9 +33,9 @@ module.exports = function(grunt) {
                 src: ['packages/ember-droplet/*.js'],
                 options: {
                     specs: 'tests/spec.js',
-                    helpers: ['./bower_components/jquery/jquery.js',
-                              './bower_components/handlebars/handlebars.js',
-                              './bower_components/ember/ember.js']
+                    helpers: ['./example/scripts/vendor/jquery/jquery.js',
+                              './example/scripts/vendor/handlebars/handlebars.js',
+                              './example/scripts/vendor/ember/ember.js']
                 }
             }
         },
