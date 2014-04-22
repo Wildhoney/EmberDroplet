@@ -32,7 +32,9 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "grunt test"
+    "test": "grunt test",
+    "start": "node example/node-server/server.js",
+    "postinstall": "node_modules/bower/bin/bower install && node_modules/grunt-cli/bin/grunt build"
   },
   "keywords": [
     "HTML5 drag and drop",
