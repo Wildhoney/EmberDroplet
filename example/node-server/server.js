@@ -1,9 +1,12 @@
 var express         = require('express'),
     app             = express(),
     fileSystem      = require('fs'),
-    server          = require('http').createServer(app).listen(8889),
+    server          = require('http').createServer(app),
     promisedIo      = require('promised-io/promise'),
     Deferred        = promisedIo.Deferred;
+
+app.use(express.static(__dirname + '/..'));
+server.listen(process.env.PORT || 3001);
 
 // Configuration.
 app.configure(function(){

@@ -48,6 +48,17 @@ module.exports = function(grunt) {
                 src: ['packages/ember-droplet/*.js'],
                 dest: 'dist/<%= pkg.name %>.js'
             }
+        },
+        copy: {
+            main: {
+                files: [{
+                    flatten: true,
+                    src: ['packages/ember-droplet/*.js'],
+                    dest: 'example/scripts/package',
+                    expand: true,
+                    filter: 'isFile'
+                }]
+            }
         }
     });
 
@@ -56,9 +67,10 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-yuidoc');
     grunt.loadNpmTasks('grunt-contrib-jasmine');
+    grunt.loadNpmTasks('grunt-contrib-copy');
 
-    grunt.registerTask('build', ['yuidoc', 'concat', 'uglify']);
+    grunt.registerTask('build', ['yuidoc', 'concat', 'uglify', 'copy']);
     grunt.registerTask('test', ['jshint', 'jasmine']);
-    grunt.registerTask('default', ['jshint', 'jasmine', 'yuidoc', 'concat', 'uglify']);
+    grunt.registerTask('default', ['jshint', 'jasmine', 'yuidoc', 'concat', 'uglify', 'copy']);
 
 };
