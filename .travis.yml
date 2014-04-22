@@ -1,13 +1,17 @@
 language: node_js
-
 node_js:
-   - "0.8"
-
+- '0.8'
 before_script:
-  - npm -q install
-  - npm -q install -g grunt-cli
-  - npm -q install -g bower
-  - bower install
-
+- npm -q install
+- npm -q install -g grunt-cli
+- npm -q install -g bower
+- bower install
 script:
-  - grunt test
+- grunt test
+deploy:
+  provider: heroku
+  api_key:
+    secure: NVn9c9jiGiSLMcsVFuirYGjgEr5wxEs++dVOSdTUrrw1Q5dIfD1lMhzG8xVLt8WtK+nZcIIsNkVUuxPiNg3ydXzQO6W4FTYUUES6vcRfGra4sNFgn1kkdXcoZD1JwDiw1nUDYVQoB3xt4bJxXSKKocch2Wmz/B//8RRqWoj3nco=
+  app: ember-droplet
+  on:
+    repo: Wildhoney/EmberDroplet
