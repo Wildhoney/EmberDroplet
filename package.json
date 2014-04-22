@@ -35,27 +35,13 @@
     "test": "grunt test"
   },
   "keywords": [
-    "HTML5",
-    "drag",
-    "and",
-    "drop",
-    "drag",
-    "and",
-    "drop",
-    "image",
-    "upload",
-    "HTML5",
-    "file",
-    "upload",
-    "ember",
-    "drag",
-    "and",
-    "drop",
-    "ember",
-    "image",
-    "upload",
-    "ember",
-    "HTML5"
+    "HTML5 drag and drop",
+    "HTML5 drag & drop",
+    "drag and drop",
+    "drag & drop",
+    "ember image upload",
+    "ember drag and drop",
+    "ember drag & drop"
   ],
   "license": "MIT"
 }
