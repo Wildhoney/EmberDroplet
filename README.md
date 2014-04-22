@@ -5,7 +5,7 @@ Ember Droplet
 &nbsp;
 <img src="https://badge.fury.io/js/ember-droplet.png" />
 
-**Demo**: http://wildhoney.io/ember-droplet/example/
+**Demo**: http://ember-droplet.herokuapp.com/
 
 Install via npm: `npm install ember-droplet`.
 
