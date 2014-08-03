@@ -3,7 +3,7 @@ Ember Droplet
 
 [![Build Status](https://travis-ci.org/Wildhoney/EmberDroplet.svg?branch=master)](https://travis-ci.org/Wildhoney/EmberDroplet)
 &nbsp;
-<img src="https://badge.fury.io/js/ember-droplet.png" />
+[![NPM version](https://badge.fury.io/js/ember-droplet.svg)](http://badge.fury.io/js/ember-droplet)
 
 **Demo**: http://droplet.wildhoney.io/
 
