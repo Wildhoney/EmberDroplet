@@ -1,7 +1,7 @@
 Ember Droplet
 =============
 
-<img src="https://api.travis-ci.org/Wildhoney/EmberDroplet.png" alt="Travis" />
+[![Build Status](https://travis-ci.org/Wildhoney/EmberDroplet.svg?branch=master)](https://travis-ci.org/Wildhoney/EmberDroplet)
 &nbsp;
 <img src="https://badge.fury.io/js/ember-droplet.png" />
 
