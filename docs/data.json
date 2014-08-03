@@ -192,7 +192,7 @@
             "name": "deleteFile",
             "params": [
                 {
-                    "name": "file!~YUIDOC_LINE~!Deletes",
+                    "name": "file\nDeletes",
                     "description": "a file from the collection."
                 }
             ],
