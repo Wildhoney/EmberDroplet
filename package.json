@@ -4,7 +4,7 @@
   "author": "Adam Timberlake",
   "dependencies": {
     "bower": "^1.2.8",
-    "express": "^3.15.2",
+    "express": "^3.16.6",
     "grunt": "~0.4.1",
     "grunt-cli": "~0.1.13",
     "grunt-contrib-concat": "^0.3.0",
