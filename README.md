@@ -9,6 +9,8 @@ Ember Droplet
 
 Install via npm: `npm install ember-droplet`.
 
+[See this comment](https://github.com/Wildhoney/EmberDroplet/issues/36#issuecomment-50809709) for installing for Ember CLI.
+
 Ember Droplet allows HTML5 drag and drop functionality in Ember straight out-of-the-box. Its philosophy is that it doesn't
 impose anything, and instead allows each individual developer to decide how it should work. I've provided a view &ndash; `DropletView`
 that you're free to use in your views. However, most of the functionality exists in the controller mixin &ndash; `DropletController`).
