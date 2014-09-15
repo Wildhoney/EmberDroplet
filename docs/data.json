@@ -507,7 +507,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-view.js",
-            "line": 122,
+            "line": 124,
             "itemtype": "property",
             "name": "file",
             "type": "{String}",
@@ -517,7 +517,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-view.js",
-            "line": 129,
+            "line": 131,
             "itemtype": "property",
             "name": "multiple",
             "type": "{String}",
@@ -527,7 +527,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-view.js",
-            "line": 136,
+            "line": 138,
             "itemtype": "method",
             "name": "change\nInvoked when the content of the INPUT changes.",
             "return": {
@@ -539,7 +539,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-view.js",
-            "line": 148,
+            "line": 150,
             "itemtype": "method",
             "name": "drop",
             "params": [
@@ -563,7 +563,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-view.js",
-            "line": 160,
+            "line": 162,
             "itemtype": "method",
             "name": "traverseFiles",
             "params": [
@@ -582,7 +582,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-view.js",
-            "line": 203,
+            "line": 205,
             "itemtype": "method",
             "name": "_preventDefaultBehaviour",
             "params": [
@@ -603,7 +603,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-view.js",
-            "line": 215,
+            "line": 217,
             "itemtype": "method",
             "name": "dragOver",
             "params": [
@@ -622,7 +622,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-view.js",
-            "line": 224,
+            "line": 226,
             "itemtype": "method",
             "name": "dragEnter",
             "params": [
@@ -641,7 +641,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-view.js",
-            "line": 233,
+            "line": 235,
             "itemtype": "method",
             "name": "dragLeave",
             "params": [
