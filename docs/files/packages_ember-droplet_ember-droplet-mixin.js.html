@@ -115,26 +115,29 @@
         extensions: [&#x27;jpeg&#x27;, &#x27;jpg&#x27;, &#x27;gif&#x27;, &#x27;png&#x27;],
 
         /**
-         * @property requestHeaders
-         * @type {Object}
          * Contains a list of headers to be included in the request made by
          * uploadAllFiles()
+         *
+         * @property requestHeaders
+         * @type {Object}
          */
         requestHeaders: {},
 
         /**
-         * @property postData
-         * @type {Object}
          * Contains a dictionary of extra POST data to be included in the
          * request made by uploadAllFiles()
+         *
+         * @property postData
+         * @type {Object}
          */
         postData: {},
 
         /**
+         * Contains a list of files, both valid, deleted, and invalid.
+         *
          * @property files
          * @type {Array}
          * @default []
-         * Contains a list of files, both valid, deleted, and invalid.
          */
         files: [],
 
@@ -145,9 +148,10 @@
         uploadStatus: { uploading: false, percentComplete: 0, error: false },
 
         /**
+         * Clears the file array for each instantiation.
+         *
          * @constructor
          * @method init
-         * Clears the file array for each instantiation.
          * @return {void}
          */
         init: function() {
@@ -162,9 +166,10 @@
         actions: {
 
             /**
+             * Adds a valid file to the collection.
+             *
              * @method addValidFile
              * @param file {File}
-             * Adds a valid file to the collection.
              * @return {Object}
              */
             addValidFile: function(file) {
@@ -172,9 +177,10 @@
             },
 
             /**
+             * Adds an invalid file to the collection.
+             *
              * @method addInvalidFile
              * @param file {File}
-             * Adds an invalid file to the collection.
              * @return {Object}
              */
             addInvalidFile: function(file) {
@@ -182,9 +188,10 @@
             },
 
             /**
+             * Deletes a file from the collection.
+             *
              * @method deleteFile
              * @param file
-             * Deletes a file from the collection.
              * @return {Object}
              */
             deleteFile: function(file) {
@@ -193,8 +200,9 @@
             },
 
             /**
-             * @method clearAllFiles
              * Clears all of the files from the collection.
+             *
+             * @method clearAllFiles
              * @return {void}
              */
             clearAllFiles: function() {
@@ -202,11 +210,21 @@
             },
 
             /**
-             * @method uploadAllFiles
              * Uploads all of the files that haven&#x27;t been uploaded yet, but are valid files.
+             *
+             * @method uploadAllFiles
              * @return {Object|Boolean} jQuery promise, or false if there are no files to upload.
              */
             uploadAllFiles: function() {
+
+                /**
+                 * @property defaultOptions
+                 * @type {Object}
+                 */
+                var defaultOptions = {
+                    fileSizeHeader: true,
+                    useArray: true
+                };
 
                 if ($ember.get(this, &#x27;validFiles&#x27;).length === 0) {
                     // Determine if there are even files to upload.
@@ -215,6 +233,7 @@
 
                 // Find the URL, set the uploading status, and create our promise.
                 var url             = $ember.get(this, &#x27;dropletUrl&#x27;),
+                    options         = $ember.get(this, &#x27;dropletOptions&#x27;) || defaultOptions,
                     deferred        = new $jQuery.Deferred(),
                     postData        = this.get(&#x27;postData&#x27;),
                     requestHeaders  = this.get(&#x27;requestHeaders&#x27;);
@@ -234,7 +253,7 @@
 
                 // Node.js is clever enough to deduce an array of images, whereas Ruby/PHP require the
                 // specifying of an array-like name.
-                var fieldName = ($ember.get(this, &#x27;useArray&#x27;, true)) ? &#x27;file[]&#x27; : &#x27;file&#x27;;
+                var fieldName = options.useArray ? &#x27;file[]&#x27; : &#x27;file&#x27;;
 
                 // Iterate over each file, and append it to the form data.
                 $ember.EnumerableUtils.forEach($ember.get(this, &#x27;validFiles&#x27;), function(file) {
@@ -269,8 +288,12 @@
 
                 }.bind(this);
 
-                // Set the request size, and then we can upload the files!
-                request.setRequestHeader(&#x27;X-File-Size&#x27;, this._getSize());
+                if (options.fileSizeHeader) {
+
+                    // Set the request size, and then we can upload the files!
+                    request.setRequestHeader(&#x27;X-File-Size&#x27;, this._getSize());
+
+                }
 
                 // Assign any request headers specified in the controller.
                 for (index in requestHeaders) {
@@ -289,8 +312,9 @@
         },
 
         /**
-         * @property validFiles
          * Finds a list of files that aren&#x27;t deleted, and are of a valid MIME type.
+         *
+         * @property validFiles
          * @return {Array}
          */
         validFiles: $ember.computed(function() {
@@ -298,8 +322,9 @@
         }).property(&#x27;files.length&#x27;, &#x27;files.@each.deleted&#x27;, &#x27;files.@each.uploaded&#x27;),
 
         /**
-         * @property invalidFiles
          * Finds a list of files that have an unsupported MIME type.
+         *
+         * @property invalidFiles
          * @return {Array}
          */
         invalidFiles: $ember.computed(function() {
@@ -307,8 +332,9 @@
         }).property(&#x27;files.length&#x27;, &#x27;files.@each.deleted&#x27;),
 
         /**
-         * @property uploadedFiles
          * Finds a list of files that have been successfully uploaded.
+         *
+         * @property uploadedFiles
          * @return {Array}
          */
         uploadedFiles: $ember.computed(function() {
@@ -316,8 +342,9 @@
         }).property(&#x27;files.length&#x27;, &#x27;files.@each.uploaded&#x27;),
 
         /**
-         * @property deletedFiles
          * Finds a list of files that have been deleted by the user.
+         *
+         * @property deletedFiles
          * @return {Array}
          */
         deletedFiles: $ember.computed(function() {
@@ -325,9 +352,10 @@
         }).property(&#x27;files.length&#x27;, &#x27;files.@each.deleted&#x27;),
 
         /**
+         * Accepts a map of properties that each file must have.
+         *
          * @method _filesByProperties
          * @param maps {Object}
-         * Accepts a map of properties that each file must have.
          * @return {Array}
          * @private
          */
@@ -358,8 +386,9 @@
         },
 
         /**
-         * @method _getSize
          * Determine the size of the request.
+         *
+         * @method _getSize
          * @return {Number}
          * @private
          */
@@ -446,10 +475,11 @@
         },
 
         /**
+         * Adds a file based on whether it&#x27;s valid or invalid.
+         *
          * @method _addFile
          * @param file {File}
          * @param valid {Boolean}
-         * Adds a file based on whether it&#x27;s valid or invalid.
          * @return {Object}
          * @private
          */

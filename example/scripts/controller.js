@@ -8,32 +8,37 @@
 App.IndexController = Ember.Controller.extend(DropletController, {
 
     /**
+     * Path that handles the file uploads.
+     *
      * @property dropletUrl
      * @type {String}
-     * Path that handles the file uploads.
      */
     dropletUrl: 'upload',
 
     /**
-     * @property useArray
-     * @type {Boolean}
-     * @default false
+     * @property dropletOptions
+     * @type {Object}
      */
-    useArray: false,
+    dropletOptions: {
+        fileSizeHeader: true,
+        useArray: false
+    },
 
     /**
-     * @property mimeTypes
-     * @type {Array}
      * Specifies the valid MIME types. Can used in an additive fashion by using the
      * property below.
+     *
+     * @property mimeTypes
+     * @type {Array}
      */
     mimeTypes: ['image/bmp'],
 
     /**
-     * @property concatenatedProperties
-     * @type {Array}
      * Apply this property if you want your MIME types above to be appended to the white-list
      * as opposed to replacing the white-list entirely.
+     *
+     * @property concatenatedProperties
+     * @type {Array}
      */
     concatenatedProperties: ['mimeTypes'],
 

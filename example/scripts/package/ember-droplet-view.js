@@ -118,7 +118,7 @@
              * @type {Array}
              */
             attributeBindings: ['name', 'type', 'multiple'],
-            
+
             /**
              * @property file
              * @type {String}
