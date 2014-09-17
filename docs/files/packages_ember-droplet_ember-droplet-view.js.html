@@ -95,6 +95,66 @@
     &quot;use strict&quot;;
 
     /**
+     * @property MultipleInput
+     * @type {Object}
+     */
+    var MultipleInput = {
+
+        /**
+         * @property tagName
+         * @type {String}
+         * @default &quot;input&quot;
+         */
+        tagName: &#x27;input&#x27;,
+
+        /**
+         * @property classNames
+         * @type {String}
+         * @default &quot;files&quot;
+         */
+        classNames: &#x27;files&#x27;,
+
+        /**
+         * @property attributeBindings
+         * @type {Array}
+         */
+        attributeBindings: [&#x27;name&#x27;, &#x27;type&#x27;, &#x27;multiple&#x27;],
+
+        /**
+         * @property file
+         * @type {String}
+         * @default &quot;file&quot;
+         */
+        type: &#x27;file&#x27;,
+
+        /**
+         * @property multiple
+         * @type {String}
+         * @default &quot;multiple&quot;
+         */
+        multiple: &#x27;multiple&#x27;,
+
+        /**
+         * Invoked when the content of the INPUT changes.
+         *
+         * @method change
+         * @return {Boolean}
+         */
+        change: function() {
+            var files = this.get(&#x27;element&#x27;).files;
+            return this.get(&#x27;parentView&#x27;).traverseFiles(files);
+        }
+
+    };
+
+    /**
+     * @property SingleInput
+     * @type {Object}
+     */
+    var SingleInput      = $ember.copy(MultipleInput);
+    SingleInput.multiple = false;
+
+    /**
      * @module App
      * @class DropletView
      * @type Ember.View
@@ -144,8 +204,9 @@
             image: null,
 
             /**
-             * @method didInsertElement
              * Invoked when the view is inserted into the DOM.
+             *
+             * @method didInsertElement
              * @return {void}
              */
             didInsertElement: function() {
@@ -189,59 +250,20 @@
          * @property MultipleInput
          * @type {Ember.View}
          */
-        MultipleInput: $ember.View.extend({
-
-            /**
-             * @property tagName
-             * @type {String}
-             * @default &quot;input&quot;
-             */
-            tagName: &#x27;input&#x27;,
-
-            /**
-             * @property classNames
-             * @type {String}
-             * @default &quot;files&quot;
-             */
-            classNames: &#x27;files&#x27;,
-
-            /**
-             * @property attributeBindings
-             * @type {Array}
-             */
-            attributeBindings: [&#x27;name&#x27;, &#x27;type&#x27;, &#x27;multiple&#x27;],
-
-            /**
-             * @property file
-             * @type {String}
-             * @default &quot;file&quot;
-             */
-            type: &#x27;file&#x27;,
-
-            /**
-             * @property multiple
-             * @type {String}
-             * @default &quot;multiple&quot;
-             */
-            multiple: &#x27;multiple&#x27;,
-
-            /**
-             * @method change
-             * Invoked when the content of the INPUT changes.
-             * @return {Boolean}
-             */
-            change: function() {
-                var files = this.get(&#x27;element&#x27;).files;
-                return this.get(&#x27;parentView&#x27;).traverseFiles(files);
-            }
-
-        }),
+        MultipleInput: $ember.View.extend(MultipleInput),
 
         /**
+         * @property SingleInput
+         * @type {Ember.View}
+         */
+        SingleInput: $ember.View.extend(SingleInput),
+
+        /**
+         * Invoked when the user drops a file onto the droppable area.
+         *
          * @method drop
          * @param event {jQuery.Event}
          * @param [files = []] {Array}
-         * Invoked when the user drops a file onto the droppable area.
          * @return {Boolean}
          */
         drop: function(event, files) {
@@ -250,10 +272,11 @@
         },
 
         /**
-         * @method traverseFiles
-         * @param files {FileList}
          * Accepts a FileList object, and traverses them to determine if they&#x27;re valid, adding them
          * as either valid or invalid.
+         *
+         * @method traverseFiles
+         * @param files {FileList}
          * @return {boolean}
          */
         traverseFiles: function(files) {
@@ -261,26 +284,33 @@
             // Find the controller, and the &#x60;mimeTypes&#x60; and &#x60;extensions&#x60; property.
             var controller  = $ember.get(this, &#x27;controller&#x27;),
                 mimeTypes   = $ember.get(controller, &#x27;mimeTypes&#x27;),
-                extensions = $ember.get(controller, &#x27;extensions&#x27;);
+                extensions  = $ember.get(controller, &#x27;extensions&#x27;),
+                options     = $ember.get(controller, &#x27;dropletOptions&#x27;) || { limit: Infinity };
 
-            // Assert that we have the &#x60;mineTypes&#x60; property, and that it&#x27;s an array.
+            // Assert that we have the &#x60;mimeTypes&#x60; property, and that it&#x27;s an array.
             $ember.assert(&#x27;&#x60;mimeTypes&#x60; is undefined. Does your controller implement the &#x60;$emberDropletController&#x60; mixin?&#x27;, !!mimeTypes);
             $ember.assert(&#x27;&#x60;mimeTypes&#x60; is not an array. It should be an array of valid MIME types.&#x27;, !!$ember.isArray(mimeTypes));
 
             for (var index = 0, numFiles = files.length; index &lt; numFiles; index++) {
 
-                if (!files.hasOwnProperty(index)&amp;&amp;(!(index in files))) {
+                if (!files.hasOwnProperty(index) &amp;&amp; (!(index in files))) {
                     continue;
                 }
 
-                var file = files[index],
+                var file    = files[index],
                     fileExt = file.name.split(&#x27;.&#x27;).pop();
 
-                // Determine if the file is valid based on its MIME type or extension.
-                if (($.inArray(file.type, mimeTypes) === -1)&amp;&amp;($.inArray(fileExt, extensions) === -1)) {
+                // Determine if the file is valid based on its MIME type or extension, and we haven&#x27;t exceeded
+                // the user defined limit for the amount of files to upload in one go.
+                var invalidMime   = ($.inArray(file.type, mimeTypes) === -1) &amp;&amp; ($.inArray(fileExt, extensions) === -1),
+                    currentLength = $ember.get(controller, &#x27;validFiles&#x27;).length;
+
+                if (invalidMime || currentLength === options.limit) {
+
                     // If it isn&#x27;t valid, then we&#x27;ll add it as an invalid file.
                     controller.send(&#x27;addInvalidFile&#x27;, file);
                     continue;
+
                 }
 
                 // Otherwise the file has a valid MIME type or extension, and therefore be added as a good file.
@@ -293,9 +323,10 @@
         },
 
         /**
+         * Prevents default behaviour and propagation on nodes where it&#x27;s undesirable.
+         *
          * @method _preventDefaultBehaviour
          * @param event {jQuery.Event}
-         * Prevents default behaviour and propagation on nodes where it&#x27;s undesirable.
          * @return {void}
          * @private
          */
