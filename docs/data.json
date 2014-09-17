@@ -376,7 +376,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 364,
+            "line": 366,
             "itemtype": "method",
             "name": "_addProgressListener",
             "params": [
@@ -396,7 +396,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 387,
+            "line": 391,
             "description": "Adds a file based on whether it's valid or invalid.",
             "itemtype": "method",
             "name": "_addFile",

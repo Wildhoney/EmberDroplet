@@ -348,14 +348,16 @@
 
             request.addEventListener('error', function() {
 
-                // As an error occurred, we need to revert everything.
-                $ember.set(this, 'uploadStatus.uploading', false);
-                $ember.set(this, 'uploadStatus.error', true);
+                Ember.run(function() {
+                    // As an error occurred, we need to revert everything.
+                    $ember.set(this, 'uploadStatus.uploading', false);
+                    $ember.set(this, 'uploadStatus.error', true);
 
-                if (deferred) {
-                    // Reject the promise if we have one.
-                    deferred.reject();
-                }
+                    if (deferred) {
+                        // Reject the promise if we have one.
+                        deferred.reject();
+                    }
+                }.bind(this));
 
             }.bind(this));
 
@@ -371,14 +373,16 @@
 
             request.addEventListener('progress', function (event) {
 
-                if (!event.lengthComputable) {
-                    // There's not much we can do if the request is not computable.
-                    return;
-                }
+                Ember.run(function() {
+                    if (!event.lengthComputable) {
+                        // There's not much we can do if the request is not computable.
+                        return;
+                    }
 
-                // Calculate the percentage remaining.
-                var percentageLoaded = (event.loaded / this._getSize()) * 100;
-                $ember.set(this, 'uploadStatus.percentComplete', Math.round(percentageLoaded));
+                    // Calculate the percentage remaining.
+                    var percentageLoaded = (event.loaded / this._getSize()) * 100;
+                    $ember.set(this, 'uploadStatus.percentComplete', Math.round(percentageLoaded));
+                }.bind(this));
 
             }.bind(this), false);
 

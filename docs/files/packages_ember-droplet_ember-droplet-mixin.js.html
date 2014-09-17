@@ -440,14 +440,16 @@
 
             request.addEventListener(&#x27;error&#x27;, function() {
 
-                // As an error occurred, we need to revert everything.
-                $ember.set(this, &#x27;uploadStatus.uploading&#x27;, false);
-                $ember.set(this, &#x27;uploadStatus.error&#x27;, true);
+                Ember.run(function() {
+                    // As an error occurred, we need to revert everything.
+                    $ember.set(this, &#x27;uploadStatus.uploading&#x27;, false);
+                    $ember.set(this, &#x27;uploadStatus.error&#x27;, true);
 
-                if (deferred) {
-                    // Reject the promise if we have one.
-                    deferred.reject();
-                }
+                    if (deferred) {
+                        // Reject the promise if we have one.
+                        deferred.reject();
+                    }
+                }.bind(this));
 
             }.bind(this));
 
@@ -463,14 +465,16 @@
 
             request.addEventListener(&#x27;progress&#x27;, function (event) {
 
-                if (!event.lengthComputable) {
-                    // There&#x27;s not much we can do if the request is not computable.
-                    return;
-                }
+                Ember.run(function() {
+                    if (!event.lengthComputable) {
+                        // There&#x27;s not much we can do if the request is not computable.
+                        return;
+                    }
 
-                // Calculate the percentage remaining.
-                var percentageLoaded = (event.loaded / this._getSize()) * 100;
-                $ember.set(this, &#x27;uploadStatus.percentComplete&#x27;, Math.round(percentageLoaded));
+                    // Calculate the percentage remaining.
+                    var percentageLoaded = (event.loaded / this._getSize()) * 100;
+                    $ember.set(this, &#x27;uploadStatus.percentComplete&#x27;, Math.round(percentageLoaded));
+                }.bind(this));
 
             }.bind(this), false);
 
