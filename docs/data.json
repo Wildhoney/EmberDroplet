@@ -226,6 +226,19 @@
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
             "line": 120,
+            "description": "Aborts the current upload",
+            "itemtype": "method",
+            "name": "abortUpload",
+            "return": {
+                "description": "returns true if it aborted successfully, return false if there are no files to upload.",
+                "type": "Boolean"
+            },
+            "class": "EmberDropletController",
+            "module": "App"
+        },
+        {
+            "file": "packages/ember-droplet/ember-droplet-mixin.js",
+            "line": 135,
             "description": "Uploads all of the files that haven't been uploaded yet, but are valid files.",
             "itemtype": "method",
             "name": "uploadAllFiles",
@@ -238,7 +251,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 128,
+            "line": 143,
             "itemtype": "property",
             "name": "defaultOptions",
             "type": "{Object}",
@@ -247,7 +260,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 222,
+            "line": 238,
             "description": "Finds a list of files that aren't deleted, and are of a valid MIME type.",
             "itemtype": "property",
             "name": "validFiles",
@@ -260,7 +273,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 232,
+            "line": 248,
             "description": "Finds a list of files that have an unsupported MIME type.",
             "itemtype": "property",
             "name": "invalidFiles",
@@ -273,7 +286,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 242,
+            "line": 258,
             "description": "Finds a list of files that have been successfully uploaded.",
             "itemtype": "property",
             "name": "uploadedFiles",
@@ -286,7 +299,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 252,
+            "line": 268,
             "description": "Finds a list of files that have been deleted by the user.",
             "itemtype": "property",
             "name": "deletedFiles",
@@ -299,7 +312,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 262,
+            "line": 278,
             "description": "Accepts a map of properties that each file must have.",
             "itemtype": "method",
             "name": "_filesByProperties",
@@ -321,7 +334,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 296,
+            "line": 312,
             "description": "Determine the size of the request.",
             "itemtype": "method",
             "name": "_getSize",
@@ -336,7 +349,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 316,
+            "line": 332,
             "itemtype": "method",
             "name": "_addSuccessListener",
             "params": [
@@ -352,7 +365,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 340,
+            "line": 356,
             "itemtype": "method",
             "name": "_addErrorListener",
             "params": [
@@ -376,7 +389,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 366,
+            "line": 382,
             "itemtype": "method",
             "name": "_addProgressListener",
             "params": [
@@ -396,7 +409,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 391,
+            "line": 407,
             "description": "Adds a file based on whether it's valid or invalid.",
             "itemtype": "method",
             "name": "_addFile",
