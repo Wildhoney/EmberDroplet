@@ -429,8 +429,7 @@
 
     });
 
-})(window, window.Ember, window.jQuery);
-;(function($window, $ember) {
+})(window, window.Ember, window.jQuery);;(function($window, $ember) {
 
     "use strict";
 
