@@ -210,6 +210,21 @@
             },
 
             /**
+             * Aborts the current upload
+             *
+             * @method abortUpload
+             * @return {Boolean} returns true if it aborted successfully, return false if there are no files to upload.
+             */
+            abortUpload: function() {
+              var request = $ember.get(this, &#x27;lastRequest&#x27;);
+
+              if (request) {
+                request.abort();
+                $ember.set(this, &#x27;uploadStatus.uploading&#x27;, false);
+              }
+            },
+
+            /**
              * Uploads all of the files that haven&#x27;t been uploaded yet, but are valid files.
              *
              * @method uploadAllFiles
@@ -246,6 +261,7 @@
 
                 // Create a new XHR request object.
                 var request = new $window.XMLHttpRequest();
+                $ember.set(this, &#x27;lastRequest&#x27;, request);
                 request.open(&#x27;post&#x27;, url, true);
 
                 // Create a new form data instance.
@@ -275,7 +291,7 @@
                 // Resolve the promise when we&#x27;ve finished uploading all the files.
                 request.onreadystatechange = function() {
 
-                    if (request.readyState === 4) {
+                    if (request.readyState === 4 &amp;&amp; request.status !== 0) {
                         Ember.run(function() {
                             // Parse the response!
                             var response = $window.JSON.parse(request.responseText);
@@ -506,6 +522,7 @@
     });
 
 })(window, window.Ember, window.jQuery);
+
     </pre>
 </div>
 
