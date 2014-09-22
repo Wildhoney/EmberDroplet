@@ -218,7 +218,7 @@
             abortUpload: function() {
               var request = $ember.get(this, &#x27;lastRequest&#x27;);
 
-              if (request) {
+              if (request &amp;&amp; $ember.get(this, &#x27;uploadStatus.uploading&#x27;)) {
                 request.abort();
                 $ember.set(this, &#x27;uploadStatus.uploading&#x27;, false);
               }
@@ -522,6 +522,7 @@
     });
 
 })(window, window.Ember, window.jQuery);
+
     </pre>
 </div>
 

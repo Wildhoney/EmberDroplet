@@ -59,6 +59,35 @@ describe('Ember Crossfilter', function() {
             expect(Ember.get(controller, 'deletedFiles.length')).toEqual(0);
         });
 
+        it('Can clear all files from the list', function() {
+            controller.send('clearAllFiles');
+            expect(Ember.get(controller, 'files.length')).toEqual(0);
+            expect(Ember.get(controller, 'validFiles.length')).toEqual(0);
+            expect(Ember.get(controller, 'invalidFiles.length')).toEqual(0);
+            expect(Ember.get(controller, 'uploadedFiles.length')).toEqual(0);
+            expect(Ember.get(controller, 'deletedFiles.length')).toEqual(0);
+        });
+
+        it('does not attempt to abort when there is no upload', function() {
+            var requestSpy = jasmine.createSpyObj('request', ['abort'])
+            Ember.set(controller, 'uploadStatus.uploading', false);
+            Ember.set(controller, 'lastRequest', requestSpy);
+            controller.send('abortUpload');
+
+            expect(Ember.get(controller, 'uploadStatus.uploading')).toEqual(false);
+            expect(requestSpy.abort).not.toHaveBeenCalled();
+        });
+
+        it('Can abort an upload', function() {
+            var requestSpy = jasmine.createSpyObj('request', ['abort'])
+            Ember.set(controller, 'uploadStatus.uploading', true);
+            Ember.set(controller, 'lastRequest', requestSpy);
+            controller.send('abortUpload');
+
+            expect(Ember.get(controller, 'uploadStatus.uploading')).toEqual(false);
+            expect(requestSpy.abort).toHaveBeenCalled();
+        });
+
     });
 
     describe('View', function() {
