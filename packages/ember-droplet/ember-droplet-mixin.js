@@ -53,7 +53,7 @@
          * @property uploadStatus
          * @type {Object}
          */
-        uploadStatus: Ember.computed(function() {
+        uploadStatus: $ember.computed(function() {
           return { uploading: false, percentComplete: 0, error: false };
         }),
 
@@ -199,7 +199,7 @@
                 this._addErrorListener(request.upload, deferred);
 
                 // Resolve the promise when we've finished uploading all the files.
-                request.onreadystatechange = Ember.run.bind(this, function() {
+                request.onreadystatechange = $ember.run.bind(this, function() {
                     if (request.readyState === 4 && request.status !== 0) {
                         // Parse the response!
                         var response = $window.JSON.parse(request.responseText);
@@ -335,7 +335,7 @@
         _addSuccessListener: function(request) {
 
             // Once the files have been successfully uploaded.
-            request.onload = Ember.run.bind(this, function() {
+            request.onload = $ember.run.bind(this, function() {
                 // Set the `uploaded` parameter to true once we've successfully // uploaded the files.
                 $ember.EnumerableUtils.forEach($ember.get(this, 'validFiles'), function(file) {
                     $ember.set(file, 'uploaded', true);
@@ -356,7 +356,7 @@
          */
         _addErrorListener: function(request, deferred) {
 
-            request.onerror = Ember.run.bind(this, function() {
+            request.onerror = $ember.run.bind(this, function() {
                 // As an error occurred, we need to revert everything.
                 $ember.set(this, 'uploadStatus.uploading', false);
                 $ember.set(this, 'uploadStatus.error', true);
