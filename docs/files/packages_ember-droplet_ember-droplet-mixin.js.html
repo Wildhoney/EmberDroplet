@@ -291,20 +291,16 @@
                 this._addErrorListener(request.upload, deferred);
 
                 // Resolve the promise when we&#x27;ve finished uploading all the files.
-                request.onreadystatechange = function() {
-
+                request.onreadystatechange = Ember.run.bind(this, function() {
                     if (request.readyState === 4 &amp;&amp; request.status !== 0) {
-                        Ember.run(function() {
-                            // Parse the response!
-                            var response = $window.JSON.parse(request.responseText);
-                            deferred.resolve(response);
+                        // Parse the response!
+                        var response = $window.JSON.parse(request.responseText);
+                        deferred.resolve(response);
 
-                            // Invoke the &#x60;didUploadFiles&#x60; callback if it exists.
-                            $ember.tryInvoke(this, &#x27;didUploadFiles&#x27;, [response]);
-                        }.bind(this));
+                        // Invoke the &#x60;didUploadFiles&#x60; callback if it exists.
+                        $ember.tryInvoke(this, &#x27;didUploadFiles&#x27;, [response]);
                     }
-
-                }.bind(this);
+                });
 
                 if (options.fileSizeHeader) {
 
@@ -431,19 +427,15 @@
         _addSuccessListener: function(request) {
 
             // Once the files have been successfully uploaded.
-            request.addEventListener(&#x27;load&#x27;, function() {
+            request.onload = Ember.run.bind(this, function() {
+                // Set the &#x60;uploaded&#x60; parameter to true once we&#x27;ve successfully // uploaded the files.
+                $ember.EnumerableUtils.forEach($ember.get(this, &#x27;validFiles&#x27;), function(file) {
+                    $ember.set(file, &#x27;uploaded&#x27;, true);
+                });
 
-                Ember.run(function() {
-                    // Set the &#x60;uploaded&#x60; parameter to true once we&#x27;ve successfully // uploaded the files.
-                    $ember.EnumerableUtils.forEach($ember.get(this, &#x27;validFiles&#x27;), function(file) {
-                        $ember.set(file, &#x27;uploaded&#x27;, true);
-                    });
-
-                    // We want to revert the upload status.
-                    $ember.set(this, &#x27;uploadStatus.uploading&#x27;, false);
-                }.bind(this));
-
-            }.bind(this), false);
+                // We want to revert the upload status.
+                $ember.set(this, &#x27;uploadStatus.uploading&#x27;, false);
+            });
 
         },
 
@@ -456,20 +448,16 @@
          */
         _addErrorListener: function(request, deferred) {
 
-            request.addEventListener(&#x27;error&#x27;, function() {
+            request.onerror = Ember.run.bind(this, function() {
+                // As an error occurred, we need to revert everything.
+                $ember.set(this, &#x27;uploadStatus.uploading&#x27;, false);
+                $ember.set(this, &#x27;uploadStatus.error&#x27;, true);
 
-                Ember.run(function() {
-                    // As an error occurred, we need to revert everything.
-                    $ember.set(this, &#x27;uploadStatus.uploading&#x27;, false);
-                    $ember.set(this, &#x27;uploadStatus.error&#x27;, true);
-
-                    if (deferred) {
-                        // Reject the promise if we have one.
-                        deferred.reject();
-                    }
-                }.bind(this));
-
-            }.bind(this));
+                if (deferred) {
+                    // Reject the promise if we have one.
+                    deferred.reject();
+                }
+            });
 
         },
 
@@ -481,20 +469,16 @@
          */
         _addProgressListener: function(request) {
 
-            request.addEventListener(&#x27;progress&#x27;, function (event) {
+            request.onprogress = $ember.run.bind(this, function(event) {
+                if (!event.lengthComputable) {
+                    // There&#x27;s not much we can do if the request is not computable.
+                    return;
+                }
 
-                Ember.run(function() {
-                    if (!event.lengthComputable) {
-                        // There&#x27;s not much we can do if the request is not computable.
-                        return;
-                    }
-
-                    // Calculate the percentage remaining.
-                    var percentageLoaded = (event.loaded / this._getSize()) * 100;
-                    $ember.set(this, &#x27;uploadStatus.percentComplete&#x27;, Math.round(percentageLoaded));
-                }.bind(this));
-
-            }.bind(this), false);
+                // Calculate the percentage remaining.
+                var percentageLoaded = (event.loaded / this._getSize()) * 100;
+                $ember.set(this, &#x27;uploadStatus.percentComplete&#x27;, Math.round(percentageLoaded));
+            });
 
         },
 
