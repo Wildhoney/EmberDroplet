@@ -16,7 +16,8 @@
     "promised-io": "~0.3.4"
   },
   "devDependencies": {
-    "grunt": "~0.4.1"
+    "grunt": "~0.4.1",
+    "grunt-bower-install": "^1.6.0"
   },
   "repository": {
     "type": "git",
