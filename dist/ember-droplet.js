@@ -444,7 +444,7 @@
          * @property attributeBindings
          * @type {Array}
          */
-        attributeBindings: ['name', 'type', 'multiple'],
+        attributeBindings: ['disabled', 'name', 'type', 'multiple'],
 
         /**
          * @property file
@@ -552,7 +552,7 @@
                 }
 
                 // Invoked when the image preview has been loaded.
-                reader.onload = function (event) {
+                reader.onload = $ember.run.bind(this, function (event) {
 
                     if (this.get('isDestroyed') === true) {
                         // If the view has already been destroyed, then we can't
@@ -563,7 +563,7 @@
                     // Otherwise we're free to set the SRC attribute to the image's data.
                     $ember.set(this, 'src', event.target.result);
 
-                }.bind(this);
+                });
 
                 // Begin the reading of the image.
                 reader.readAsDataURL(image);
