@@ -26,7 +26,7 @@
          * @property attributeBindings
          * @type {Array}
          */
-        attributeBindings: ['name', 'type', 'multiple'],
+        attributeBindings: ['disabled', 'name', 'type', 'multiple'],
 
         /**
          * @property file
