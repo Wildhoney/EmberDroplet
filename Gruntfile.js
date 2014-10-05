@@ -33,9 +33,12 @@ module.exports = function(grunt) {
                 src: ['packages/ember-droplet/*.js'],
                 options: {
                     specs: 'tests/spec.js',
-                    helpers: ['./example/scripts/vendor/jquery/jquery.js',
-                              './example/scripts/vendor/handlebars/handlebars.js',
-                              './example/scripts/vendor/ember/ember.js']
+                    helpers: [
+                      './example/scripts/vendor/sinon_server/sinon-server.js',
+                      './example/scripts/vendor/jquery/jquery.js',
+                      './example/scripts/vendor/handlebars/handlebars.js',
+                      './example/scripts/vendor/ember/ember.js'
+                    ]
                 }
             }
         },
@@ -59,9 +62,29 @@ module.exports = function(grunt) {
                     filter: 'isFile'
                 }]
             }
+        },
+        bowerInstall: {
+          target: {
+            // Point to the files that should be updated when
+            // you run `grunt bower-install`
+            src: [
+              'tests/index.html'
+            ],
+
+            // Optional:
+            // ---------
+            cwd: '',
+            dependencies: true,
+            devDependencies: false,
+            exclude: [],
+            fileTypes: {},
+            ignorePath: '',
+            overrides: {}
+          }
         }
     });
 
+    grunt.loadNpmTasks('grunt-bower-install');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-concat');

@@ -59,26 +59,6 @@ describe('Ember Crossfilter', function() {
             expect(Ember.get(controller, 'deletedFiles.length')).toEqual(0);
         });
 
-        it('does not attempt to abort when there is no upload', function() {
-            var requestSpy = jasmine.createSpyObj('request', ['abort'])
-            Ember.set(controller, 'uploadStatus.uploading', false);
-            Ember.set(controller, 'lastRequest', requestSpy);
-            controller.send('abortUpload');
-
-            expect(Ember.get(controller, 'uploadStatus.uploading')).toEqual(false);
-            expect(requestSpy.abort).not.toHaveBeenCalled();
-        });
-
-        it('Can abort an upload', function() {
-            var requestSpy = jasmine.createSpyObj('request', ['abort'])
-            Ember.set(controller, 'uploadStatus.uploading', true);
-            Ember.set(controller, 'lastRequest', requestSpy);
-            controller.send('abortUpload');
-
-            expect(Ember.get(controller, 'uploadStatus.uploading')).toEqual(false);
-            expect(requestSpy.abort).toHaveBeenCalled();
-        });
-
         it('Creates an upload status per instance', function() {
           otherController = Ember.Controller.createWithMixins(DropletController);
 
@@ -86,6 +66,77 @@ describe('Ember Crossfilter', function() {
 
           expect(otherController.get("uploadStatus.uploading")).toEqual(false);
           expect(controller.get("uploadStatus.uploading")).toEqual(true);
+        });
+
+        describe('Aborting an upload', function() {
+          it('Aborts the upload request', function() {
+              var requestSpy = jasmine.createSpyObj('request', ['abort'])
+              Ember.set(controller, 'uploadStatus.uploading', true);
+              Ember.set(controller, 'lastRequest', requestSpy);
+              controller.send('abortUpload');
+
+              expect(Ember.get(controller, 'uploadStatus.uploading')).toEqual(false);
+              expect(requestSpy.abort).toHaveBeenCalled();
+          });
+
+          it('Does not attempt to abort the request when there is no upload', function() {
+              var requestSpy = jasmine.createSpyObj('request', ['abort'])
+              Ember.set(controller, 'uploadStatus.uploading', false);
+              Ember.set(controller, 'lastRequest', requestSpy);
+              controller.send('abortUpload');
+
+              expect(Ember.get(controller, 'uploadStatus.uploading')).toEqual(false);
+              expect(requestSpy.abort).not.toHaveBeenCalled();
+          });
+        });
+
+        describe('Destroy', function() {
+          var xhr;
+
+          beforeEach(function() {
+            xhr = sinon.useFakeXMLHttpRequest();
+          });
+
+          afterEach(function() {
+            xhr.restore();
+          });
+
+          describe('When a file is uploading', function() {
+            beforeEach(function() {
+              file = { name: 'art_of_flight.mp4', type: 'video/mp4' };
+              controller.set("dropletUrl", "http://localhost")
+              controller.send('addValidFile', file);
+              controller.send('uploadAllFiles', file);
+            });
+
+            it('Clears the readystatechange, progress, load and error event handlers', function() {
+              lastRequest = controller.get('lastRequest');
+
+              Em.run(controller, 'destroy');
+
+              expect(lastRequest.onreadystatechange).toBe(undefined);
+              expect(lastRequest.upload.onprogress).toBe(undefined);
+              expect(lastRequest.upload.onload).toBe(undefined);
+              expect(lastRequest.upload.onerror).toBe(undefined);
+            });
+
+            it('Aborts the download', function() {
+              lastRequest = controller.get('lastRequest');
+              spyOn(lastRequest, 'abort');
+
+              Em.run(controller, 'destroy');
+
+              expect(lastRequest.abort).toHaveBeenCalled();
+            });
+          });
+
+          describe('When a file is not uploading', function() {
+            it("Doesn't raise an error", function() {
+              expect(function() {
+                Em.run(controller, 'destroy');
+              }).not.toThrow();
+            });
+          });
         });
     });
 
