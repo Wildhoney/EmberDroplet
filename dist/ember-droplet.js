@@ -234,6 +234,26 @@
         },
 
         /**
+         * Clears the request event handlers and cancels the upload
+         *
+         * @property willDestroy
+         * @return {void}
+         */
+        willDestroy: function() {
+          this._super.apply(this, arguments);
+
+          lastRequest = this.get("lastRequest")
+
+          if (lastRequest) {
+            delete lastRequest.onreadystatechange;
+            delete lastRequest.upload.onprogress;
+            delete lastRequest.upload.onload;
+            delete lastRequest.upload.onerror;
+            this.send('abortUpload');
+          }
+        },
+
+        /**
          * Finds a list of files that aren't deleted, and are of a valid MIME type.
          *
          * @property validFiles
