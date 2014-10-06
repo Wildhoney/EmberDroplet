@@ -245,10 +245,10 @@
           var lastRequest = this.get("lastRequest")
 
           if (lastRequest) {
-            delete lastRequest.onreadystatechange;
-            delete lastRequest.upload.onprogress;
-            delete lastRequest.upload.onload;
-            delete lastRequest.upload.onerror;
+            lastRequest.onreadystatechange = undefined;
+            lastRequest.upload.onprogress = undefined;
+            lastRequest.upload.onload = undefined;
+            lastRequest.upload.onerror = undefined;
             this.send('abortUpload');
           }
         },
