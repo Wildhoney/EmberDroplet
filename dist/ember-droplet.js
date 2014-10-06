@@ -242,7 +242,7 @@
         willDestroy: function() {
           this._super.apply(this, arguments);
 
-          lastRequest = this.get("lastRequest")
+          var lastRequest = this.get("lastRequest")
 
           if (lastRequest) {
             delete lastRequest.onreadystatechange;
