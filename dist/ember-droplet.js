@@ -126,10 +126,10 @@
              * @return {Boolean} returns true if it aborted successfully, return false if there are no files to upload.
              */
             abortUpload: function() {
-              var request = $ember.get(this, 'lastRequest');
+              var jqXhr = $ember.get(this, 'lastJqXhr');
 
-              if (request && $ember.get(this, 'uploadStatus.uploading')) {
-                request.abort();
+              if (jqXhr && $ember.get(this, 'uploadStatus.uploading')) {
+                jqXhr.abort();
                 $ember.set(this, 'uploadStatus.uploading', false);
               }
             },
@@ -159,7 +159,6 @@
                 // Find the URL, set the uploading status, and create our promise.
                 var url             = $ember.get(this, 'dropletUrl'),
                     options         = $ember.get(this, 'dropletOptions') || defaultOptions,
-                    deferred        = new $jQuery.Deferred(),
                     postData        = this.get('postData'),
                     requestHeaders  = this.get('requestHeaders');
 
@@ -168,11 +167,6 @@
 
                 // Assert that we have the URL specified in the controller that implements the mixin.
                 $ember.assert('You must specify the `dropletUrl` parameter in order to upload files.', !!url);
-
-                // Create a new XHR request object.
-                var request = new $window.XMLHttpRequest();
-                $ember.set(this, 'lastRequest', request);
-                request.open('post', url, true);
 
                 // Create a new form data instance.
                 var formData = new $window.FormData();
@@ -193,42 +187,50 @@
                     }
                 }
 
-                // Add all of the event listeners.
-                this._addProgressListener(request.upload);
-                this._addSuccessListener(request.upload, deferred);
-                this._addErrorListener(request.upload, deferred);
-
-                // Resolve the promise when we've finished uploading all the files.
-                request.onreadystatechange = $ember.run.bind(this, function() {
-                    if (request.readyState === 4 && request.status !== 0) {
-                        // Parse the response!
-                        var response = $window.JSON.parse(request.responseText);
-                        deferred.resolve(response);
-
-                        // Invoke the `didUploadFiles` callback if it exists.
-                        $ember.tryInvoke(this, 'didUploadFiles', [response]);
-                    }
-                });
+                var headers = {};
 
                 if (options.fileSizeHeader) {
 
                     // Set the request size, and then we can upload the files!
-                    request.setRequestHeader('X-File-Size', this._getSize());
+                    headers['X-File-Size'] = this._getSize();
 
                 }
 
                 // Assign any request headers specified in the controller.
                 for (index in requestHeaders) {
                     if ((requestHeaders.hasOwnProperty(index)) || (index in requestHeaders)) {
-                        request.setRequestHeader(index, requestHeaders[index]);
+                        headers[index] = requestHeaders[index];
                     }
                 }
 
-                request.send(formData);
+                var jqXhr = $jQuery.ajax({
+                    url: url,
+                    method: 'post',
+                    data: formData,
+                    headers: headers,
+                    processData: false,
+                    contentType: false,
+
+                    xhr: function() {
+                        var xhr = $jQuery.ajaxSettings.xhr();
+                        // Add all of the event listeners.
+                        this._addProgressListener(xhr.upload);
+                        this._addSuccessListener(xhr.upload);
+                        this._addErrorListener(xhr.upload);
+                        $ember.set(this, 'lastRequest', xhr);
+                        return xhr;
+                    }.bind(this)
+                });
+
+                $ember.set(this, 'lastJqXhr', jqXhr);
 
                 // Return the promise.
-                return deferred.promise();
+                return jqXhr.then($ember.run.bind(this, function(response) {
+                    // Invoke the `didUploadFiles` callback if it exists.
+                    $ember.tryInvoke(this, 'didUploadFiles', [response]);
 
+                    return response;
+                }));
             }
 
         },
@@ -242,10 +244,9 @@
         willDestroy: function() {
           this._super.apply(this, arguments);
 
-          var lastRequest = this.get("lastRequest")
+          var lastRequest = this.get('lastRequest');
 
           if (lastRequest) {
-            lastRequest.onreadystatechange = undefined;
             lastRequest.upload.onprogress = undefined;
             lastRequest.upload.onload = undefined;
             lastRequest.upload.onerror = undefined;
@@ -370,21 +371,15 @@
         /**
          * @method _addErrorListener
          * @param request
-         * @param [deferred = null]
          * @return {void}
          * @private
          */
-        _addErrorListener: function(request, deferred) {
+        _addErrorListener: function(request) {
 
             request.onerror = $ember.run.bind(this, function() {
                 // As an error occurred, we need to revert everything.
                 $ember.set(this, 'uploadStatus.uploading', false);
                 $ember.set(this, 'uploadStatus.error', true);
-
-                if (deferred) {
-                    // Reject the promise if we have one.
-                    deferred.reject();
-                }
             });
 
         },

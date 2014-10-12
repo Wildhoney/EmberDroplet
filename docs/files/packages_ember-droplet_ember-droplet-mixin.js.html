@@ -218,10 +218,10 @@
              * @return {Boolean} returns true if it aborted successfully, return false if there are no files to upload.
              */
             abortUpload: function() {
-              var request = $ember.get(this, &#x27;lastRequest&#x27;);
+              var jqXhr = $ember.get(this, &#x27;lastJqXhr&#x27;);
 
-              if (request &amp;&amp; $ember.get(this, &#x27;uploadStatus.uploading&#x27;)) {
-                request.abort();
+              if (jqXhr &amp;&amp; $ember.get(this, &#x27;uploadStatus.uploading&#x27;)) {
+                jqXhr.abort();
                 $ember.set(this, &#x27;uploadStatus.uploading&#x27;, false);
               }
             },
@@ -251,7 +251,6 @@
                 // Find the URL, set the uploading status, and create our promise.
                 var url             = $ember.get(this, &#x27;dropletUrl&#x27;),
                     options         = $ember.get(this, &#x27;dropletOptions&#x27;) || defaultOptions,
-                    deferred        = new $jQuery.Deferred(),
                     postData        = this.get(&#x27;postData&#x27;),
                     requestHeaders  = this.get(&#x27;requestHeaders&#x27;);
 
@@ -260,11 +259,6 @@
 
                 // Assert that we have the URL specified in the controller that implements the mixin.
                 $ember.assert(&#x27;You must specify the &#x60;dropletUrl&#x60; parameter in order to upload files.&#x27;, !!url);
-
-                // Create a new XHR request object.
-                var request = new $window.XMLHttpRequest();
-                $ember.set(this, &#x27;lastRequest&#x27;, request);
-                request.open(&#x27;post&#x27;, url, true);
 
                 // Create a new form data instance.
                 var formData = new $window.FormData();
@@ -285,42 +279,50 @@
                     }
                 }
 
-                // Add all of the event listeners.
-                this._addProgressListener(request.upload);
-                this._addSuccessListener(request.upload, deferred);
-                this._addErrorListener(request.upload, deferred);
-
-                // Resolve the promise when we&#x27;ve finished uploading all the files.
-                request.onreadystatechange = $ember.run.bind(this, function() {
-                    if (request.readyState === 4 &amp;&amp; request.status !== 0) {
-                        // Parse the response!
-                        var response = $window.JSON.parse(request.responseText);
-                        deferred.resolve(response);
-
-                        // Invoke the &#x60;didUploadFiles&#x60; callback if it exists.
-                        $ember.tryInvoke(this, &#x27;didUploadFiles&#x27;, [response]);
-                    }
-                });
+                var headers = {};
 
                 if (options.fileSizeHeader) {
 
                     // Set the request size, and then we can upload the files!
-                    request.setRequestHeader(&#x27;X-File-Size&#x27;, this._getSize());
+                    headers[&#x27;X-File-Size&#x27;] = this._getSize();
 
                 }
 
                 // Assign any request headers specified in the controller.
                 for (index in requestHeaders) {
                     if ((requestHeaders.hasOwnProperty(index)) || (index in requestHeaders)) {
-                        request.setRequestHeader(index, requestHeaders[index]);
+                        headers[index] = requestHeaders[index];
                     }
                 }
 
-                request.send(formData);
+                var jqXhr = $jQuery.ajax({
+                    url: url,
+                    method: &#x27;post&#x27;,
+                    data: formData,
+                    headers: headers,
+                    processData: false,
+                    contentType: false,
+
+                    xhr: function() {
+                        var xhr = $jQuery.ajaxSettings.xhr();
+                        // Add all of the event listeners.
+                        this._addProgressListener(xhr.upload);
+                        this._addSuccessListener(xhr.upload);
+                        this._addErrorListener(xhr.upload);
+                        $ember.set(this, &#x27;lastRequest&#x27;, xhr);
+                        return xhr;
+                    }.bind(this)
+                });
+
+                $ember.set(this, &#x27;lastJqXhr&#x27;, jqXhr);
 
                 // Return the promise.
-                return deferred.promise();
+                return jqXhr.then($ember.run.bind(this, function(response) {
+                    // Invoke the &#x60;didUploadFiles&#x60; callback if it exists.
+                    $ember.tryInvoke(this, &#x27;didUploadFiles&#x27;, [response]);
 
+                    return response;
+                }));
             }
 
         },
@@ -334,10 +336,9 @@
         willDestroy: function() {
           this._super.apply(this, arguments);
 
-          var lastRequest = this.get(&quot;lastRequest&quot;)
+          var lastRequest = this.get(&#x27;lastRequest&#x27;);
 
           if (lastRequest) {
-            lastRequest.onreadystatechange = undefined;
             lastRequest.upload.onprogress = undefined;
             lastRequest.upload.onload = undefined;
             lastRequest.upload.onerror = undefined;
@@ -462,21 +463,15 @@
         /**
          * @method _addErrorListener
          * @param request
-         * @param [deferred = null]
          * @return {void}
          * @private
          */
-        _addErrorListener: function(request, deferred) {
+        _addErrorListener: function(request) {
 
             request.onerror = $ember.run.bind(this, function() {
                 // As an error occurred, we need to revert everything.
                 $ember.set(this, &#x27;uploadStatus.uploading&#x27;, false);
                 $ember.set(this, &#x27;uploadStatus.error&#x27;, true);
-
-                if (deferred) {
-                    // Reject the promise if we have one.
-                    deferred.reject();
-                }
             });
 
         },

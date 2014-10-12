@@ -70,23 +70,23 @@ describe('Ember Crossfilter', function() {
 
         describe('Aborting an upload', function() {
           it('Aborts the upload request', function() {
-              var requestSpy = jasmine.createSpyObj('request', ['abort'])
+              var jqXhrSpy = jasmine.createSpyObj('jqXhr', ['abort'])
               Ember.set(controller, 'uploadStatus.uploading', true);
-              Ember.set(controller, 'lastRequest', requestSpy);
+              Ember.set(controller, 'lastJqXhr', jqXhrSpy);
               controller.send('abortUpload');
 
               expect(Ember.get(controller, 'uploadStatus.uploading')).toEqual(false);
-              expect(requestSpy.abort).toHaveBeenCalled();
+              expect(jqXhrSpy.abort).toHaveBeenCalled();
           });
 
           it('Does not attempt to abort the request when there is no upload', function() {
-              var requestSpy = jasmine.createSpyObj('request', ['abort'])
+              var jqXhrSpy = jasmine.createSpyObj('jqXhr', ['abort'])
               Ember.set(controller, 'uploadStatus.uploading', false);
-              Ember.set(controller, 'lastRequest', requestSpy);
+              Ember.set(controller, 'jqXhr', jqXhrSpy);
               controller.send('abortUpload');
 
               expect(Ember.get(controller, 'uploadStatus.uploading')).toEqual(false);
-              expect(requestSpy.abort).not.toHaveBeenCalled();
+              expect(jqXhrSpy.abort).not.toHaveBeenCalled();
           });
         });
 
@@ -110,7 +110,7 @@ describe('Ember Crossfilter', function() {
             });
 
             it('Clears the readystatechange, progress, load and error event handlers', function() {
-              lastRequest = controller.get('lastRequest');
+              var lastRequest = controller.get('lastRequest');
 
               Em.run(controller, 'destroy');
 
@@ -120,7 +120,7 @@ describe('Ember Crossfilter', function() {
               expect(lastRequest.upload.onerror).toBe(undefined);
             });
 
-            it('Aborts the download', function() {
+            it('Aborts the upload', function() {
               lastRequest = controller.get('lastRequest');
               spyOn(lastRequest, 'abort');
 
