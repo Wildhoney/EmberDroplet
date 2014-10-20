@@ -317,12 +317,15 @@
                 $ember.set(this, &#x27;lastJqXhr&#x27;, jqXhr);
 
                 // Return the promise.
-                return jqXhr.then($ember.run.bind(this, function(response) {
+                return new Ember.RSVP.Promise(function(resolve, reject) {
+                  jqXhr.done(resolve).fail(reject);
+                })
+                .then(function(response) {
                     // Invoke the &#x60;didUploadFiles&#x60; callback if it exists.
                     $ember.tryInvoke(this, &#x27;didUploadFiles&#x27;, [response]);
 
                     return response;
-                }));
+                }.bind(this));
             }
 
         },
