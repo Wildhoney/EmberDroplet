@@ -303,7 +303,7 @@
                     processData: false,
                     contentType: false,
 
-                    xhr: function() {
+                    xhr: $ember.run.bind(this, function() {
                         var xhr = $jQuery.ajaxSettings.xhr();
                         // Add all of the event listeners.
                         this._addProgressListener(xhr.upload);
@@ -311,7 +311,7 @@
                         this._addErrorListener(xhr.upload);
                         $ember.set(this, &#x27;lastRequest&#x27;, xhr);
                         return xhr;
-                    }.bind(this)
+                    })
                 });
 
                 $ember.set(this, &#x27;lastJqXhr&#x27;, jqXhr);
@@ -320,12 +320,12 @@
                 return new Ember.RSVP.Promise(function(resolve, reject) {
                   jqXhr.done(resolve).fail(reject);
                 })
-                .then(function(response) {
+                .then($ember.run.bind(this, function(response) {
                     // Invoke the &#x60;didUploadFiles&#x60; callback if it exists.
                     $ember.tryInvoke(this, &#x27;didUploadFiles&#x27;, [response]);
 
                     return response;
-                }.bind(this));
+                }));
             }
 
         },
