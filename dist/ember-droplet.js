@@ -211,7 +211,7 @@
                     processData: false,
                     contentType: false,
 
-                    xhr: $ember.run.bind(this, function() {
+                    xhr: function() {
                         var xhr = $jQuery.ajaxSettings.xhr();
                         // Add all of the event listeners.
                         this._addProgressListener(xhr.upload);
@@ -219,7 +219,7 @@
                         this._addErrorListener(xhr.upload);
                         $ember.set(this, 'lastRequest', xhr);
                         return xhr;
-                    })
+                    }.bind(this)
                 });
 
                 $ember.set(this, 'lastJqXhr', jqXhr);
