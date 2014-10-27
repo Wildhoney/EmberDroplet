@@ -124,6 +124,13 @@
         requestHeaders: {},
 
         /**
+         * @property requestType
+         * @type {String}
+         * Request type: POST, PATCH, DELETE
+         */
+        requestType: &#x27;post&#x27;,
+
+        /**
          * Contains a dictionary of extra POST data to be included in the
          * request made by uploadAllFiles()
          *
@@ -297,7 +304,7 @@
 
                 var jqXhr = $jQuery.ajax({
                     url: url,
-                    method: &#x27;post&#x27;,
+                    method: this.requestType,
                     data: formData,
                     headers: headers,
                     processData: false,
