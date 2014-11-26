@@ -298,7 +298,7 @@
                 }
 
                 var file    = files[index],
-                    fileExt = file.name.split(&#x27;.&#x27;).pop();
+                    fileExt = file.name.substr((~-file.name.lastIndexOf(&quot;.&quot;) &gt;&gt;&gt; 0) + 2);
 
                 // Determine if the file is valid based on its MIME type or extension, and we haven&#x27;t exceeded
                 // the user defined limit for the amount of files to upload in one go.
