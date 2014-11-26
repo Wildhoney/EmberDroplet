@@ -420,7 +420,8 @@
         _addFile: function(file, valid) {
 
             // Extract the file's extension which allows us to style accordingly.
-            var className = 'extension-%@'.fmt(file.name.match(/\.(.+)$/i)[1]).toLowerCase();
+            var fileExt = file.name.substr((~-file.name.lastIndexOf(".") >>> 0) + 2);
+            var className = 'extension-%@'.fmt(fileExt).toLowerCase();
 
             // Create the record with its default parameters, and then add it to the collection.
             var record = { file: file, valid: valid, uploaded: false, deleted: false, className: className };
