@@ -1,6 +1,6 @@
 {
   "name": "ember-droplet",
-  "version": "0.8.4",
+  "version": "0.8.5",
   "author": "Adam Timberlake",
   "dependencies": {
     "bower": "^1.3.10",
