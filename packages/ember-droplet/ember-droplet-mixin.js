@@ -54,7 +54,7 @@
          * @type {Object}
          */
         uploadStatus: $ember.computed(function() {
-          return { uploading: false, percentComplete: 0, error: false };
+            return { uploading: false, percentComplete: 0, error: false };
         }),
 
         /**
@@ -198,9 +198,11 @@
 
                 // Assign any request headers specified in the controller.
                 for (index in requestHeaders) {
+
                     if ((requestHeaders.hasOwnProperty(index)) || (index in requestHeaders)) {
                         headers[index] = requestHeaders[index];
                     }
+
                 }
 
                 var jqXhr = $jQuery.ajax({
@@ -211,28 +213,34 @@
                     processData: false,
                     contentType: false,
 
-                    xhr: function() {
+                    xhr: function xhr() {
+
                         var xhr = $jQuery.ajaxSettings.xhr();
+
                         // Add all of the event listeners.
                         this._addProgressListener(xhr.upload);
                         this._addSuccessListener(xhr.upload);
                         this._addErrorListener(xhr.upload);
                         $ember.set(this, 'lastRequest', xhr);
+
                         return xhr;
+
                     }.bind(this)
                 });
 
                 $ember.set(this, 'lastJqXhr', jqXhr);
 
                 // Return the promise.
-                return new Ember.RSVP.Promise(function(resolve, reject) {
+                return new $ember.RSVP.Promise(function(resolve, reject) {
+
                   jqXhr.done(resolve).fail(reject);
-                })
-                .then($ember.run.bind(this, function(response) {
+
+                }).then($ember.run.bind(this, function(response) {
+
                     // Invoke the `didUploadFiles` callback if it exists.
                     $ember.tryInvoke(this, 'didUploadFiles', [response]);
-
                     return response;
+
                 }));
             }
 
@@ -244,17 +252,18 @@
          * @property willDestroy
          * @return {void}
          */
-        willDestroy: function() {
-          this._super.apply(this, arguments);
+        willDestroy: function willDestroy() {
 
-          var lastRequest = this.get('lastRequest');
+            this._super.apply(this, arguments);
+            var lastRequest = this.get('lastRequest');
 
-          if (lastRequest) {
-            lastRequest.upload.onprogress = undefined;
-            lastRequest.upload.onload = undefined;
-            lastRequest.upload.onerror = undefined;
-            this.send('abortUpload');
-          }
+            if (lastRequest) {
+                lastRequest.upload.onprogress = undefined;
+                lastRequest.upload.onload = undefined;
+                lastRequest.upload.onerror = undefined;
+                this.send('abortUpload');
+            }
+
         },
 
         /**
@@ -420,8 +429,8 @@
         _addFile: function(file, valid) {
 
             // Extract the file's extension which allows us to style accordingly.
-            var fileExt = file.name.substr((~-file.name.lastIndexOf(".") >>> 0) + 2);
-            var className = 'extension-%@'.fmt(fileExt).toLowerCase();
+            var fileExt   = file.name.substr((~-file.name.lastIndexOf(".") >>> 0) + 2),
+                className = 'extension-%@'.fmt(fileExt).toLowerCase();
 
             // Create the record with its default parameters, and then add it to the collection.
             var record = { file: file, valid: valid, uploaded: false, deleted: false, className: className };
