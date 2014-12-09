@@ -224,7 +224,7 @@
                     processData: false,
                     contentType: false,
 
-                    xhr: function xhr() {
+                    xhr: function xhrHook() {
 
                         var xhr = $jQuery.ajaxSettings.xhr();
 
