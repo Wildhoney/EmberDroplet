@@ -104,4 +104,4 @@ Testing
 
 All of the related tests are written in Jasmine, and can be run with `grunt test` (assuming you have `grunt` installed &ndash; `npm install grunt-cli -g`). You'll also need to run `npm install` to install the project's dependencies.
 
-<img src="http://pivotal.github.io/jasmine/images/jasmine_logo.png" alt="Jasmine" />
+<img src="http://nathanleclaire.com/images/unit-test-angularjs-service/jasmine.png" alt="Jasmine" />
