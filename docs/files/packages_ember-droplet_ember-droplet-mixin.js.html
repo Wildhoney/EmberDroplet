@@ -251,7 +251,8 @@
                  */
                 var defaultOptions = {
                     fileSizeHeader: true,
-                    useArray: true
+                    useArray: true,
+                    method: &#x27;post&#x27;
                 };
 
                 if ($ember.get(this, &#x27;validFiles&#x27;).length === 0) {
@@ -277,6 +278,8 @@
                 // Node.js is clever enough to deduce an array of images, whereas Ruby/PHP require the
                 // specifying of an array-like name.
                 var fieldName = options.useArray ? &#x27;file[]&#x27; : &#x27;file&#x27;;
+
+                var method = options.method || defaultOptions.method;
 
                 // Iterate over each file, and append it to the form data.
                 $ember.EnumerableUtils.forEach($ember.get(this, &#x27;validFiles&#x27;), function(file) {
@@ -310,7 +313,7 @@
 
                 var jqXhr = $jQuery.ajax({
                     url: url,
-                    method: &#x27;post&#x27;,
+                    method: method,
                     data: formData,
                     headers: headers,
                     processData: false,
