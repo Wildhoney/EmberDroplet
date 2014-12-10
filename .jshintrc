@@ -14,7 +14,7 @@
     "maxparams"     : 10,
     "maxdepth"      : 5,
     "maxstatements" : 30,
-    "maxcomplexity" : 10,
+    "maxcomplexity" : 12,
 
     "asi"           : true,
     "eqnull"        : true,
