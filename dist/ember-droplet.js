@@ -180,26 +180,10 @@
                 // Assert that we have the URL specified in the controller that implements the mixin.
                 $ember.assert('You must specify the `dropletUrl` parameter in order to upload files.', !!url);
 
-                // Create a new form data instance.
-                var formData = new $window.FormData();
-
-                // Node.js is clever enough to deduce an array of images, whereas Ruby/PHP require the
-                // specifying of an array-like name.
-                var fieldName = options.useArray ? 'file[]' : 'file';
+                // Create a new form data instance based on file and postData.
+                var formData = this._getFormData(postData, options.useArray);
 
                 var method = options.method || defaultOptions.method;
-
-                // Iterate over each file, and append it to the form data.
-                $ember.EnumerableUtils.forEach($ember.get(this, 'validFiles'), function(file) {
-                    formData.append(fieldName, file.file);
-                }, this);
-
-                // Add any extra POST data specified in the controller
-                for (var index in postData) {
-                    if (postData.hasOwnProperty(index)) {
-                        formData.append(index, postData[index]);
-                    }
-                }
 
                 var headers = {};
 
@@ -211,7 +195,7 @@
                 }
 
                 // Assign any request headers specified in the controller.
-                for (index in requestHeaders) {
+                for (var index in requestHeaders) {
 
                     if ((requestHeaders.hasOwnProperty(index)) || (index in requestHeaders)) {
                         headers[index] = requestHeaders[index];
@@ -257,6 +241,40 @@
 
                 }));
             }
+
+        },
+
+        /**
+        * Creates a FormData object based on the valid files and postData provided.
+        *
+        * @method _getFormData
+        * @param postData {Object}
+        * @param useArray {Boolean} If false, use `file` as the field name for files. Otherwise, use `file[]`.
+        * @return {FormData}
+        * @private
+        */
+        _getFormData: function _getFormData(postData, useArray) {
+
+          // Create a new form data instance.
+          var formData = new $window.FormData();
+
+          // Node.js is clever enough to deduce an array of images, whereas Ruby/PHP require the
+          // specifying of an array-like name.
+          var fieldName = useArray ? 'file[]' : 'file';
+
+          // Iterate over each file, and append it to the form data.
+          $ember.EnumerableUtils.forEach($ember.get(this, 'validFiles'), function(file) {
+            formData.append(fieldName, file.file);
+          }, this);
+
+          // Add any extra POST data specified in the controller
+          for (var index in postData) {
+            if (postData.hasOwnProperty(index)) {
+              formData.append(index, postData[index]);
+            }
+          }
+
+          return formData;
 
         },
 
