@@ -230,8 +230,8 @@
 
                 // Return the promise.
                 return new $ember.RSVP.Promise(function(resolve, reject) {
-
-                  jqXhr.done(resolve).fail(reject);
+                  
+                    jqXhr.done(resolve).fail(reject);
 
                 }).then($ember.run.bind(this, function(response) {
 
@@ -239,6 +239,13 @@
                     $ember.tryInvoke(this, 'didUploadFiles', [response]);
                     return response;
 
+                }), $ember.run.bind(this, function ajaxError(jqXHR, textStatus, errorThrown) {
+                  
+                    // As an error occurred, we need to revert everything.
+                    var args = { jqXHR: jqXHR, textStatus: textStatus, errorThrown: errorThrown};
+                    $ember.set(this, 'uploadStatus.uploading', false);
+                    $ember.set(this, 'uploadStatus.error', args);
+                  
                 }));
             }
 
