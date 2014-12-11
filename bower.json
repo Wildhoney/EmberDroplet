@@ -20,6 +20,6 @@
   },
   "devDependencies": {
     "jasmine": "~2.0.1",
-    "sinon_server": "~1.10.13"
+    "sinon_server": "http://sinonjs.org/releases/sinon-server-1.12.1.js"
   }
 }
