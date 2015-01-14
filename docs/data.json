@@ -706,7 +706,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-view.js",
-            "line": 239,
+            "line": 245,
             "description": "Prevents default behaviour and propagation on nodes where it's undesirable.",
             "itemtype": "method",
             "name": "_preventDefaultBehaviour",
@@ -728,7 +728,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-view.js",
-            "line": 252,
+            "line": 258,
             "itemtype": "method",
             "name": "dragOver",
             "params": [
@@ -747,7 +747,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-view.js",
-            "line": 261,
+            "line": 267,
             "itemtype": "method",
             "name": "dragEnter",
             "params": [
@@ -766,7 +766,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-view.js",
-            "line": 270,
+            "line": 276,
             "itemtype": "method",
             "name": "dragLeave",
             "params": [
