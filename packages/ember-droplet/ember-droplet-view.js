@@ -193,7 +193,8 @@
             var controller  = $ember.get(this, 'controller'),
                 mimeTypes   = $ember.get(controller, 'mimeTypes'),
                 extensions  = $ember.get(controller, 'extensions'),
-                options     = $ember.get(controller, 'dropletOptions') || { limit: Infinity };
+                options     = $ember.get(controller, 'dropletOptions') || { limit: Infinity},
+                addedFiles  = [];
 
             // Assert that we have the `mimeTypes` property, and that it's an array.
             $ember.assert('`mimeTypes` is undefined. Does your controller implement the `$emberDropletController` mixin?', !!mimeTypes);
@@ -206,7 +207,7 @@
                 }
 
                 var file    = files[index],
-                    fileExt = file.name.split('.').pop();
+                    fileExt = file.name.substr((~-file.name.lastIndexOf(".") >>> 0) + 2);
 
                 // Determine if the file is valid based on its MIME type or extension, and we haven't exceeded
                 // the user defined limit for the amount of files to upload in one go.
@@ -217,14 +218,19 @@
 
                     // If it isn't valid, then we'll add it as an invalid file.
                     controller.send('addInvalidFile', file);
+                    addedFiles.push(file);
                     continue;
 
                 }
 
                 // Otherwise the file has a valid MIME type or extension, and therefore be added as a good file.
                 controller.send('addValidFile', file);
+                addedFiles.push(file);
 
             }
+
+            // Initialise the event for adding files.
+            controller.send('addedFiles', addedFiles);
 
             return true;
 

@@ -14,7 +14,6 @@ describe('Ember Crossfilter', function() {
         it('Files are cleared for each instantiation', function() {
             expect(Ember.get(controller, 'files.length')).toEqual(0);
         });
-
     });
 
     describe('Controller', function() {
@@ -166,6 +165,14 @@ describe('Ember Crossfilter', function() {
 
         });
 
+        it('should return the correct file extension', function () {
+            var eventMock   = jasmine.createSpyObj('event', ['preventDefault', 'stopPropagation', 'dataTransfer']),
+                fileMock    = {name: 'Screen Shot 2014-11-11 at 09.19.22.png', type: 'image/png'};
+
+            view.drop(eventMock, [fileMock]);
+            var files = controller.get('files')
+            expect(files[0]['className']).toEqual('extension-png');
+        });
     });
 
 });

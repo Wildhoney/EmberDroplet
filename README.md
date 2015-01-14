@@ -64,8 +64,10 @@ App.IndexController = Ember.Controller.extend(DropletController, {
 Properties that can be defined in your controller to interact with the mixin are as follows:
 
  * `dropletUrl`: URL in which the Node.js <em>(default)</em> or Apache/Nginx server is running on;
- * `useArray`: For Ruby/PHP scripts you need to specify an array-like name &ndash; set to `true` for those cases;
  * `mimeTypes`: Enumeration of valid MIME types. Can be appended using `concatenatedProperties` (see example);
+ * `dropletOptions.useArray`: Defaults to `true`, which works for Ruby/PHP scripts where you need to specify an array-like name for the field (`file[]`). Set to `false` to use the field name `file` instead;
+ * `dropletOptions.fileSizeHeader`: Defaults to `true`. Set to `false` to omit the `X-File-Size` http header;
+ * `dropletOptions.method`: Defaults to `post`, but can be set to `put` if needed.
 
 Now that your controller is using the mixin, it's time for your view to interact with your controller and its related mixin. For this we recommend using the in-built view, but it's not essential. In order to create your own, please refer to the example. The simplest way to use the in-built view is to embed it into your template.
 
@@ -104,4 +106,4 @@ Testing
 
 All of the related tests are written in Jasmine, and can be run with `grunt test` (assuming you have `grunt` installed &ndash; `npm install grunt-cli -g`). You'll also need to run `npm install` to install the project's dependencies.
 
-<img src="http://pivotal.github.io/jasmine/images/jasmine_logo.png" alt="Jasmine" />
+<img src="http://nathanleclaire.com/images/unit-test-angularjs-service/jasmine.png" alt="Jasmine" />

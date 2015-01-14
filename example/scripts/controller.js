@@ -47,8 +47,18 @@ App.IndexController = Ember.Controller.extend(DropletController, {
      * @param response {Object}
      * @return {void}
      */
-    didUploadFiles: function(response) {
+    didUploadFiles: function didUploadFiles(response) {
         console.log(response);
+    },
+
+    /**
+     * @method didAddFiles
+     * @param fileList {Array}
+     * @return {void}
+     */
+    didAddFiles: function didAddFiles(fileList) {
+        this.send('uploadAllFiles');
+        console.log(fileList);
     }
 
 });

@@ -53,8 +53,8 @@
          * @property uploadStatus
          * @type {Object}
          */
-        uploadStatus: $ember.computed(function() {
-          return { uploading: false, percentComplete: 0, error: false };
+        uploadStatus: $ember.computed(function computedFn() {
+            return { uploading: false, percentComplete: 0, error: false };
         }),
 
         /**
@@ -76,13 +76,22 @@
         actions: {
 
             /**
+             * @method addedFiles
+             * @param fileList {Array}
+             * @return {void}
+             */
+            addedFiles: function addedFiles(fileList) {
+                $ember.tryInvoke(this, 'didAddFiles', [fileList]);
+            },
+
+            /**
              * Adds a valid file to the collection.
              *
              * @method addValidFile
              * @param file {File}
              * @return {Object}
              */
-            addValidFile: function(file) {
+            addValidFile: function addValidFile(file) {
                 return this._addFile(file, true);
             },
 
@@ -93,7 +102,7 @@
              * @param file {File}
              * @return {Object}
              */
-            addInvalidFile: function(file) {
+            addInvalidFile: function addInvalidFile(file) {
                 return this._addFile(file, false);
             },
 
@@ -104,7 +113,7 @@
              * @param file
              * @return {Object}
              */
-            deleteFile: function(file) {
+            deleteFile: function deleteFile(file) {
                 $ember.set(file, 'deleted', true);
                 return file;
             },
@@ -115,7 +124,7 @@
              * @method clearAllFiles
              * @return {void}
              */
-            clearAllFiles: function() {
+            clearAllFiles: function clearAllFiles() {
                 $ember.set(this, 'files', []);
             },
 
@@ -125,13 +134,15 @@
              * @method abortUpload
              * @return {Boolean} returns true if it aborted successfully, return false if there are no files to upload.
              */
-            abortUpload: function() {
-              var jqXhr = $ember.get(this, 'lastJqXhr');
-
-              if (jqXhr && $ember.get(this, 'uploadStatus.uploading')) {
-                jqXhr.abort();
-                $ember.set(this, 'uploadStatus.uploading', false);
-              }
+            abortUpload: function abortUpload() {
+                
+                var jqXhr = $ember.get(this, 'lastJqXhr');
+                
+                if (jqXhr && $ember.get(this, 'uploadStatus.uploading')) {
+                    jqXhr.abort();
+                    $ember.set(this, 'uploadStatus.uploading', false);
+                }
+                
             },
 
             /**
@@ -140,7 +151,7 @@
              * @method uploadAllFiles
              * @return {Object|Boolean} jQuery promise, or false if there are no files to upload.
              */
-            uploadAllFiles: function() {
+            uploadAllFiles: function uploadAllFiles() {
 
                 /**
                  * @property defaultOptions
@@ -148,7 +159,8 @@
                  */
                 var defaultOptions = {
                     fileSizeHeader: true,
-                    useArray: true
+                    useArray: true,
+                    method: 'post'
                 };
 
                 if ($ember.get(this, 'validFiles').length === 0) {
@@ -168,24 +180,10 @@
                 // Assert that we have the URL specified in the controller that implements the mixin.
                 $ember.assert('You must specify the `dropletUrl` parameter in order to upload files.', !!url);
 
-                // Create a new form data instance.
-                var formData = new $window.FormData();
+                // Create a new form data instance based on file and postData.
+                var formData = this._getFormData(postData, options.useArray);
 
-                // Node.js is clever enough to deduce an array of images, whereas Ruby/PHP require the
-                // specifying of an array-like name.
-                var fieldName = options.useArray ? 'file[]' : 'file';
-
-                // Iterate over each file, and append it to the form data.
-                $ember.EnumerableUtils.forEach($ember.get(this, 'validFiles'), function(file) {
-                    formData.append(fieldName, file.file);
-                }, this);
-
-                // Add any extra POST data specified in the controller
-                for (var index in postData) {
-                    if (postData.hasOwnProperty(index)) {
-                        formData.append(index, postData[index]);
-                    }
-                }
+                var method = options.method || defaultOptions.method;
 
                 var headers = {};
 
@@ -197,44 +195,86 @@
                 }
 
                 // Assign any request headers specified in the controller.
-                for (index in requestHeaders) {
+                for (var index in requestHeaders) {
+
                     if ((requestHeaders.hasOwnProperty(index)) || (index in requestHeaders)) {
                         headers[index] = requestHeaders[index];
                     }
+
                 }
 
                 var jqXhr = $jQuery.ajax({
                     url: url,
-                    method: 'post',
+                    method: method,
                     data: formData,
                     headers: headers,
                     processData: false,
                     contentType: false,
 
-                    xhr: function() {
+                    xhr: function xhrHook() {
+
                         var xhr = $jQuery.ajaxSettings.xhr();
+
                         // Add all of the event listeners.
                         this._addProgressListener(xhr.upload);
                         this._addSuccessListener(xhr.upload);
                         this._addErrorListener(xhr.upload);
                         $ember.set(this, 'lastRequest', xhr);
+
                         return xhr;
+
                     }.bind(this)
                 });
 
                 $ember.set(this, 'lastJqXhr', jqXhr);
 
                 // Return the promise.
-                return new Ember.RSVP.Promise(function(resolve, reject) {
+                return new $ember.RSVP.Promise(function(resolve, reject) {
+
                   jqXhr.done(resolve).fail(reject);
-                })
-                .then($ember.run.bind(this, function(response) {
+
+                }).then($ember.run.bind(this, function(response) {
+
                     // Invoke the `didUploadFiles` callback if it exists.
                     $ember.tryInvoke(this, 'didUploadFiles', [response]);
-
                     return response;
+
                 }));
             }
+
+        },
+
+        /**
+        * Creates a FormData object based on the valid files and postData provided.
+        *
+        * @method _getFormData
+        * @param postData {Object}
+        * @param useArray {Boolean} If false, use `file` as the field name for files. Otherwise, use `file[]`.
+        * @return {FormData}
+        * @private
+        */
+        _getFormData: function _getFormData(postData, useArray) {
+
+            // Create a new form data instance.
+            var formData = new $window.FormData();
+
+            // Node.js is clever enough to deduce an array of images, whereas Ruby/PHP require the
+            // specifying of an array-like name.
+            var fieldName = useArray ? 'file[]' : 'file';
+
+            // Iterate over each file, and append it to the form data.
+            $ember.EnumerableUtils.forEach($ember.get(this, 'validFiles'), function(file) {
+                formData.append(fieldName, file.file);
+            }, this);
+
+            // Add any extra POST data specified in the controller
+            for (var index in postData) {
+                if (postData.hasOwnProperty(index)) {
+                    formData.append(index, postData[index]);
+                }
+            }
+
+            return formData;
 
         },
 
@@ -244,17 +284,18 @@
          * @property willDestroy
          * @return {void}
          */
-        willDestroy: function() {
-          this._super.apply(this, arguments);
+        willDestroy: function willDestroy() {
 
-          var lastRequest = this.get('lastRequest');
+            this._super.apply(this, arguments);
+            var lastRequest = this.get('lastRequest');
 
-          if (lastRequest) {
-            lastRequest.upload.onprogress = undefined;
-            lastRequest.upload.onload = undefined;
-            lastRequest.upload.onerror = undefined;
-            this.send('abortUpload');
-          }
+            if (lastRequest) {
+                lastRequest.upload.onprogress = undefined;
+                lastRequest.upload.onload = undefined;
+                lastRequest.upload.onerror = undefined;
+                this.send('abortUpload');
+            }
+
         },
 
         /**
@@ -263,7 +304,7 @@
          * @property validFiles
          * @return {Array}
          */
-        validFiles: $ember.computed(function() {
+        validFiles: $ember.computed(function computedFn() {
             return this._filesByProperties({ valid: true, deleted: false, uploaded: false });
         }).property('files.length', 'files.@each.deleted', 'files.@each.uploaded'),
 
@@ -273,7 +314,7 @@
          * @property invalidFiles
          * @return {Array}
          */
-        invalidFiles: $ember.computed(function() {
+        invalidFiles: $ember.computed(function computedFn() {
             return this._filesByProperties({ valid: false });
         }).property('files.length', 'files.@each.deleted'),
 
@@ -283,7 +324,7 @@
          * @property uploadedFiles
          * @return {Array}
          */
-        uploadedFiles: $ember.computed(function() {
+        uploadedFiles: $ember.computed(function computedFn() {
             return this._filesByProperties({ uploaded: true });
         }).property('files.length', 'files.@each.uploaded'),
 
@@ -293,7 +334,7 @@
          * @property deletedFiles
          * @return {Array}
          */
-        deletedFiles: $ember.computed(function() {
+        deletedFiles: $ember.computed(function computedFn() {
             return this._filesByProperties({ deleted: true });
         }).property('files.length', 'files.@each.deleted'),
 
@@ -305,7 +346,7 @@
          * @return {Array}
          * @private
          */
-        _filesByProperties: function(maps) {
+        _filesByProperties: function _filesByProperties(maps) {
 
             // Iterate over each of the files.
             return $ember.get(this, 'files').filter(function(file) {
@@ -338,7 +379,7 @@
          * @return {Number}
          * @private
          */
-        _getSize: function() {
+        _getSize: function _getSize() {
 
             var size = 0;
 
@@ -356,7 +397,7 @@
          * @param request
          * @private
          */
-        _addSuccessListener: function(request) {
+        _addSuccessListener: function _addSuccessListener(request) {
 
             // Once the files have been successfully uploaded.
             request.onload = $ember.run.bind(this, function() {
@@ -377,7 +418,7 @@
          * @return {void}
          * @private
          */
-        _addErrorListener: function(request) {
+        _addErrorListener: function _addErrorListener(request) {
 
             request.onerror = $ember.run.bind(this, function() {
                 // As an error occurred, we need to revert everything.
@@ -393,17 +434,21 @@
          * @return {void}
          * @private
          */
-        _addProgressListener: function(request) {
+        _addProgressListener: function _addProgressListener(request) {
 
             request.onprogress = $ember.run.bind(this, function(event) {
+
                 if (!event.lengthComputable) {
+
                     // There's not much we can do if the request is not computable.
                     return;
+
                 }
 
                 // Calculate the percentage remaining.
                 var percentageLoaded = (event.loaded / this._getSize()) * 100;
                 $ember.set(this, 'uploadStatus.percentComplete', Math.round(percentageLoaded));
+
             });
 
         },
@@ -417,10 +462,11 @@
          * @return {Object}
          * @private
          */
-        _addFile: function(file, valid) {
+        _addFile: function _addFile(file, valid) {
 
             // Extract the file's extension which allows us to style accordingly.
-            var className = 'extension-%@'.fmt(file.name.match(/\.(.+)$/i)[1]).toLowerCase();
+            var fileExt   = file.name.substr((~-file.name.lastIndexOf(".") >>> 0) + 2),
+                className = 'extension-%@'.fmt(fileExt).toLowerCase();
 
             // Create the record with its default parameters, and then add it to the collection.
             var record = { file: file, valid: valid, uploaded: false, deleted: false, className: className };
