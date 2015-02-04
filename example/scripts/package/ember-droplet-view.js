@@ -191,14 +191,10 @@
 
             // Find the controller, and the `mimeTypes` and `extensions` property.
             var controller  = $ember.get(this, 'controller'),
-                mimeTypes   = $ember.get(controller, 'mimeTypes'),
+                mimeTypes   = $ember.get(controller, 'mimeTypes') || [],
                 extensions  = $ember.get(controller, 'extensions'),
                 options     = $ember.get(controller, 'dropletOptions') || { limit: Infinity},
                 addedFiles  = [];
-
-            // Assert that we have the `mimeTypes` property, and that it's an array.
-            $ember.assert('`mimeTypes` is undefined. Does your controller implement the `$emberDropletController` mixin?', !!mimeTypes);
-            $ember.assert('`mimeTypes` is not an array. It should be an array of valid MIME types.', !!$ember.isArray(mimeTypes));
 
             for (var index = 0, numFiles = files.length; index < numFiles; index++) {
 
@@ -206,15 +202,16 @@
                     continue;
                 }
 
-                var file    = files[index],
-                    fileExt = file.name.substr((~-file.name.lastIndexOf(".") >>> 0) + 2);
+                var file        = files[index],
+                    fileExt     = file.name.substr((~-file.name.lastIndexOf('.') >>> 0) + 2),
+                    assumeValid = $ember.get(controller, 'mimeTypes') === '*';
 
                 // Determine if the file is valid based on its MIME type or extension, and we haven't exceeded
                 // the user defined limit for the amount of files to upload in one go.
                 var invalidMime   = ($.inArray(file.type, mimeTypes) === -1) && ($.inArray(fileExt, extensions) === -1),
                     currentLength = $ember.get(controller, 'validFiles').length;
 
-                if (invalidMime || currentLength === options.limit) {
+                if (!assumeValid && (invalidMime || currentLength === options.limit)) {
 
                     // If it isn't valid, then we'll add it as an invalid file.
                     controller.send('addInvalidFile', file);

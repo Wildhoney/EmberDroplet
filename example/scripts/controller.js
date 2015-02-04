@@ -40,7 +40,7 @@ App.IndexController = Ember.Controller.extend(DropletController, {
      * @property concatenatedProperties
      * @type {Array}
      */
-    concatenatedProperties: ['mimeTypes'],
+    //concatenatedProperties: ['mimeTypes'],
 
     /**
      * @method didUploadFiles
