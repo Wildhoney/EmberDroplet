@@ -27,6 +27,19 @@ describe('Ember Crossfilter', function() {
             expect(Ember.get(controller, 'deletedFiles.length')).toEqual(0);
         });
 
+        it('Can define the MIME type as a wildcard', function() {
+
+            spyOn(controller, 'send');
+            
+            view.traverseFiles([{ name: 'MyFile.mp3' }]);
+            expect(controller.send).toHaveBeenCalledWith('addInvalidFile', jasmine.any(Object));
+
+            controller.mimeTypes = '*';
+            view.traverseFiles([{ name: 'MyFile.mp3' }]);
+            expect(controller.send).toHaveBeenCalledWith('addValidFile', jasmine.any(Object));
+
+        });
+
         it('Can add an invalid file to the list', function() {
             var file = { name: 'MyFile.xml' };
             controller.send('addInvalidFile', file);
