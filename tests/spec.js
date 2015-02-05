@@ -30,7 +30,7 @@ describe('Ember Crossfilter', function() {
         it('Can define the MIME type as a wildcard', function() {
 
             spyOn(controller, 'send');
-            
+
             view.traverseFiles([{ name: 'MyFile.mp3' }]);
             expect(controller.send).toHaveBeenCalledWith('addInvalidFile', jasmine.any(Object));
 
