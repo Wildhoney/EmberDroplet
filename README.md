@@ -5,7 +5,7 @@ Ember Droplet
 &nbsp;
 [![NPM version](https://badge.fury.io/js/ember-droplet.svg)](http://badge.fury.io/js/ember-droplet)
 
-**Demo**: http://droplet.wildhoney.io/
+**Heroku**: http://ember-droplet.herokuapp.com/
 
 Install via npm: `npm install ember-droplet`.
 
