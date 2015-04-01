@@ -209,7 +209,8 @@
                 // Determine if the file is valid based on its MIME type or extension, and we haven't exceeded
                 // the user defined limit for the amount of files to upload in one go.
                 var invalidMime   = ($.inArray(file.type, mimeTypes) === -1) && ($.inArray(fileExt, extensions) === -1),
-                    currentLength = $ember.get(controller, 'validFiles').length;
+                    currentLength = $ember.get(controller, 'validFiles').length,
+                    fileSizeLimit = controller.get('fileSizeLimit');
 
                 if (!assumeValid && (invalidMime || currentLength === options.limit)) {
 
@@ -218,6 +219,11 @@
                     addedFiles.push(file);
                     continue;
 
+                }
+
+                if (fileSizeLimit != null && file.size >= fileSizeLimit) {
+                    controller.send('addInvalidFile', file);
+                    continue;
                 }
 
                 // Otherwise the file has a valid MIME type or extension, and therefore be added as a good file.
