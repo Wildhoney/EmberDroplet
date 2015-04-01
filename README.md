@@ -32,15 +32,15 @@ Features
 Methods
 -------------
 
-The `DropletController` exposes the following public methods:
+The `DropletController` contains the following actions:
 
  * `addValidFile` &ndash; Adds a file that is allowed by its MIME type;
  * `addInvalidFile` &ndash; Same as above, but a file that isn't allowed by its MIME type;
  * `deleteFile` &ndash; Deletes a specified file by its object;
  * `clearAllFiles` &ndash; Clears all files, including uploaded files;
- * `uploadAllFiles` &ndash; Uploads all valid files &ndash; returns a <a href="http://api.jquery.com/deferred.promise/" target="_blank">jQuery promise</a>;
+ * `uploadAllFiles` &ndash; Uploads all valid files;
 
-In addition to the methods, `DropletController` also has the following computed properties for convenience:
+In addition to the actions, `DropletController` also has the following computed properties for convenience:
 
  * `validFiles` &ndash; Provides a list of valid files;
  * `invalidFiles` &ndash; Provides a list of invalid files;
@@ -67,7 +67,8 @@ Properties that can be defined in your controller to interact with the mixin are
  * `mimeTypes`: Enumeration of valid MIME types. Can be appended using `concatenatedProperties` (see example);
  * `dropletOptions.useArray`: Defaults to `true`, which works for Ruby/PHP scripts where you need to specify an array-like name for the field (`file[]`). Set to `false` to use the field name `file` instead;
  * `dropletOptions.fileSizeHeader`: Defaults to `true`. Set to `false` to omit the `X-File-Size` http header;
- * `dropletOptions.method`: Defaults to `post`, but can be set to `put` if needed.
+ * `dropletOptions.method`: Defaults to `post`, but can be set to `put` if needed;
+ * `didUploadFiles`: Function which will be called if files were uploaded successfully, with the server response as the argument;
 
 Now that your controller is using the mixin, it's time for your view to interact with your controller and its related mixin. For this we recommend using the in-built view, but it's not essential. In order to create your own, please refer to the example. The simplest way to use the in-built view is to embed it into your template.
 
@@ -101,9 +102,27 @@ In order to use `EmberDroplet` it's not necessary for you to implement the `Drop
 
 There is also `DropletPreview` which allows image uploads to be previewed immediately.
 
+Handling Errors
+---------------
+
+If you need to handle upload errors in your controller, you can observe changes to the `uploadStatus.error` property. Here is an example function which would be placed in your controller:
+
+```javascript
+onFileUploadError: function () {
+    // `uploadStatus.error` contains `false` if there are no errors, `true` if
+    // there was a network error, and the arguments passed to jqXHR.fail wrapped
+    // in an object - { jqXHR, textStatus, errorThrown }
+    var error = this.get('uploadStatus.error');
+    if (error) {
+        console.error(error.jqXHR.responseText);
+        alert('An error occurred uploading the file');
+    }
+}.observes('uploadStatus.error'),
+```
+
 Testing
 -------------
 
-All of the related tests are written in Jasmine, and can be run with `grunt test` (assuming you have `grunt` installed &ndash; `npm install grunt-cli -g`). You'll also need to run `npm install` to install the project's dependencies.
+All of the related tests are written in Jasmine, and can be run with `npm test`. You'll also need to run `npm install` to install the project's dependencies.
 
 <img src="http://nathanleclaire.com/images/unit-test-angularjs-service/jasmine.png" alt="Jasmine" />

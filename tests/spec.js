@@ -150,6 +150,78 @@ describe('Ember Crossfilter', function() {
             });
           });
         });
+        
+        describe('With successful upload request', function() {
+            var server, file, didUploadFiles;
+            
+            beforeEach(function() {
+                server = sinon.fakeServer.create();
+                server.respondWith([200, {}, '']);
+                
+                didUploadFiles = jasmine.createSpy();
+                
+                file = { name: 'art_of_flight.mp4', type: 'video/mp4' };
+                controller.set('didUploadFiles', didUploadFiles);
+                controller.set('dropletUrl', 'http://localhost');
+                controller.send('addValidFile', file);
+                controller.send('uploadAllFiles');
+                
+                server.respond();
+            });
+            
+            afterEach(function() {
+                server.restore();
+            });
+          
+            it('Calls didUploadFiles', function(done) {
+                setTimeout(function () {
+                    expect(didUploadFiles).toHaveBeenCalled();
+                    expect(controller.get('uploadStatus.error')).toBe(false);
+                    done();
+                }, 1);
+            });
+        });
+        
+        describe('With failing upload request', function() {
+            var server, file, didUploadFiles;
+            
+            beforeEach(function() {
+                server = sinon.fakeServer.create();
+                server.respondWith([400, {}, 'Failed']);
+                
+                didUploadFiles = jasmine.createSpy();
+                
+                file = { name: 'art_of_flight.mp4', type: 'video/mp4' };
+                controller.set('didUploadFiles', didUploadFiles);
+                controller.set('dropletUrl', 'http://localhost');
+                controller.send('addValidFile', file);
+                controller.send('uploadAllFiles');
+                
+                server.respond();
+            });
+            
+            afterEach(function() {
+                server.restore();
+            });
+            
+            it('Does not call didUploadFiles', function(done) {
+                setTimeout(function () {
+                    expect(didUploadFiles).not.toHaveBeenCalled();
+                    done();
+                }, 1);
+            });
+            
+            it('Sets uploadStatus.error appropriately', function(done) {
+                setTimeout(function () {
+                    var error = controller.get('uploadStatus.error');
+                    expect(error).toBeDefined();
+                    expect(error.jqXHR).toBeDefined();
+                    expect(error.jqXHR.responseText).toEqual('Failed');
+                    expect(error.jqXHR.status).toEqual(400);
+                    done();
+                }, 1);
+            });
+        });
     });
 
     describe('View', function() {

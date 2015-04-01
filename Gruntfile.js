@@ -34,7 +34,7 @@ module.exports = function(grunt) {
                 options: {
                     specs: 'tests/spec.js',
                     helpers: [
-                      './example/scripts/vendor/sinon_server/sinon-server.js',
+                      './example/scripts/vendor/sinon_server/index.js',
                       './example/scripts/vendor/jquery/jquery.js',
                       './example/scripts/vendor/handlebars/handlebars.js',
                       './example/scripts/vendor/ember/ember.js'
@@ -75,7 +75,7 @@ module.exports = function(grunt) {
             // ---------
             cwd: '',
             dependencies: true,
-            devDependencies: false,
+            devDependencies: true,
             exclude: [],
             fileTypes: {},
             ignorePath: '',
