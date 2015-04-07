@@ -13,6 +13,9 @@ script:
 
 deploy:
   provider: heroku
+  strategy: api
+  skip_cleanup: true
+  all_branches: true
   api_key:
     secure: NVn9c9jiGiSLMcsVFuirYGjgEr5wxEs++dVOSdTUrrw1Q5dIfD1lMhzG8xVLt8WtK+nZcIIsNkVUuxPiNg3ydXzQO6W4FTYUUES6vcRfGra4sNFgn1kkdXcoZD1JwDiw1nUDYVQoB3xt4bJxXSKKocch2Wmz/B//8RRqWoj3nco=
   app: ember-droplet

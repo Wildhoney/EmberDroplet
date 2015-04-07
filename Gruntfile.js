@@ -62,25 +62,6 @@ module.exports = function(grunt) {
                     filter: 'isFile'
                 }]
             }
-        },
-        bowerInstall: {
-          target: {
-            // Point to the files that should be updated when
-            // you run `grunt bower-install`
-            src: [
-              'tests/index.html'
-            ],
-
-            // Optional:
-            // ---------
-            cwd: '',
-            dependencies: true,
-            devDependencies: true,
-            exclude: [],
-            fileTypes: {},
-            ignorePath: '',
-            overrides: {}
-          }
         }
     });
 
