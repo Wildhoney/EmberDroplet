@@ -266,6 +266,10 @@
                     postData        = this.get(&#x27;postData&#x27;),
                     requestHeaders  = this.get(&#x27;requestHeaders&#x27;);
 
+                if (typeof url === &#x27;function&#x27;) {
+                    url = url();
+                }
+
                 $ember.set(this, &#x27;uploadStatus.uploading&#x27;, true);
                 $ember.set(this, &#x27;uploadStatus.error&#x27;, false);
 
@@ -273,11 +277,9 @@
                 $ember.assert(&#x27;You must specify the &#x60;dropletUrl&#x60; parameter in order to upload files.&#x27;, !!url);
 
                 // Create a new form data instance based on file and postData.
-                var formData = this._getFormData(postData, options.useArray);
-
-                var method = options.method || defaultOptions.method;
-
-                var headers = {};
+                var formData = this._getFormData(postData, options.useArray),
+                    method   = options.method || defaultOptions.method,
+                    headers  = {};
 
                 if (options.fileSizeHeader) {
 

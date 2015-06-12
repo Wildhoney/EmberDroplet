@@ -279,7 +279,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 254,
+            "line": 256,
             "description": "Creates a FormData object based on the valid files and postData provided.",
             "itemtype": "method",
             "name": "_getFormData",
@@ -306,7 +306,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 288,
+            "line": 290,
             "description": "Clears the request event handlers and cancels the upload",
             "itemtype": "property",
             "name": "willDestroy",
@@ -319,7 +319,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 308,
+            "line": 310,
             "description": "Finds a list of files that aren't deleted, and are of a valid MIME type.",
             "itemtype": "property",
             "name": "validFiles",
@@ -332,7 +332,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 318,
+            "line": 320,
             "description": "Finds a list of files that have an unsupported MIME type.",
             "itemtype": "property",
             "name": "invalidFiles",
@@ -345,7 +345,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 328,
+            "line": 330,
             "description": "Finds a list of files that have been successfully uploaded.",
             "itemtype": "property",
             "name": "uploadedFiles",
@@ -358,7 +358,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 338,
+            "line": 340,
             "description": "Finds a list of files that have been deleted by the user.",
             "itemtype": "property",
             "name": "deletedFiles",
@@ -371,7 +371,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 348,
+            "line": 350,
             "description": "Accepts a map of properties that each file must have.",
             "itemtype": "method",
             "name": "_filesByProperties",
@@ -393,7 +393,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 382,
+            "line": 384,
             "description": "Determine the size of the request.",
             "itemtype": "method",
             "name": "_getSize",
@@ -408,7 +408,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 402,
+            "line": 404,
             "itemtype": "method",
             "name": "_addSuccessListener",
             "params": [
@@ -424,7 +424,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 422,
+            "line": 424,
             "itemtype": "method",
             "name": "_addErrorListener",
             "params": [
@@ -444,7 +444,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 438,
+            "line": 440,
             "itemtype": "method",
             "name": "_addProgressListener",
             "params": [
@@ -464,7 +464,7 @@
         },
         {
             "file": "packages/ember-droplet/ember-droplet-mixin.js",
-            "line": 463,
+            "line": 465,
             "description": "Adds a file based on whether it's valid or invalid.",
             "itemtype": "method",
             "name": "_addFile",
