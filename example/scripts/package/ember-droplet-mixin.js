@@ -175,7 +175,7 @@
                     requestHeaders  = this.get('requestHeaders');
 
                 if (typeof url === 'function') {
-                    url = url();
+                    url = url.apply(this);
                 }
 
                 $ember.set(this, 'uploadStatus.uploading', true);
