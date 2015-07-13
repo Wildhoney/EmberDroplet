@@ -694,7 +694,7 @@
                 }
 
                 var file        = files[index],
-                    fileExt     = file.name.substr((~-file.name.lastIndexOf('.') >>> 0) + 2),
+                    fileExt     = file.name.substr((~-file.name.lastIndexOf('.') >>> 0) + 2).toLowerCase(),
                     assumeValid = $ember.get(controller, 'mimeTypes') === '*';
 
                 // Determine if the file is valid based on its MIME type or extension, and we haven't exceeded
