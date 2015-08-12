@@ -2,7 +2,7 @@ module.exports = function(config) {
 
     config.set({
 
-        frameworks: ['jasmine', 'browserify'],
+        frameworks: ['jasmine'],
         files: [
             'example/vendor/jquery/dist/jquery.js',
             'example/vendor/handlebars/handlebars.js',
@@ -11,9 +11,9 @@ module.exports = function(config) {
             'tests/*.test.js'
         ],
         preprocessors: {
-            'components/*.js': ['browserify'],
-            'tests/*.js': ['browserify'],
-            'tests/**/*.js': ['browserify']
+            'components/*.js': ['babel'],
+            'tests/*.js': ['babel'],
+            'tests/**/*.js': ['babel']
         },
         reporters: ['spec'],
         port: 9876,
@@ -21,11 +21,7 @@ module.exports = function(config) {
         logLevel: config.LOG_INFO,
         autoWatch: false,
         browsers: ['Firefox'],
-        singleRun: false,
-        browserify: {
-            debug: true,
-            transform: [["babelify", { stage: 0 }]]
-        }
+        singleRun: false
 
     });
 

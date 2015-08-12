@@ -16,6 +16,7 @@
     "js-yaml": "^3.3.1",
     "jshint-stylish": "^2.0.1",
     "karma": "^0.12.37",
+    "karma-babel-preprocessor": "^5.2.1",
     "karma-firefox-launcher": "^0.1.6",
     "karma-jasmine": "^0.3.6",
     "karma-spec-reporter": "0.0.20"

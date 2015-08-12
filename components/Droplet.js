@@ -3,6 +3,37 @@
     "use strict";
 
     /**
+     * @property Model
+     * @type {Model}
+     */
+    class Model {
+
+        /**
+         * @method setStatusType
+         * @param {Number} statusType
+         * @return {void}
+         */
+        setStatusType(statusType) {
+            this.statusType = Number(statusType);
+        }
+
+    }
+
+    /**
+     * @constant MIME_MODE
+     * @type {Object}
+     */
+    const MIME_MODE = { PUSH: 'push', SET: 'set' };
+
+    /**
+     * @constant MESSAGES
+     * @type {Object}
+     */
+    const MESSAGES = {
+        URL_REQUIRED: 'Droplet: You must specify the URL parameter when constructing your component.'
+    };
+
+    /**
      * @module EmberDroplet
      * @author Adam Timberlake
      * @see https://github.com/Wildhoney/EmberDroplet
@@ -10,10 +41,29 @@
     $window.Droplet = $ember.Mixin.create({
 
         /**
+         * @property url
+         * @throws {Error}
+         * @type {Function}
+         */
+        url: () => { throw new Error(MESSAGES.URL_REQUIRED) },
+
+        /**
+         * @property hooks
+         * @type {Object}
+         */
+        hooks: { didAdd: () => {}, didDelete: () => {} },
+
+        /**
          * @property files
          * @type {Array}
          */
         files: [],
+
+        /**
+         * @property model
+         * @type {Model}
+         */
+        model: Model,
 
         /**
          * @property mimeTypes
@@ -38,7 +88,7 @@
              * @method uploadFiles
              * @return {Promise}
              */
-            uploadFiles: () => {
+            uploadFiles() {
 
                 const isFunction  = value => typeof $ember.get(this, 'url') === 'function';
                 const isUndefined = value => typeof value !== 'undefined';
@@ -53,38 +103,59 @@
             },
 
             /**
+             * @method mimeTypes
+             * @param {Array} mimeTypes
+             * @param {Object} [mode=MIME_MODE.PUSH]
+             * @return {void}
+             */
+            mimeTypes(mimeTypes, mode = MIME_MODE.PUSH) {
+                mode === MIME_MODE.SET && this.set('mimeTypes', []);
+                const types = this.get('mimeTypes').concat(mimeTypes);
+                this.set('mimeTypes', types);
+            },
+
+            /**
              * @method addFiles
              * @param {Model[]} files
-             * @return {Boolean}
+             * @return {void}
              */
-            addFiles(files) {
-                files = Array.isArray(files) ? files : [files];
-                return files.every(file => !!this.files.push(file));
+            addFiles(...files) {
+
+                files.forEach(file => {
+                    this.get('hooks').didAdd(file);
+                    this.get('files').pushObject(file);
+                });
+
             },
 
             /**
              * @method deleteFiles
              * @param {Model[]} files
-             * @return {Boolean}
+             * @return {void}
              */
-            deleteFiles(files) {
+            deleteFiles(...files) {
 
-                files = Array.isArray(files) ? files : [files];
+                files.forEach((file) => {
 
-                return files.every((file) => {
-                    const index = file instanceof Model && this.files.indexOf(file);
-                    return ~index && this.files.splice(index) || false;
+                    const index = file instanceof Model && this.get('files').indexOf(file);
+                    file.setStatusType(this.statusTypes.DELETED);
+
+                    if (~index) {
+                        this.get('hooks').didDelete(file);
+                        this.get('files').splice(index, 1);
+                    }
+
                 });
 
             },
 
             /**
              * @method clearFiles
-             * @return {Boolean}
+             * @return {void}
              */
             clearFiles() {
-                this.files.forEach(file => file.setStatusType(this.statusTypes.DELETED));
-                return !(this.files.length = 0);
+                this.files.forEach(file => this.sendAction('deleteFiles', file));
+                this.files.length = 0;
             },
 
             /**
@@ -92,29 +163,12 @@
              * @param {Number} statusType
              * @return {Array}
              */
-            getFiles: statusType => {
+            getFiles(statusType) {
                 return this.files.filter(file => file.statusType & statusType);
             }
 
         }
 
     });
-
-    /**
-     * @property Model
-     * @type {Model}
-     */
-    class Model {
-
-        /**
-         * @method setStatusType
-         * @param {Number} statusType
-         * @return {void}
-         */
-        setStatusType(statusType) {
-            this.statusType = Number(statusType);
-        }
-
-    }
 
 })(window, window.Ember);

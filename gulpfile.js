@@ -4,6 +4,7 @@
         rename = require('gulp-rename'),
         uglify = require('gulp-uglify'),
         jshint = require('gulp-jshint'),
+        karma  = require('gulp-karma'),
         path   = require('path'),
         yaml   = require('js-yaml'),
         fs     = require('fs'),
@@ -32,7 +33,20 @@
 
     });
 
-    $gulp.task('test', ['lint']);
+    $gulp.task('karma', function() {
+
+        return $gulp.src([].concat(config.dependencies, config.tests, config.module))
+                    .pipe(karma({
+                        configFile: 'karma.conf.js',
+                        action: 'run'
+                    }))
+                    .on('error', function(err) {
+                        throw err;
+                    });
+
+    });
+
+    $gulp.task('test', ['lint', 'karma']);
     $gulp.task('build', ['compile']);
     $gulp.task('default', ['test', 'build']);
 
