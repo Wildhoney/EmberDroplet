@@ -159,4 +159,15 @@ describe('Ember Droplet', () => {
 
     });
 
+    it('Should be able to determine the file size for the X-File-Size header;', () => {
+
+        const files = [new Model({ type: 'image/png', size: 100 }),
+                       new Model({ type: 'image/png', size: 1500 }),
+                       new Model({ type: 'image/png', size: 250 })];
+        
+        component.send('addFiles', ...files);
+        expect(component.get('requestSize')).toEqual(1850);
+
+    });
+
 });

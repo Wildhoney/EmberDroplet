@@ -32,6 +32,14 @@
         }
 
         /**
+         * @method getFileSize
+         * @return {Number}
+         */
+        getFileSize() {
+            return this.file.size || 0;
+        }
+
+        /**
          * @method setStatusType
          * @param {Number} statusType
          * @return {void}
@@ -119,7 +127,7 @@
          * @property uploadStatus
          * @type {Object}
          */
-        uploadStatus: $ember.computed(function computedFn() {
+        uploadStatus: $ember.computed(function() {
             return { uploading: false, percentComplete: 0, error: false };
         }),
 
@@ -127,7 +135,7 @@
          * @property validFiles
          * @return {Array}
          */
-        validFiles: $ember.computed(function computedFn() {
+        validFiles: $ember.computed(function() {
             return this.getFiles(STATUS_TYPES.VALID);
         }).property(COMPUTED_OBSERVER),
 
@@ -135,7 +143,7 @@
          * @property invalidFiles
          * @return {Array}
          */
-        invalidFiles: $ember.computed(function computedFn() {
+        invalidFiles: $ember.computed(function() {
             return this.getFiles(STATUS_TYPES.INVALID);
         }).property(COMPUTED_OBSERVER),
 
@@ -143,8 +151,16 @@
          * @property deleteFiles
          * @return {Array}
          */
-        deleteFiles: $ember.computed(function computedFn() {
+        deleteFiles: $ember.computed(function() {
             return this.getFiles(STATUS_TYPES.DELETED);
+        }).property(COMPUTED_OBSERVER),
+
+        /**
+         * @property requestSize
+         * @return {Array}
+         */
+        requestSize: $ember.computed(function() {
+            return $ember.get(this, 'validFiles').reduce((size, model) => size + model.getFileSize(), 0);
         }).property(COMPUTED_OBSERVER),
 
         /**
