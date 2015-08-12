@@ -1,24 +1,39 @@
-(function main() {
+(function main($gulp) {
 
-    var gulp   = require('gulp'),
-        karma  = require('gulp-karma'),
+    var babel  = require('gulp-babel'),
+        rename = require('gulp-rename'),
+        uglify = require('gulp-uglify'),
+        jshint = require('gulp-jshint'),
         path   = require('path'),
         yaml   = require('js-yaml'),
         fs     = require('fs'),
         config = yaml.safeLoad(fs.readFileSync('./droplet.yml', 'utf8'));
 
-    gulp.task('karma', function() {
+    $gulp.task('compile', function() {
 
-        return gulp.src([].concat(config.libraries, config.components, config.tests))
-            .pipe(karma({
-                configFile: 'karma.conf.js',
-                action: 'run'
-            }))
-            .on('error', function(err) { throw err; });
+        return $gulp.src(config.module)
+                    .pipe(babel())
+                    .pipe(rename(config.name + '.js'))
+                    .pipe($gulp.dest(config.locations.release))
+                    .pipe($gulp.dest(config.locations.vendor + '/' + config.name))
+                    .pipe(uglify())
+                    .pipe(rename(function (path) {
+                        path.basename += '.min';
+                    }))
+                    .pipe($gulp.dest(config.locations.release));
 
     });
 
-    gulp.task('test', ['karma']);
-    gulp.task('default', ['test']);
+    $gulp.task('lint', function() {
 
-})();
+        return $gulp.src(config.module)
+                    .pipe(jshint())
+                    .pipe(jshint.reporter(require('jshint-stylish')));
+
+    });
+
+    $gulp.task('test', ['lint']);
+    $gulp.task('build', ['compile']);
+    $gulp.task('default', ['test', 'build']);
+
+})(require('gulp'));
