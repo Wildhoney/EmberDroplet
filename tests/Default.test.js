@@ -136,4 +136,16 @@ describe('Ember Droplet', () => {
 
     });
 
+    it('Should be able to upload valid files;', () => {
+
+        const validFiles   = [new Model({ type: 'image/png' }), new Model({ type: 'image/gif' })];
+        const invalidFiles = [new Model({ type: 'text/json' }), new Model({ type: 'text/xml' })];
+
+        component.send('addFiles', ...[...validFiles, ...invalidFiles]);
+
+        expect(component.get('validFiles.length')).toEqual(2);
+        expect(component.get('invalidFiles.length')).toEqual(2);
+
+    });
+
 });

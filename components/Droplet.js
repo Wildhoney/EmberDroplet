@@ -111,9 +111,17 @@
          * @return {void}
          */
         init() {
-            this.set('files', []);
+            $ember.set(this, 'files', []);
             this._super();
         },
+
+        /**
+         * @property uploadStatus
+         * @type {Object}
+         */
+        uploadStatus: $ember.computed(function computedFn() {
+            return { uploading: false, percentComplete: 0, error: false };
+        }),
 
         /**
          * @property validFiles
@@ -180,9 +188,10 @@
              * @return {void}
              */
             mimeTypes(mimeTypes, mode = MIME_MODE.PUSH) {
-                mode === MIME_MODE.SET && this.set('mimeTypes', []);
-                const types = this.get('mimeTypes').concat(mimeTypes);
-                this.set('mimeTypes', types);
+                mode === MIME_MODE.SET && $ember.set(this, 'mimeTypes', []);
+                mimeTypes = Array.isArray(mimeTypes) ? mimeTypes : [mimeTypes];
+                const types = [...$ember.get(this, 'mimeTypes'), ...mimeTypes];
+                $ember.set(this, 'mimeTypes', types);
             },
 
             /**
@@ -196,7 +205,7 @@
                  * @method isAcceptableMIMEType
                  * @return {Boolean}
                  */
-                const isAcceptableMIMEType = mimeType => !!~this.get('mimeTypes').indexOf(mimeType);
+                const isAcceptableMIMEType = mimeType => !!~$ember.get(this, 'mimeTypes').indexOf(mimeType);
 
                 files.forEach(file => {
 
@@ -204,8 +213,8 @@
 
                         file.setStatusType(isAcceptableMIMEType(file.getMIMEType()) ? STATUS_TYPES.VALID : STATUS_TYPES.INVALID);
 
-                        this.get('hooks').didAdd(file);
-                        this.get('files').pushObject(file);
+                        $ember.get(this, 'hooks').didAdd(file);
+                        $ember.get(this, 'files').pushObject(file);
 
                     }
 
@@ -222,13 +231,13 @@
 
                 files.forEach((file) => {
 
-                    const contains = !!~this.get('files').indexOf(file);
+                    const contains = !!~$ember.get(this, 'files').indexOf(file);
 
                     if (contains && file instanceof Model) {
 
                         file.setStatusType(STATUS_TYPES.DELETED);
-                        this.get('files').removeObject(file);
-                        this.get('hooks').didDelete(file);
+                        $ember.get(this, 'files').removeObject(file);
+                        $ember.get(this, 'hooks').didDelete(file);
 
                     }
 
