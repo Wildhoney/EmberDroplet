@@ -3,10 +3,33 @@
     "use strict";
 
     /**
+     * @constant STATUS_TYPES
+     * @type {Object}
+     */
+    const STATUS_TYPES = { NONE: 0, VALID: 1, INVALID: 2, DELETED: 4, UPLOADED: 8, FAILED: 16 };
+
+    /**
      * @property Model
      * @type {Model}
      */
     class Model {
+
+        /**
+         * @constructor
+         * @param {File} [file={}]
+         */
+        constructor(file = {}) {
+            this.file       = file;
+            this.statusType = STATUS_TYPES.NONE;
+        }
+
+        /**
+         * @method getMIMEType
+         * @return {String}
+         */
+        getMIMEType() {
+            return this.file.type;
+        }
 
         /**
          * @method setStatusType
@@ -75,7 +98,16 @@
          * @property statusTypes
          * @type {Object}
          */
-        statusTypes: { VALID: 1, INVALID: 2, DELETED: 4, UPLOADED: 8, FAILED: 16 },
+        statusTypes: STATUS_TYPES,
+
+        /**
+         * @method init
+         * @return {void}
+         */
+        init() {
+            this.set('files', []);
+            this._super();
+        },
 
         /**
          * @property actions
@@ -121,9 +153,19 @@
              */
             addFiles(...files) {
 
+                /**
+                 * @method isAcceptableMIMEType
+                 * @return {Boolean}
+                 */
+                const isAcceptableMIMEType = mimeType => !!~this.get('mimeTypes').indexOf(mimeType);
+
                 files.forEach(file => {
+
+                    file.setStatusType(isAcceptableMIMEType(file.getMIMEType()) ? STATUS_TYPES.VALID : STATUS_TYPES.INVALID);
+
                     this.get('hooks').didAdd(file);
                     this.get('files').pushObject(file);
+
                 });
 
             },
@@ -138,7 +180,7 @@
                 files.forEach((file) => {
 
                     const index = file instanceof Model && this.get('files').indexOf(file);
-                    file.setStatusType(this.statusTypes.DELETED);
+                    file.setStatusType(STATUS_TYPES.DELETED);
 
                     if (~index) {
                         this.get('hooks').didDelete(file);
@@ -154,7 +196,7 @@
              * @return {void}
              */
             clearFiles() {
-                this.files.forEach(file => this.sendAction('deleteFiles', file));
+                this.files.forEach(file => this.send('deleteFiles', file));
                 this.files.length = 0;
             },
 

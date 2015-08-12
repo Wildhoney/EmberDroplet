@@ -95,4 +95,25 @@ describe('Ember Droplet', () => {
 
     });
 
+    it('Should be able to set the correct status type ID;', () => {
+
+        const statusTypes = component.statusTypes;
+
+        const validMockModel   = new Model({ type: 'image/png' });
+        const invalidMockModel = new Model({ type: 'text/pdf' });
+
+        expect(validMockModel.statusType).toEqual(statusTypes.NONE);
+        component.send('addFiles', validMockModel);
+        expect(validMockModel.statusType).toEqual(statusTypes.VALID);
+        component.send('deleteFiles', validMockModel);
+        expect(validMockModel.statusType).toEqual(statusTypes.DELETED);
+
+        expect(invalidMockModel.statusType).toEqual(statusTypes.NONE);
+        component.send('addFiles', invalidMockModel);
+        expect(invalidMockModel.statusType).toEqual(statusTypes.INVALID);
+        component.send('clearFiles');
+        expect(invalidMockModel.statusType).toEqual(statusTypes.DELETED);
+
+    });
+
 });
