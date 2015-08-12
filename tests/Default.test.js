@@ -56,6 +56,10 @@ describe('Ember Droplet', () => {
         component.send('clearFiles');
         expect(component.get('files').length).toEqual(0);
 
+        // Adding invalid models shouldn't have any effect.
+        component.send('addFiles', 'Non-model');
+        expect(component.get('files').length).toEqual(0);
+
     });
 
     it('Should be able to update the whitelist for MIME types;', () => {
@@ -93,6 +97,10 @@ describe('Ember Droplet', () => {
         component.send('deleteFiles', mockModels.first, mockModels.second);
         expect(component.hooks.didDelete.calls.count()).toEqual(2);
 
+        // Deleting a non-existent model shouldn't invoke the didAdd callback.
+        component.send('deleteFiles', mockModels.first, mockModels.second);
+        expect(component.hooks.didDelete.calls.count()).toEqual(2);
+
     });
 
     it('Should be able to set the correct status type ID;', () => {
@@ -113,6 +121,18 @@ describe('Ember Droplet', () => {
         expect(invalidMockModel.statusType).toEqual(statusTypes.INVALID);
         component.send('clearFiles');
         expect(invalidMockModel.statusType).toEqual(statusTypes.DELETED);
+
+    });
+
+    it('Should be able to read from the computed properties;', () => {
+
+        const validMockModel   = new Model({ type: 'image/png' });
+        const invalidMockModel = new Model({ type: 'text/pdf' });
+
+        component.send('addFiles', validMockModel, invalidMockModel);
+
+        expect(component.get('validFiles.length')).toEqual(1);
+        expect(component.get('invalidFiles.length')).toEqual(1);
 
     });
 

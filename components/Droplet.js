@@ -49,6 +49,12 @@
     const MIME_MODE = { PUSH: 'push', SET: 'set' };
 
     /**
+     * @constant COMPUTED_OBSERVER
+     * @type {Array}
+     */
+    const COMPUTED_OBSERVER = $ember.String.w('files.length', 'files.@each.statusType');
+
+    /**
      * @constant MESSAGES
      * @type {Object}
      */
@@ -74,7 +80,7 @@
          * @property hooks
          * @type {Object}
          */
-        hooks: { didAdd: () => {}, didDelete: () => {} },
+        hooks: { didAdd: () => {}, didDelete: () => {}, didUpload: () => {} },
 
         /**
          * @property files
@@ -107,6 +113,39 @@
         init() {
             this.set('files', []);
             this._super();
+        },
+
+        /**
+         * @property validFiles
+         * @return {Array}
+         */
+        validFiles: $ember.computed(function computedFn() {
+            return this.getFiles(STATUS_TYPES.VALID);
+        }).property(COMPUTED_OBSERVER),
+
+        /**
+         * @property invalidFiles
+         * @return {Array}
+         */
+        invalidFiles: $ember.computed(function computedFn() {
+            return this.getFiles(STATUS_TYPES.INVALID);
+        }).property(COMPUTED_OBSERVER),
+
+        /**
+         * @property deleteFiles
+         * @return {Array}
+         */
+        deleteFiles: $ember.computed(function computedFn() {
+            return this.getFiles(STATUS_TYPES.DELETED);
+        }).property(COMPUTED_OBSERVER),
+
+        /**
+         * @method getFiles
+         * @param {Number} statusType
+         * @return {Array}
+         */
+        getFiles(statusType) {
+            return this.files.filter(file => file.statusType & statusType);
         },
 
         /**
@@ -161,10 +200,14 @@
 
                 files.forEach(file => {
 
-                    file.setStatusType(isAcceptableMIMEType(file.getMIMEType()) ? STATUS_TYPES.VALID : STATUS_TYPES.INVALID);
+                    if (file instanceof Model) {
 
-                    this.get('hooks').didAdd(file);
-                    this.get('files').pushObject(file);
+                        file.setStatusType(isAcceptableMIMEType(file.getMIMEType()) ? STATUS_TYPES.VALID : STATUS_TYPES.INVALID);
+
+                        this.get('hooks').didAdd(file);
+                        this.get('files').pushObject(file);
+
+                    }
 
                 });
 
@@ -179,12 +222,14 @@
 
                 files.forEach((file) => {
 
-                    const index = file instanceof Model && this.get('files').indexOf(file);
-                    file.setStatusType(STATUS_TYPES.DELETED);
+                    const contains = !!~this.get('files').indexOf(file);
 
-                    if (~index) {
+                    if (contains && file instanceof Model) {
+
+                        file.setStatusType(STATUS_TYPES.DELETED);
+                        this.get('files').removeObject(file);
                         this.get('hooks').didDelete(file);
-                        this.get('files').splice(index, 1);
+
                     }
 
                 });
@@ -198,15 +243,6 @@
             clearFiles() {
                 this.files.forEach(file => this.send('deleteFiles', file));
                 this.files.length = 0;
-            },
-
-            /**
-             * @method getFiles
-             * @param {Number} statusType
-             * @return {Array}
-             */
-            getFiles(statusType) {
-                return this.files.filter(file => file.statusType & statusType);
             }
 
         }
