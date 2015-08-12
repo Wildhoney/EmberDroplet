@@ -165,7 +165,7 @@
 
             /**
              * @method uploadFiles
-             * @return {Promise}
+             * @return {Ember.RSVP.Promise}
              */
             uploadFiles() {
 
@@ -174,8 +174,17 @@
 
                 const defaults = { fileSizeHeader: true, useArray: true, method: 'POST' };
                 const url      = isFunction($ember.get(this, 'url')) ? $ember.get(this, 'url').apply(this) : $ember.get(this, 'url');
+                const files    = $ember.get(this, 'files').filter(file => file.statusType & STATUS_TYPES.VALID);
 
-                return new Promise((resolve, reject) => {
+                return new $ember.RSVP.Promise((resolve, reject) => {
+
+                    resolve({ files });
+
+                }).then(response => {
+
+                    $ember.get(this, 'hooks').didUpload(...response.files);
+
+                }, (jqXHR, textStatus, error) => {
 
                 });
 
@@ -207,18 +216,19 @@
                  */
                 const isAcceptableMIMEType = mimeType => !!~$ember.get(this, 'mimeTypes').indexOf(mimeType);
 
-                files.forEach(file => {
+                const addedFiles = files.map(file => {
 
                     if (file instanceof Model) {
 
                         file.setStatusType(isAcceptableMIMEType(file.getMIMEType()) ? STATUS_TYPES.VALID : STATUS_TYPES.INVALID);
-
-                        $ember.get(this, 'hooks').didAdd(file);
                         $ember.get(this, 'files').pushObject(file);
+                        return file;
 
                     }
 
-                });
+                }).filter(file => typeof file !== 'undefined');
+
+                addedFiles.length && $ember.get(this, 'hooks').didAdd(...addedFiles);
 
             },
 
@@ -229,7 +239,7 @@
              */
             deleteFiles(...files) {
 
-                files.forEach((file) => {
+                const deletedFiles = files.map((file) => {
 
                     const contains = !!~$ember.get(this, 'files').indexOf(file);
 
@@ -237,11 +247,13 @@
 
                         file.setStatusType(STATUS_TYPES.DELETED);
                         $ember.get(this, 'files').removeObject(file);
-                        $ember.get(this, 'hooks').didDelete(file);
+                        return file;
 
                     }
 
-                });
+                }).filter(file => typeof file !== 'undefined');
+
+                deletedFiles.length && $ember.get(this, 'hooks').didDelete(...deletedFiles);
 
             },
 

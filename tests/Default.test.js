@@ -92,14 +92,14 @@ describe('Ember Droplet', () => {
         spyOn(component.hooks, 'didDelete');
 
         component.send('addFiles', mockModels.first, mockModels.second, mockModels.third);
-        expect(component.hooks.didAdd.calls.count()).toEqual(3);
+        expect(component.hooks.didAdd.calls.count()).toEqual(1);
 
         component.send('deleteFiles', mockModels.first, mockModels.second);
-        expect(component.hooks.didDelete.calls.count()).toEqual(2);
+        expect(component.hooks.didDelete.calls.count()).toEqual(1);
 
         // Deleting a non-existent model shouldn't invoke the didAdd callback.
         component.send('deleteFiles', mockModels.first, mockModels.second);
-        expect(component.hooks.didDelete.calls.count()).toEqual(2);
+        expect(component.hooks.didDelete.calls.count()).toEqual(1);
 
     });
 
@@ -136,15 +136,26 @@ describe('Ember Droplet', () => {
 
     });
 
-    it('Should be able to upload valid files;', () => {
+    it('Should be able to upload valid files;', done => {
 
         const validFiles   = [new Model({ type: 'image/png' }), new Model({ type: 'image/gif' })];
         const invalidFiles = [new Model({ type: 'text/json' }), new Model({ type: 'text/xml' })];
 
-        component.send('addFiles', ...[...validFiles, ...invalidFiles]);
+        // Resolve the Jasmine test when the hook is invoked.
+        component.hooks.didUpload = (...files) => {
+            expect(files.length).toEqual(2);
+            expect(files[0]).toEqual(validFiles[0]);
+            expect(files[1]).toEqual(validFiles[1]);
+            expect(component.hooks.didUpload.calls.count()).toEqual(1);
+            done();
+        };
 
+        spyOn(component.hooks, 'didUpload').and.callThrough();
+
+        component.send('addFiles', ...[...validFiles, ...invalidFiles]);
         expect(component.get('validFiles.length')).toEqual(2);
         expect(component.get('invalidFiles.length')).toEqual(2);
+        component.send('uploadFiles');
 
     });
 
