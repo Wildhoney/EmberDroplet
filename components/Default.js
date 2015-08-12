@@ -1,6 +1,3 @@
-import Ember from 'ember';
-import Model from './model';
-
 /**
  * @constant STATUS_TYPES
  * @type {Object}
@@ -12,7 +9,7 @@ const STATUS_TYPES = { VALID: 1, INVALID: 2, DELETED: 4, UPLOADED: 8, FAILED: 16
  * @author Adam Timberlake
  * @see https://github.com/Wildhoney/EmberDroplet
  */
-export default Ember.Mixin.create({
+window.Droplet = Ember.Mixin.create({
 
     /**
      * @property files
@@ -44,6 +41,8 @@ export default Ember.Mixin.create({
          * @return {Promise}
          */
         uploadFiles: () => {
+
+            console.log('x');
 
             const defaults = { fileSizeHeader: true, useArray: true, method: 'POST' };
             const url      = typeof getUrl === 'function' ? getUrl.apply(this) : getUrl;
@@ -93,3 +92,5 @@ export default Ember.Mixin.create({
     }
 
 });
+
+export default Droplet;

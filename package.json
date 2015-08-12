@@ -4,7 +4,17 @@
   "author": "Adam Timberlake",
   "dependencies": {},
   "devDependencies": {
-    "hapi": "^8.8.1"
+    "gulp": "^3.9.0",
+    "gulp-babel": "^5.2.0",
+    "gulp-karma": "0.0.4",
+    "hapi": "^8.8.1",
+    "jasmine": "^2.3.2",
+    "jasmine-core": "^2.3.4",
+    "js-yaml": "^3.3.1",
+    "karma": "^0.12.37",
+    "karma-firefox-launcher": "^0.1.6",
+    "karma-jasmine": "^0.3.6",
+    "karma-spec-reporter": "0.0.20"
   },
   "repository": {
     "type": "git",
@@ -22,7 +32,7 @@
   },
   "scripts": {
     "test": "grunt test",
-    "start": "node example/node-server/server.js"
+    "start": "node example/server/default.js"
   },
   "keywords": [
     "HTML5 drag and drop",
