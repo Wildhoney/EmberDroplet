@@ -245,7 +245,7 @@
             /**
              * @method validMime
              * @param {String} mimeType
-             * @return {Boolean}
+             * @return {Function}
              */
             const validMime = mimeType => () => {
 
@@ -274,7 +274,7 @@
             /**
              * @method validSize
              * @param {Number} fileSize
-             * @return {void}
+             * @return {Function}
              */
             const validSize = fileSize => () => fileSize <= Number($ember.get(this, 'options.maximumSize'));
 
