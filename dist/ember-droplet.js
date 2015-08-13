@@ -358,6 +358,78 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     },
 
     /**
+     * @method getFormData
+     * @return {Object}
+     */
+    getFormData: function getFormData() {
+      return {};
+    },
+
+    /**
+     * @method getHeaders
+     * @return {Object}
+     */
+    getHeaders: function getHeaders() {
+      return {};
+    },
+
+    /**
+     * @method addProgressListener
+     * @param {Ember.$.ajaxSettings.xhr} xhr
+     * @return {void}
+     */
+    addProgressListener: function addProgressListener(xhr) {},
+
+    /**
+     * @method addSuccessListener
+     * @param {Ember.$.ajaxSettings.xhr} xhr
+     * @return {void}
+     */
+    addSuccessListener: function addSuccessListener(xhr) {},
+
+    /**
+     * @method addErrorListener
+     * @param {Ember.$.ajaxSettings.xhr} xhr
+     * @return {void}
+     */
+    addErrorListener: function addErrorListener(xhr) {},
+
+    /**
+     * @method getRequest
+     * @return {Ember.$.ajax}
+     */
+    getRequest: function getRequest() {
+      var _this3 = this;
+
+      var isFunction = function isFunction(value) {
+        return typeof value === 'function';
+      };
+      var url = isFunction(get(this, 'url')) ? get(this, 'url').apply(this) : get(this, 'url');
+      var method = get(this, 'options.requestMethod') || 'POST';
+      var data = this.getFormData();
+      var headers = this.getHeaders();
+      var request = $Ember.$.ajax({ url: url, method: method, headers: headers, data: data, processData: false, contentType: false,
+
+        /**
+         * @method xhr
+         * @return {Ember.$.ajaxSettings.xhr}
+         */
+        xhr: function xhr() {
+
+          var xhr = $Ember.$.ajaxSettings.xhr();
+          _this3.addProgressListener(xhr.upload);
+          _this3.addSuccessListener(xhr.upload);
+          _this3.addErrorListener(xhr.upload);
+          set(_this3, 'lastRequest', xhr);
+          return xhr;
+        }
+      });
+
+      set(this, 'lastResolver', request);
+      return request;
+    },
+
+    /**
      * @property actions
      * @type {Object}
      * @return {void}
@@ -369,15 +441,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * @return {Ember.RSVP.Promise}
        */
       uploadFiles: function uploadFiles() {
-        var _this3 = this;
+        var _this4 = this;
 
-        var isFunction = function isFunction(value) {
-          return typeof value === 'function';
-        };
-        var url = isFunction(get(this, 'url')) ? get(this, 'url').apply(this) : get(this, 'url');
         var files = get(this, 'files').filter(function (file) {
           return file.statusType & STATUS_TYPES.VALID;
         });
+        var request = this.getRequest();
 
         set(this, 'uploadStatus.uploading', true);
         set(this, 'uploadStatus.error', false);
@@ -389,7 +458,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
          * @return {void}
          */
         var resolver = function resolver(resolve, reject) {
-          _this3.invokeHook('promiseResolver', resolve, reject, files);
+          _this4.invokeHook('promiseResolver', resolve, reject, files);
+          request.done(resolve).fail(reject);
         };
 
         /**
@@ -398,7 +468,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
          * @return {void}
          */
         var resolved = function resolved(response) {
-          _this3.invokeHook.apply(_this3, ['didUpload'].concat(_toConsumableArray(response.files)));
+          _this4.invokeHook.apply(_this4, ['didUpload'].concat(_toConsumableArray(response.files)));
         };
 
         /**
@@ -412,8 +482,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           var textStatus = _ref.textStatus;
           var errorThrown = _ref.errorThrown;
 
-          var args = { request: request, textStatus: textStatus, errorThrown: errorThrown };
-          set(_this3, 'uploadStatus.error', args);
+          set(_this4, 'uploadStatus.error', { request: request, textStatus: textStatus, errorThrown: errorThrown });
         };
 
         /**
@@ -421,8 +490,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
          * @return {void}
          */
         var always = function always() {
-          set(_this3, 'uploadStatus.uploading', false);
-          _this3.invokeHook('didComplete');
+          set(_this4, 'uploadStatus.uploading', false);
+          _this4.invokeHook('didComplete');
         };
 
         return new $Ember.RSVP.Promise(resolver).then(resolved, rejected)['finally'](always);
@@ -434,7 +503,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        */
       abortUpload: function abortUpload() {
 
-        var request = get(this, 'lastRequest');
+        var request = get(this, 'lastResolver');
 
         if (request && get(this, 'uploadStatus.uploading')) {
           request.abort();
@@ -463,7 +532,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * @return {void}
        */
       addFiles: function addFiles() {
-        var _this4 = this;
+        var _this5 = this;
 
         for (var _len3 = arguments.length, files = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
           files[_key3] = arguments[_key3];
@@ -473,8 +542,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
           if (file instanceof Model) {
 
-            file.setStatusType(_this4.isValid(file) ? STATUS_TYPES.VALID : STATUS_TYPES.INVALID);
-            get(_this4, 'files').pushObject(file);
+            file.setStatusType(_this5.isValid(file) ? STATUS_TYPES.VALID : STATUS_TYPES.INVALID);
+            get(_this5, 'files').pushObject(file);
             return file;
           }
         }).filter(function (file) {
@@ -490,7 +559,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * @return {void}
        */
       deleteFiles: function deleteFiles() {
-        var _this5 = this;
+        var _this6 = this;
 
         for (var _len4 = arguments.length, files = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
           files[_key4] = arguments[_key4];
@@ -498,12 +567,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         var deletedFiles = files.map(function (file) {
 
-          var contains = !! ~get(_this5, 'files').indexOf(file);
+          var contains = !! ~get(_this6, 'files').indexOf(file);
 
           if (contains && file instanceof Model) {
 
             file.setStatusType(STATUS_TYPES.DELETED);
-            get(_this5, 'files').removeObject(file);
+            get(_this6, 'files').removeObject(file);
             return file;
           }
         }).filter(function (file) {
@@ -518,10 +587,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * @return {void}
        */
       clearFiles: function clearFiles() {
-        var _this6 = this;
+        var _this7 = this;
 
         this.files.forEach(function (file) {
-          return _this6.send('deleteFiles', file);
+          return _this7.send('deleteFiles', file);
         });
         this.files.length = 0;
       }
@@ -677,7 +746,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
      * @return {void}
      */
     didInsertElement: function didInsertElement() {
-      var _this7 = this;
+      var _this8 = this;
 
       var reader = this.get('reader'),
           image = get(this, 'image.file');
@@ -688,7 +757,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
 
       reader.addEventListener('load', run.bind(this, function (event) {
-        set(_this7, 'src', event.target.result);
+        set(_this8, 'src', event.target.result);
       }));
 
       reader.readAsDataURL(image);

@@ -307,6 +307,83 @@
         },
 
         /**
+         * @method getFormData
+         * @return {Object}
+         */
+        getFormData() {
+            return {};
+        },
+
+        /**
+         * @method getHeaders
+         * @return {Object}
+         */
+        getHeaders() {
+            return {};
+        },
+
+        /**
+         * @method addProgressListener
+         * @param {Ember.$.ajaxSettings.xhr} xhr
+         * @return {void}
+         */
+        addProgressListener(xhr) {
+
+        },
+
+        /**
+         * @method addSuccessListener
+         * @param {Ember.$.ajaxSettings.xhr} xhr
+         * @return {void}
+         */
+        addSuccessListener(xhr) {
+
+        },
+
+        /**
+         * @method addErrorListener
+         * @param {Ember.$.ajaxSettings.xhr} xhr
+         * @return {void}
+         */
+        addErrorListener(xhr) {
+
+        },
+
+        /**
+         * @method getRequest
+         * @return {Ember.$.ajax}
+         */
+        getRequest() {
+
+            const isFunction = value => typeof value === 'function';
+            const url        = isFunction(get(this, 'url')) ? get(this, 'url').apply(this) : get(this, 'url');
+            const method     = get(this, 'options.requestMethod') || 'POST';
+            const data       = this.getFormData();
+            const headers    = this.getHeaders();
+            const request    = $Ember.$.ajax({ url, method, headers, data, processData: false, contentType: false,
+
+                /**
+                 * @method xhr
+                 * @return {Ember.$.ajaxSettings.xhr}
+                 */
+                xhr: () => {
+
+                    const xhr = $Ember.$.ajaxSettings.xhr();
+                    this.addProgressListener(xhr.upload);
+                    this.addSuccessListener(xhr.upload);
+                    this.addErrorListener(xhr.upload);
+                    set(this, 'lastRequest', xhr);
+                    return xhr;
+
+                }
+            });
+
+            set(this, 'lastResolver', request);
+            return request;
+
+        },
+
+        /**
          * @property actions
          * @type {Object}
          * @return {void}
@@ -319,13 +396,11 @@
              */
             uploadFiles() {
 
-                const isFunction  = value => typeof value === 'function';
-                const url         = isFunction(get(this, 'url')) ? get(this, 'url').apply(this) : get(this, 'url');
-                const files       = get(this, 'files').filter(file => file.statusType & STATUS_TYPES.VALID);
+                const files      = get(this, 'files').filter(file => file.statusType & STATUS_TYPES.VALID);
+                const request    = this.getRequest();
 
                 set(this, 'uploadStatus.uploading', true);
                 set(this, 'uploadStatus.error', false);
-
 
                 /**
                  * @method resolver
@@ -335,6 +410,7 @@
                  */
                 const resolver = (resolve, reject) => {
                     this.invokeHook('promiseResolver', resolve, reject, files);
+                    request.done(resolve).fail(reject);
                 };
 
                 /**
@@ -353,8 +429,7 @@
                  * @param {Number} errorThrown
                  */
                 const rejected = ({ request, textStatus, errorThrown }) => {
-                    const args = { request, textStatus, errorThrown };
-                    set(this, 'uploadStatus.error', args);
+                    set(this, 'uploadStatus.error', { request, textStatus, errorThrown });
                 };
 
                 /**
@@ -376,7 +451,7 @@
              */
             abortUpload() {
 
-                const request = get(this, 'lastRequest');
+                const request = get(this, 'lastResolver');
 
                 if (request && get(this, 'uploadStatus.uploading')) {
                     request.abort();

@@ -272,12 +272,20 @@ describe('Ember Droplet', () => {
 
     it('Should be able to abort an existing HTTP request;', () => {
 
-        component.lastRequest = { abort: () => {} };
-        spyOn(component.lastRequest, 'abort');
+        component.lastResolver = { abort: () => {} };
+        spyOn(component.lastResolver, 'abort');
         component.set('uploadStatus.uploading', true);
 
         component.send('abortUpload');
-        expect(component.lastRequest.abort).toHaveBeenCalled();
+        expect(component.lastResolver.abort).toHaveBeenCalled();
+
+    });
+
+    it('Should be able to define the lastResolver property;', () => {
+
+        expect(component.lastResolver).toBeUndefined();
+        component.getRequest();
+        expect(component.lastResolver).not.toBeUndefined();
 
     });
 
