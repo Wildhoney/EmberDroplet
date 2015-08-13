@@ -16,5 +16,6 @@
 
     App.XDropletAreaComponent    = Ember.Component.extend($window.Droplet.Area);
     App.XDropletPreviewComponent = Ember.Component.extend($window.Droplet.Preview);
+    App.XDropletInputComponent   = Ember.Component.extend($window.Droplet.MultipleInput);
 
 })(window);

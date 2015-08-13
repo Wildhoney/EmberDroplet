@@ -565,8 +565,8 @@
          */
         didInsertElement() {
 
-            const reader  = this.get('reader'),
-                image   = get(this, 'image.file');
+            const reader = this.get('reader'),
+                  image  = get(this, 'image.file');
 
             if (!this.isImage(image)) {
                 this.destroy();

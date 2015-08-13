@@ -52,27 +52,19 @@
                 <div class="error">An error occurred during the upload process. Please try again later.</div>
             {{/if}}
 
-            {{#each controller.validFiles}}
+            {{#each validFiles}}
 
             <div {{bind-attr class="className :file"}}>
                 {{name}}
-                <a class="remove" {{action "deleteFile" this}}>Discard.</a>
-                <!--{{view view.ImagePreview image="this"}}-->
+                <a class="remove" {{action "deleteFiles" this}}>Discard.</a>
+                {{x-droplet-preview image=this}}
             </div>
 
             {{/each}}
 
         {{/x-droplet-area}}
 
-        {{#each validFiles}}
-
-            <div {{bind-attr class="className :file"}}>
-                {{name}}
-                <a class="remove" {{action "deleteFile" this}}>Discard.</a>
-                <!--{{view view.ImagePreview image="this"}}-->
-            </div>
-
-        {{/each}}
+        {{x-droplet-input}}
 
     </script>
 
