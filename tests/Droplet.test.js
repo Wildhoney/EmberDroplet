@@ -164,9 +164,37 @@ describe('Ember Droplet', () => {
         const files = [new Model({ type: 'image/png', size: 100 }),
                        new Model({ type: 'image/png', size: 1500 }),
                        new Model({ type: 'image/png', size: 250 })];
-        
+
         component.send('addFiles', ...files);
         expect(component.get('requestSize')).toEqual(1850);
+
+    });
+
+    it('Should be able to determine when a file is valid or invalid;', () => {
+
+        const validFiles   = [new Model({ size: 100, type: 'image/png' }), new Model({ size: 500,   type: 'image/gif' })];
+        const invalidFiles = [new Model({ size: 55,  type: 'text/json' }), new Model({ size: 15000, type: 'image/png' })];
+
+        component.set('options.maximumSize', 14500);
+
+        expect(component.isValid(validFiles[0])).toBe(true);
+        expect(component.isValid(validFiles[1])).toBe(true);
+
+        expect(component.isValid(invalidFiles[0])).toBe(false);
+        expect(component.isValid(invalidFiles[1])).toBe(false);
+
+        // Checks to validate the file size limitation can be exact.
+        const exactSizeModel = new Model({ size: 14500, type: 'image/png' });
+        expect(component.isValid(exactSizeModel)).toBe(true);
+
+        // Checks to ensure a file without any metadata is considered invalid.
+        expect(component.isValid(new Model())).toBe(false);
+
+        // Checks to make sure that only a valid MIME type is not enough.
+        expect(component.isValid(new Model({ type: 'image/gif' }))).toBe(false);
+
+        // Checks to make sure that only a valid file size is insufficient.
+        expect(component.isValid(new Model({ size: 500 }))).toBe(false);
 
     });
 

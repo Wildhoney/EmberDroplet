@@ -28,7 +28,7 @@
          * @return {String}
          */
         getMIMEType() {
-            return this.file.type;
+            return this.file.type || '';
         }
 
         /**
@@ -36,7 +36,7 @@
          * @return {Number}
          */
         getFileSize() {
-            return this.file.size || 0;
+            return typeof this.file.size !== 'undefined' ? this.file.size : Infinity;
         }
 
         /**
@@ -236,6 +236,36 @@
         },
 
         /**
+         * @method isValid
+         * @param {Model} model
+         * @return {Boolean}
+         */
+        isValid(model) {
+
+            const validMime = mimeType => () => !!~$ember.get(this, 'options.mimeTypes').indexOf(mimeType);
+            const validSize = fileSize => () => fileSize <= Number($ember.get(this, 'options.maximumSize'));
+
+            /**
+             * @method composeEvery
+             * @param {Function[]} fns
+             * @return {Boolean}
+             */
+            const composeEvery = (...fns) => model => fns.reverse().every(fn => fn(model));
+
+            /**
+             * @method isValid
+             * @type {Boolean}
+             */
+            const isValid = composeEvery(
+                validMime(model.getMIMEType()),
+                validSize(model.getFileSize())
+            );
+
+            return isValid(model);
+
+        },
+
+        /**
          * @property actions
          * @type {Object}
          * @return {void}
@@ -294,13 +324,11 @@
              */
             addFiles(...files) {
 
-                const isAcceptableMIMEType = mimeType => !!~$ember.get(this, 'options.mimeTypes').indexOf(mimeType);
-
                 const addedFiles = files.map(file => {
 
                     if (file instanceof Model) {
 
-                        file.setStatusType(isAcceptableMIMEType(file.getMIMEType()) ? STATUS_TYPES.VALID : STATUS_TYPES.INVALID);
+                        file.setStatusType(this.isValid(file) ? STATUS_TYPES.VALID : STATUS_TYPES.INVALID);
                         $ember.get(this, 'files').pushObject(file);
                         return file;
 
@@ -311,18 +339,6 @@
                 addedFiles.length && $ember.get(this, 'hooks').didAdd(...addedFiles);
 
             },
-
-            ///**
-            // * @method isValid
-            // * @param {Model} model
-            // * @return {Boolean}
-            // */
-            //isValid(model) {
-            //
-            //    const isAcceptableMIMEType = mimeType => !!~$ember.get(this, 'mimeTypes').indexOf(mimeType);
-            //    const isAcceptableFileSize = fileSize =>
-            //
-            //},
 
             /**
              * @method deleteFiles
