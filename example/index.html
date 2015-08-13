@@ -8,7 +8,8 @@
 
     <script type="text/javascript" src="vendor/jquery/dist/jquery.js"></script>
     <script type="text/javascript" src="vendor/handlebars/handlebars.js"></script>
-    <script type="text/javascript" src="vendor/ember/ember.js"></script>
+    <script type="text/javascript" src="vendor/ember/ember.debug.js"></script>
+    <script type="text/javascript" src="vendor/ember/ember-template-compiler.js"></script>
     <script type="text/javascript" src="vendor/ember-droplet/ember-droplet.js"></script>
 
     <script type="text/javascript" src="js/default.js"></script>
@@ -17,10 +18,10 @@
 <body>
 
     <script type="text/x-handlebars">
-        {{outlet}}
+        {{x-droplet}}
     </script>
 
-    <script type="text/x-handlebars" data-template-name="index">
+    <script type="text/x-handlebars" data-template-name="components/x-droplet">
 
         <h1>Upload Files ({{files.length}} in total)</h1>
 
@@ -32,16 +33,20 @@
         </ul>
 
         <div class="buttons">
-            <button class="btn" {{action "uploadAllFiles"}}>Upload All</button>
-            <button class="btn" {{action "clearAllFiles"}}>Clear</button>
-            <button class="btn" {{action "abortUpload"}}>Abort Upload</button>
+            <button class="btn" {{action "uploadFiles"}}>Upload All</button>
+            <button class="btn" {{action "clearFiles"}}>Clear</button>
+            <button class="btn" {{action "abortUpload"}}>Abort</button>
         </div>
 
         {{#if uploadStatus.uploading}}
             <h3 class="uploading-percentage">Uploaded Percentage: {{uploadStatus.percentComplete}}%</h3>
         {{/if}}
 
-        {{#view view.DragDrop}}
+        {{#if uploadStatus.error}}
+            <div class="error">An error occurred during the upload process. Please try again later.</div>
+        {{/if}}
+
+        {{#x-droplet-area}}
 
             {{#if uploadStatus.error}}
                 <div class="error">An error occurred during the upload process. Please try again later.</div>
@@ -49,17 +54,25 @@
 
             {{#each controller.validFiles}}
 
-                <div {{bind-attr class="className :file"}}>
-                    {{name}}
-                    <a class="remove" {{action "deleteFile" this}}>Discard.</a>
-                    {{view view.ImagePreview imageBinding="this"}}
-                </div>
+            <div {{bind-attr class="className :file"}}>
+                {{name}}
+                <a class="remove" {{action "deleteFile" this}}>Discard.</a>
+                <!--{{view view.ImagePreview image="this"}}-->
+            </div>
 
             {{/each}}
 
-            {{view view.SingleInput}}
+        {{/x-droplet-area}}
 
-        {{/view}}
+        {{#each validFiles}}
+
+            <div {{bind-attr class="className :file"}}>
+                {{name}}
+                <a class="remove" {{action "deleteFile" this}}>Discard.</a>
+                <!--{{view view.ImagePreview image="this"}}-->
+            </div>
+
+        {{/each}}
 
     </script>
 

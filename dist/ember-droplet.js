@@ -17,7 +17,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   var STATUS_TYPES = { NONE: 0, VALID: 1, INVALID: 2, DELETED: 4, UPLOADED: 8, FAILED: 16 };
 
   /**
-   * @property Model
+   * @constructor
    * @type {Model}
    */
 
@@ -54,6 +54,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
 
       /**
+       * @method getFileSize
+       * @return {Number}
+       */
+    }, {
+      key: 'getFileSize',
+      value: function getFileSize() {
+        return this.file.size || 0;
+      }
+
+      /**
        * @method setStatusType
        * @param {Number} statusType
        * @return {void}
@@ -85,7 +95,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   };
 
   /**
-   * @module EmberDroplet
+   * @module Droplet
    * @author Adam Timberlake
    * @see https://github.com/Wildhoney/EmberDroplet
    */
@@ -99,6 +109,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     url: function url() {
       throw new Error(MESSAGES.URL_REQUIRED);
     },
+
+    /**
+     * @property options
+     * @type {Object}
+     */
+    options: { maximumSize: Infinity, includeHeader: true },
 
     /**
      * @property hooks
@@ -143,7 +159,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
      * @property uploadStatus
      * @type {Object}
      */
-    uploadStatus: $ember.computed(function computedFn() {
+    uploadStatus: $ember.computed(function () {
       return { uploading: false, percentComplete: 0, error: false };
     }),
 
@@ -151,7 +167,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
      * @property validFiles
      * @return {Array}
      */
-    validFiles: $ember.computed(function computedFn() {
+    validFiles: $ember.computed(function () {
       return this.getFiles(STATUS_TYPES.VALID);
     }).property(COMPUTED_OBSERVER),
 
@@ -159,16 +175,34 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
      * @property invalidFiles
      * @return {Array}
      */
-    invalidFiles: $ember.computed(function computedFn() {
+    invalidFiles: $ember.computed(function () {
       return this.getFiles(STATUS_TYPES.INVALID);
     }).property(COMPUTED_OBSERVER),
 
     /**
-     * @property deleteFiles
+     * @property uploadedFiles
      * @return {Array}
      */
-    deleteFiles: $ember.computed(function computedFn() {
+    uploadedFiles: $ember.computed(function () {
+      return this.getFiles(STATUS_TYPES.UPLOADED);
+    }).property(COMPUTED_OBSERVER),
+
+    /**
+     * @property deletedFiles
+     * @return {Array}
+     */
+    deletedFiles: $ember.computed(function () {
       return this.getFiles(STATUS_TYPES.DELETED);
+    }).property(COMPUTED_OBSERVER),
+
+    /**
+     * @property requestSize
+     * @return {Array}
+     */
+    requestSize: $ember.computed(function () {
+      return $ember.get(this, 'validFiles').reduce(function (size, model) {
+        return size + model.getFileSize();
+      }, 0);
     }).property(COMPUTED_OBSERVER),
 
     /**
@@ -218,6 +252,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           (_$ember$get = $ember.get(_this, 'hooks')).didUpload.apply(_$ember$get, _toConsumableArray(response.files));
         }, function (jqXHR, textStatus, error) {});
       },
+
+      /**
+       * @method abortUpload
+       * @return {void}
+       */
+      abortUpload: function abortUpload() {},
 
       /**
        * @method mimeTypes
@@ -314,6 +354,105 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
 
     }
+
+  });
+
+  /**
+   * @method squashEvent
+   * @param {Object} event
+   * @return {void}
+   */
+  var squashEvent = $window.Droplet.squashEvent = function (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
+  /**
+   * @module Droplet
+   * @submodule Area
+   * @author Adam Timberlake
+   * @see https://github.com/Wildhoney/EmberDroplet
+   */
+  $window.DropletArea = $ember.Mixin.create({
+
+    /**
+     * @property classNames
+     * @type {Array}
+     */
+    classNames: ['droppable'],
+
+    /**
+     * @method parentView
+     * @return {Object}
+     */
+    parentView: function parentView() {
+      return this.context.get('parentView');
+    },
+
+    /**
+     * @method drop
+     * @param {Object} event
+     * @return {void}
+     */
+    drop: function drop(event) {
+      squashEvent(event);
+      this.traverseFiles(event.dataTransfer.files);
+    },
+
+    /**
+     * @method files
+     * @param {FileList|Array} files
+     * @return {void}
+     */
+    traverseFiles: function traverseFiles(files) {
+
+      // Convert the FileList object into an actual array.
+      files = Array.from ? Array.from(files) : Array.prototype.slice.call(files);
+
+      var models = files.reduce(function (current, file) {
+
+        var model = new Model(file);
+        //this.isValid(model) && current.push(model);
+        return current;
+      }, []);
+
+      // Add the files using the Droplet component.
+      this.parentView().send('addFiles', models);
+    },
+
+    /**
+     * @method isValid
+     * @param {Model} model
+     * @return {void}
+     */
+    isValid: function isValid(model) {
+
+      var options = this.parentView().get('options');
+      var maxSize = Number(options.maximumSize);
+
+      return true;
+    },
+
+    /**
+     * @method dragEnter
+     * @param {Object} event
+     * @return {void}
+     */
+    dragEnter: squashEvent,
+
+    /**
+     * @method dragOver
+     * @param {Object} event
+     * @return {void}
+     */
+    dragOver: squashEvent,
+
+    /**
+     * @method dragLeave
+     * @param {Object} event
+     * @return {void}
+     */
+    dragLeave: squashEvent
 
   });
 })(window, window.Ember);

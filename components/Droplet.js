@@ -9,7 +9,7 @@
     const STATUS_TYPES = { NONE: 0, VALID: 1, INVALID: 2, DELETED: 4, UPLOADED: 8, FAILED: 16 };
 
     /**
-     * @property Model
+     * @constructor
      * @type {Model}
      */
     class Model {
@@ -57,6 +57,50 @@
     const MIME_MODE = { PUSH: 'push', SET: 'set' };
 
     /**
+     * @constant MIME_TYPES
+     * @type {String[]}
+     */
+    const MIME_TYPES = ['image/jpeg', 'image/jpg', 'image/gif', 'image/png', 'image/tiff', 'image/bmp'];
+
+    /**
+     * @constant DEFAULT_OPTIONS
+     * @type {Object}
+     */
+    const DEFAULT_OPTIONS = {
+
+        /**
+         * @property requestMethod
+         * @type {String}
+         */
+        requestMethod: 'POST',
+
+        /**
+         * @property maximumSize
+         * @type {Number|Infinity}
+         */
+        maximumSize: Infinity,
+
+        /**
+         * @property includeHeader
+         * @type {Boolean}
+         */
+        includeHeader: true,
+
+        /**
+         * @property useArray
+         * @type {Boolean}
+         */
+        useArray: false,
+
+        /**
+         * @property mimeTypes
+         * @type {Array}
+         */
+        mimeTypes: [...MIME_TYPES]
+
+    };
+
+    /**
      * @constant COMPUTED_OBSERVER
      * @type {Array}
      */
@@ -71,7 +115,7 @@
     };
 
     /**
-     * @module EmberDroplet
+     * @module Droplet
      * @author Adam Timberlake
      * @see https://github.com/Wildhoney/EmberDroplet
      */
@@ -83,6 +127,12 @@
          * @type {Function}
          */
         url: () => { throw new Error(MESSAGES.URL_REQUIRED) },
+
+        /**
+         * @property options
+         * @type {Object}
+         */
+        options: {},
 
         /**
          * @property hooks
@@ -103,12 +153,6 @@
         model: Model,
 
         /**
-         * @property mimeTypes
-         * @type {Array}
-         */
-        mimeTypes: ['image/jpeg', 'image/jpg', 'image/gif', 'image/png', 'image/tiff', 'image/bmp'],
-
-        /**
          * @property statusTypes
          * @type {Object}
          */
@@ -119,8 +163,19 @@
          * @return {void}
          */
         init() {
+
             $ember.set(this, 'files', []);
+
+            Object.keys(DEFAULT_OPTIONS).forEach(key => {
+
+                // Copy across all of the options into the object.
+                $ember.set(this, `options.${key}`, DEFAULT_OPTIONS[key]);
+
+            });
+
+            $ember.set(this, 'options.mimeTypes', [...MIME_TYPES]);
             this._super();
+
         },
 
         /**
@@ -148,10 +203,18 @@
         }).property(COMPUTED_OBSERVER),
 
         /**
-         * @property deleteFiles
+         * @property uploadedFiles
          * @return {Array}
          */
-        deleteFiles: $ember.computed(function() {
+        uploadedFiles: $ember.computed(function() {
+            return this.getFiles(STATUS_TYPES.UPLOADED);
+        }).property(COMPUTED_OBSERVER),
+
+        /**
+         * @property deletedFiles
+         * @return {Array}
+         */
+        deletedFiles: $ember.computed(function() {
             return this.getFiles(STATUS_TYPES.DELETED);
         }).property(COMPUTED_OBSERVER),
 
@@ -185,12 +248,9 @@
              */
             uploadFiles() {
 
-                const isFunction  = value => typeof $ember.get(this, 'url') === 'function';
-                const isUndefined = value => typeof value !== 'undefined';
-
-                const defaults = { fileSizeHeader: true, useArray: true, method: 'POST' };
-                const url      = isFunction($ember.get(this, 'url')) ? $ember.get(this, 'url').apply(this) : $ember.get(this, 'url');
-                const files    = $ember.get(this, 'files').filter(file => file.statusType & STATUS_TYPES.VALID);
+                const isFunction = value => typeof $ember.get(this, 'url') === 'function';
+                const url        = isFunction($ember.get(this, 'url')) ? $ember.get(this, 'url').apply(this) : $ember.get(this, 'url');
+                const files      = $ember.get(this, 'files').filter(file => file.statusType & STATUS_TYPES.VALID);
 
                 return new $ember.RSVP.Promise((resolve, reject) => {
 
@@ -207,16 +267,24 @@
             },
 
             /**
+             * @method abortUpload
+             * @return {void}
+             */
+            abortUpload() {
+
+            },
+
+            /**
              * @method mimeTypes
              * @param {Array} mimeTypes
              * @param {Object} [mode=MIME_MODE.PUSH]
              * @return {void}
              */
             mimeTypes(mimeTypes, mode = MIME_MODE.PUSH) {
-                mode === MIME_MODE.SET && $ember.set(this, 'mimeTypes', []);
+                mode === MIME_MODE.SET && $ember.set(this, 'options.mimeTypes', []);
                 mimeTypes = Array.isArray(mimeTypes) ? mimeTypes : [mimeTypes];
-                const types = [...$ember.get(this, 'mimeTypes'), ...mimeTypes];
-                $ember.set(this, 'mimeTypes', types);
+                const types = [...$ember.get(this, 'options.mimeTypes'), ...mimeTypes];
+                $ember.set(this, 'options.mimeTypes', types);
             },
 
             /**
@@ -226,11 +294,7 @@
              */
             addFiles(...files) {
 
-                /**
-                 * @method isAcceptableMIMEType
-                 * @return {Boolean}
-                 */
-                const isAcceptableMIMEType = mimeType => !!~$ember.get(this, 'mimeTypes').indexOf(mimeType);
+                const isAcceptableMIMEType = mimeType => !!~$ember.get(this, 'options.mimeTypes').indexOf(mimeType);
 
                 const addedFiles = files.map(file => {
 
@@ -247,6 +311,18 @@
                 addedFiles.length && $ember.get(this, 'hooks').didAdd(...addedFiles);
 
             },
+
+            ///**
+            // * @method isValid
+            // * @param {Model} model
+            // * @return {Boolean}
+            // */
+            //isValid(model) {
+            //
+            //    const isAcceptableMIMEType = mimeType => !!~$ember.get(this, 'mimeTypes').indexOf(mimeType);
+            //    const isAcceptableFileSize = fileSize =>
+            //
+            //},
 
             /**
              * @method deleteFiles
@@ -283,6 +359,111 @@
             }
 
         }
+
+    });
+
+    /**
+     * @method squashEvent
+     * @param {Object} event
+     * @return {void}
+     */
+    const squashEvent = event => {
+        event.preventDefault();
+        event.stopPropagation();
+    };
+
+    /**
+     * @module Droplet
+     * @submodule Area
+     * @author Adam Timberlake
+     * @see https://github.com/Wildhoney/EmberDroplet
+     */
+    $window.DropletArea = $ember.Mixin.create({
+
+        /**
+         * @property classNames
+         * @type {Array}
+         */
+        classNames: ['droppable'],
+
+        /**
+         * @method parentView
+         * @return {Object}
+         */
+        parentView() {
+            return this.context.get('parentView') || {};
+        },
+
+        /**
+         * @method drop
+         * @param {Object} event
+         * @return {Array}
+         */
+        drop(event) {
+            squashEvent(event);
+            return this.traverseFiles(event.dataTransfer.files);
+        },
+
+        /**
+         * @method files
+         * @param {FileList|Array} files
+         * @return {Array}
+         */
+        traverseFiles(files) {
+
+            // Convert the FileList object into an actual array.
+            files = Array.from ? Array.from(files) : Array.prototype.slice.call(files);
+
+            const models = files.reduce((current, file) => {
+
+                const model = new Model(file);
+                current.push(model);
+                return current;
+
+            }, []);
+
+            // Add the files using the Droplet component.
+            this.addFiles(files);
+            return models;
+
+        },
+
+        /**
+         * @method addFiles
+         * @param {Array} models
+         * @return {void}
+         */
+        addFiles(models) {
+
+            if (models.length && this.parentView().send) {
+
+                // Add the models to the parent if the parent exists, otherwise it's a no-op.
+                this.parentView().send('addFiles', models);
+
+            }
+
+        },
+
+        /**
+         * @method dragEnter
+         * @param {Object} event
+         * @return {void}
+         */
+        dragEnter: squashEvent,
+
+        /**
+         * @method dragOver
+         * @param {Object} event
+         * @return {void}
+         */
+        dragOver: squashEvent,
+
+        /**
+         * @method dragLeave
+         * @param {Object} event
+         * @return {void}
+         */
+        dragLeave: squashEvent
 
     });
 

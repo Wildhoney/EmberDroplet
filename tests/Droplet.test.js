@@ -64,23 +64,23 @@ describe('Ember Droplet', () => {
 
     it('Should be able to update the whitelist for MIME types;', () => {
 
-        const defaultMimeTypesLength = component.get('mimeTypes.length');
+        const defaultMimeTypesLength = component.get('options.mimeTypes.length');
 
         // In the default push mode the new item should be appended.
         component.send('mimeTypes', 'application/pdf');
-        expect(component.get('mimeTypes.length')).toEqual(defaultMimeTypesLength + 1);
-        expect(component.get('mimeTypes')[defaultMimeTypesLength]).toEqual('application/pdf');
+        expect(component.get('options.mimeTypes.length')).toEqual(defaultMimeTypesLength + 1);
+        expect(component.get('options.mimeTypes')[defaultMimeTypesLength]).toEqual('application/pdf');
 
         // It should also be able to handle multiple MIME types being sent across.
         component.send('mimeTypes', ['text/json', 'text/html']);
-        expect(component.get('mimeTypes.length')).toEqual(defaultMimeTypesLength + 3);
-        expect(component.get('mimeTypes')[defaultMimeTypesLength + 1]).toEqual('text/json');
-        expect(component.get('mimeTypes')[defaultMimeTypesLength + 2]).toEqual('text/html');
+        expect(component.get('options.mimeTypes.length')).toEqual(defaultMimeTypesLength + 3);
+        expect(component.get('options.mimeTypes')[defaultMimeTypesLength + 1]).toEqual('text/json');
+        expect(component.get('options.mimeTypes')[defaultMimeTypesLength + 2]).toEqual('text/html');
 
         // In the set mode the added MIME type will entirely replace the current set.
         component.send('mimeTypes', ['text/xml'], 'set');
-        expect(component.get('mimeTypes.length')).toEqual(1);
-        expect(component.get('mimeTypes')[0]).toEqual('text/xml');
+        expect(component.get('options.mimeTypes.length')).toEqual(1);
+        expect(component.get('options.mimeTypes')[0]).toEqual('text/xml');
 
     });
 
