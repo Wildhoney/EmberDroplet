@@ -198,4 +198,40 @@ describe('Ember Droplet', () => {
 
     });
 
+    it('Should be able to valid MIME types using regular expressions;', () => {
+
+        const firstValid  = new Model({ size: 0, type: 'image/first' });
+        const secondValid = new Model({ size: 0, type: 'image/second' });
+        const thirdValid  = new Model({ size: 0, type: 'text/plain' });
+
+        const firstInvalid  = new Model({ size: 0,  type: 'text/first' });
+        const secondInvalid = new Model({ size: 0, type: 'application/second' });
+
+        component.send('mimeTypes', ['text/plain', /image\/+./], 'set');
+
+        expect(component.isValid(firstValid)).toBe(true);
+        expect(component.isValid(secondValid)).toBe(true);
+        expect(component.isValid(thirdValid)).toBe(true);
+
+        expect(component.isValid(firstInvalid)).toBe(false);
+        expect(component.isValid(secondInvalid)).toBe(false);
+
+        // Accept everything!
+        component.send('mimeTypes', [/.*/], 'set');
+        expect(component.isValid(firstValid)).toBe(true);
+        expect(component.isValid(secondValid)).toBe(true);
+        expect(component.isValid(thirdValid)).toBe(true);
+        expect(component.isValid(firstInvalid)).toBe(true);
+        expect(component.isValid(secondInvalid)).toBe(true);
+
+        // Accept none!
+        component.send('mimeTypes', [], 'set');
+        expect(component.isValid(firstValid)).toBe(false);
+        expect(component.isValid(secondValid)).toBe(false);
+        expect(component.isValid(thirdValid)).toBe(false);
+        expect(component.isValid(firstInvalid)).toBe(false);
+        expect(component.isValid(secondInvalid)).toBe(false);
+
+    });
+
 });

@@ -242,7 +242,30 @@
          */
         isValid(model) {
 
-            const validMime = mimeType => () => !!~$ember.get(this, 'options.mimeTypes').indexOf(mimeType);
+            const validMime = mimeType => () => {
+
+                const anyRegExp = this.get('options.mimeTypes').some(mimeType => mimeType instanceof RegExp);
+                const mimeTypes = $ember.get(this, 'options.mimeTypes');
+
+                if (!anyRegExp) {
+
+                    // Simply indexOf check because none of the MIME types are regular expressions.
+                    return !!~mimeTypes.indexOf(mimeType);
+
+                }
+
+                // Otherwise we'll need to iterate and validate individually.
+                return mimeTypes.some(validMimeType => {
+
+                    const isExact  = validMimeType === mimeType;
+                    const isRegExp = !!mimeType.match(validMimeType);
+
+                    return isExact || isRegExp;
+
+                });
+
+            };
+
             const validSize = fileSize => () => fileSize <= Number($ember.get(this, 'options.maximumSize'));
 
             /**
