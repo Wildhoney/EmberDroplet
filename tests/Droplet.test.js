@@ -1,6 +1,7 @@
 describe('Ember Droplet', () => {
 
     const exampleUrl = 'http://example.org/send-photos.json';
+    Ember.debug      = () => {};
 
     let component, Model;
 
@@ -155,6 +156,17 @@ describe('Ember Droplet', () => {
         component.send('addFiles', ...[...validFiles, ...invalidFiles]);
         expect(component.get('validFiles.length')).toEqual(2);
         expect(component.get('invalidFiles.length')).toEqual(2);
+        component.send('uploadFiles');
+
+    });
+
+    it('Should be able to set the error messages when the request fails;', () => {
+
+        const firstValid  = new Model({ type: 'image/png' });
+        const secondValid = new Model({ type: 'image/jpg' });
+
+        component.send('addFiles', firstValid, secondValid);
+        component.promise = Promise;
         component.send('uploadFiles');
 
     });

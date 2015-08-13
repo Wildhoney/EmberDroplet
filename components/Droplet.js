@@ -156,13 +156,20 @@
         statusTypes: STATUS_TYPES,
 
         /**
+         * @property promise
+         * @type {Ember.RSVP.Promise|Object}
+         */
+        promise: $Ember.RSVP.Promise,
+
+        /**
          * @method init
          * @return {void}
          */
         init() {
 
-            this._super();
             set(this, 'files', []);
+            set(this, 'hooks', { didAdd: () => {}, didDelete: () => {}, didUpload: () => {} });
+            set(this, 'promise', $Ember.RSVP.Promise);
 
             Object.keys(DEFAULT_OPTIONS).forEach(key => {
 
@@ -171,6 +178,19 @@
 
             });
 
+            this._super();
+
+        },
+
+        /**
+         * @method invokeHook
+         * @param {String} name
+         * @param {Array} args
+         * @return {void}
+         */
+        invokeHook(name, ...args) {
+            const method = get(this, 'hooks')[name] || (() => {});
+            method(...args);
         },
 
         /**
@@ -306,19 +326,29 @@
              */
             uploadFiles() {
 
-                const isFunction = value => typeof value === 'function';
-                const url        = isFunction(get(this, 'url')) ? get(this, 'url').apply(this) : get(this, 'url');
-                const files      = get(this, 'files').filter(file => file.statusType & STATUS_TYPES.VALID);
+                const isFunction  = value => typeof value === 'function';
+                const PromiseRSVP = get(this, 'promise');
+                const url         = isFunction(get(this, 'url')) ? get(this, 'url').apply(this) : get(this, 'url');
+                const files       = get(this, 'files').filter(file => file.statusType & STATUS_TYPES.VALID);
 
-                return new $Ember.RSVP.Promise((resolve, reject) => {
+                set(this, 'uploadStatus.uploading', true);
+                set(this, 'uploadStatus.error', false);
+
+                return new PromiseRSVP((resolve, reject) => {
 
                     resolve({ files });
 
                 }).then(run.bind(this, function(response) {
 
-                    get(this, 'hooks').didUpload(...response.files);
+                    this.invokeHook('didUpload', ...response.files);
 
                 }), run.bind(this, function ajaxError(jqXHR, textStatus, errorThrown) {
+
+                    console.log('YEy!');
+
+                    //const args = { jqXHR: jqXHR, textStatus: textStatus, errorThrown: errorThrown};
+                    //set(this, 'uploadStatus.uploading', false);
+                    //set(this, 'uploadStatus.error', args);
 
                 }));
 
@@ -371,7 +401,7 @@
 
                 }).filter(file => typeof file !== 'undefined');
 
-                addedFiles.length && get(this, 'hooks').didAdd(...addedFiles);
+                addedFiles.length && this.invokeHook('didAdd', ...addedFiles);
 
             },
 
@@ -396,7 +426,7 @@
 
                 }).filter(file => typeof file !== 'undefined');
 
-                deletedFiles.length && get(this, 'hooks').didDelete(...deletedFiles);
+                deletedFiles.length && this.invokeHook('didDelete', ...deletedFiles);
 
             },
 
