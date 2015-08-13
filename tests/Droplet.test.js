@@ -234,4 +234,15 @@ describe('Ember Droplet', () => {
 
     });
 
+    it('Should be able to abort an existing HTTP request;', () => {
+
+        component.lastRequest = { abort: () => {} };
+        spyOn(component.lastRequest, 'abort');
+        component.set('uploadStatus.uploading', true);
+
+        component.send('abortUpload');
+        expect(component.lastRequest.abort).toHaveBeenCalled();
+
+    });
+
 });

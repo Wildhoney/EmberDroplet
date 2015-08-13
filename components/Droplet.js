@@ -330,6 +330,13 @@
              */
             abortUpload() {
 
+                var request = get(this, 'lastRequest');
+
+                if (request && get(this, 'uploadStatus.uploading')) {
+                    request.abort();
+                    set(this, 'uploadStatus.uploading', false);
+                }
+
             },
 
             /**
