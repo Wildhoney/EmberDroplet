@@ -1,6 +1,9 @@
-(function main($window, $ember) {
+(function main($window, $Ember, $FileReader) {
 
     "use strict";
+
+    // Extract the commonly accessed Ember methods.
+    const { Mixin, String, computed, get, set, run } = $Ember;
 
     /**
      * @constant STATUS_TYPES
@@ -98,7 +101,7 @@
      * @constant COMPUTED_OBSERVER
      * @type {Array}
      */
-    const COMPUTED_OBSERVER = $ember.String.w('files.length', 'files.@each.statusType');
+    const COMPUTED_OBSERVER = String.w('files.length', 'files.@each.statusType');
 
     /**
      * @constant MESSAGES
@@ -113,7 +116,7 @@
      * @author Adam Timberlake
      * @see https://github.com/Wildhoney/EmberDroplet
      */
-    $window.Droplet = $ember.Mixin.create({
+    $window.Droplet = Mixin.create({
 
         /**
          * @property url
@@ -159,12 +162,12 @@
         init() {
 
             this._super();
-            $ember.set(this, 'files', []);
+            set(this, 'files', []);
 
             Object.keys(DEFAULT_OPTIONS).forEach(key => {
 
                 // Copy across all of the options into the options map.
-                $ember.set(this, `options.${key}`, DEFAULT_OPTIONS[key]);
+                set(this, `options.${key}`, DEFAULT_OPTIONS[key]);
 
             });
 
@@ -174,7 +177,7 @@
          * @property uploadStatus
          * @type {Object}
          */
-        uploadStatus: $ember.computed(function() {
+        uploadStatus: computed(function() {
             return { uploading: false, percentComplete: 0, error: false };
         }),
 
@@ -182,7 +185,7 @@
          * @property validFiles
          * @return {Array}
          */
-        validFiles: $ember.computed(function() {
+        validFiles: computed(function() {
             return this.getFiles(STATUS_TYPES.VALID);
         }).property(COMPUTED_OBSERVER),
 
@@ -190,7 +193,7 @@
          * @property invalidFiles
          * @return {Array}
          */
-        invalidFiles: $ember.computed(function() {
+        invalidFiles: computed(function() {
             return this.getFiles(STATUS_TYPES.INVALID);
         }).property(COMPUTED_OBSERVER),
 
@@ -198,7 +201,7 @@
          * @property uploadedFiles
          * @return {Array}
          */
-        uploadedFiles: $ember.computed(function() {
+        uploadedFiles: computed(function() {
             return this.getFiles(STATUS_TYPES.UPLOADED);
         }).property(COMPUTED_OBSERVER),
 
@@ -206,7 +209,7 @@
          * @property deletedFiles
          * @return {Array}
          */
-        deletedFiles: $ember.computed(function() {
+        deletedFiles: computed(function() {
             return this.getFiles(STATUS_TYPES.DELETED);
         }).property(COMPUTED_OBSERVER),
 
@@ -214,8 +217,8 @@
          * @property requestSize
          * @return {Array}
          */
-        requestSize: $ember.computed(function() {
-            return $ember.get(this, 'validFiles').reduce((size, model) => size + model.getFileSize(), 0);
+        requestSize: computed(function() {
+            return get(this, 'validFiles').reduce((size, model) => size + model.getFileSize(), 0);
         }).property(COMPUTED_OBSERVER),
 
         /**
@@ -242,7 +245,7 @@
             const validMime = mimeType => () => {
 
                 const anyRegExp = this.get('options.mimeTypes').some(mimeType => mimeType instanceof RegExp);
-                const mimeTypes = $ember.get(this, 'options.mimeTypes');
+                const mimeTypes = get(this, 'options.mimeTypes');
 
                 if (!anyRegExp) {
 
@@ -268,12 +271,12 @@
              * @param {Number} fileSize
              * @return {Function}
              */
-            const validSize = fileSize => () => fileSize <= Number($ember.get(this, 'options.maximumSize'));
+            const validSize = fileSize => () => fileSize <= Number(get(this, 'options.maximumSize'));
 
             /**
              * @method composeEvery
-             * @param {Function[]} fns
-             * @return {Boolean}
+             * @param {Function} fns
+             * @return {Function}
              */
             const composeEvery = (...fns) => model => fns.reverse().every(fn => fn(model));
 
@@ -303,17 +306,17 @@
              */
             uploadFiles() {
 
-                const isFunction = value => typeof $ember.get(this, 'url') === 'function';
-                const url        = isFunction($ember.get(this, 'url')) ? $ember.get(this, 'url').apply(this) : $ember.get(this, 'url');
-                const files      = $ember.get(this, 'files').filter(file => file.statusType & STATUS_TYPES.VALID);
+                const isFunction = value => typeof get(this, 'url') === 'function';
+                const url        = isFunction(get(this, 'url')) ? get(this, 'url').apply(this) : get(this, 'url');
+                const files      = get(this, 'files').filter(file => file.statusType & STATUS_TYPES.VALID);
 
-                return new $ember.RSVP.Promise((resolve, reject) => {
+                return new $Ember.RSVP.Promise((resolve, reject) => {
 
                     resolve({ files });
 
                 }).then(response => {
 
-                    $ember.get(this, 'hooks').didUpload(...response.files);
+                    get(this, 'hooks').didUpload(...response.files);
 
                 }, (jqXHR, textStatus, error) => {
 
@@ -336,10 +339,10 @@
              * @return {void}
              */
             mimeTypes(mimeTypes, mode = MIME_MODE.PUSH) {
-                mode === MIME_MODE.SET && $ember.set(this, 'options.mimeTypes', []);
+                mode === MIME_MODE.SET && set(this, 'options.mimeTypes', []);
                 mimeTypes = Array.isArray(mimeTypes) ? mimeTypes : [mimeTypes];
-                const types = [...$ember.get(this, 'options.mimeTypes'), ...mimeTypes];
-                $ember.set(this, 'options.mimeTypes', types);
+                const types = [...get(this, 'options.mimeTypes'), ...mimeTypes];
+                set(this, 'options.mimeTypes', types);
             },
 
             /**
@@ -354,14 +357,14 @@
                     if (file instanceof Model) {
 
                         file.setStatusType(this.isValid(file) ? STATUS_TYPES.VALID : STATUS_TYPES.INVALID);
-                        $ember.get(this, 'files').pushObject(file);
+                        get(this, 'files').pushObject(file);
                         return file;
 
                     }
 
                 }).filter(file => typeof file !== 'undefined');
 
-                addedFiles.length && $ember.get(this, 'hooks').didAdd(...addedFiles);
+                addedFiles.length && get(this, 'hooks').didAdd(...addedFiles);
 
             },
 
@@ -374,19 +377,19 @@
 
                 const deletedFiles = files.map((file) => {
 
-                    const contains = !!~$ember.get(this, 'files').indexOf(file);
+                    const contains = !!~get(this, 'files').indexOf(file);
 
                     if (contains && file instanceof Model) {
 
                         file.setStatusType(STATUS_TYPES.DELETED);
-                        $ember.get(this, 'files').removeObject(file);
+                        get(this, 'files').removeObject(file);
                         return file;
 
                     }
 
                 }).filter(file => typeof file !== 'undefined');
 
-                deletedFiles.length && $ember.get(this, 'hooks').didDelete(...deletedFiles);
+                deletedFiles.length && get(this, 'hooks').didDelete(...deletedFiles);
 
             },
 
@@ -419,7 +422,7 @@
      * @author Adam Timberlake
      * @see https://github.com/Wildhoney/EmberDroplet
      */
-    $window.DropletArea = $ember.Mixin.create({
+    $window.Droplet.Area = Mixin.create({
 
         /**
          * @property classNames
@@ -508,4 +511,69 @@
 
     });
 
-})(window, window.Ember);
+    /**
+     * @module Droplet
+     * @submodule Preview
+     * @author Adam Timberlake
+     * @see https://github.com/Wildhoney/EmberDroplet
+     */
+    $window.Droplet.Preview = Mixin.create({
+
+        /**
+         * @property tagName
+         * @type {String}
+         */
+        tagName: 'img',
+
+        /**
+         * @property attributeBindings
+         * @type {Array}
+         */
+        attributeBindings: ['src'],
+
+        /**
+         * @method reader
+         * @type {FileReader|Object}
+         */
+        reader: new $FileReader(),
+
+        /**
+         * @property image
+         * @type {File|Object}
+         */
+        image: { file: { type: '' } },
+
+        /**
+         * @method isImage
+         * @type {File|Object} image
+         * @return {Boolean}
+         */
+        isImage(image) {
+            return !!image.type.match(/^image\//i);
+        },
+
+        /**
+         * @method didInsertElement
+         * @return {void}
+         */
+        didInsertElement() {
+
+            var reader  = this.get('reader'),
+                image   = get(this, 'image.file');
+
+            if (!this.isImage(image)) {
+                this.destroy();
+                return;
+            }
+
+            reader.addEventListener('load', run.bind(this, event => {
+                set(this, 'src', event.target.result);
+            }));
+
+            reader.readAsDataURL(image);
+
+        }
+
+    });
+
+})(window, window.Ember, window.FileReader);

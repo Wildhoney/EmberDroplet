@@ -4,7 +4,7 @@ describe('Ember Droplet: Area', () => {
 
     beforeEach(() => {
 
-        const Component = Ember.Component.extend(DropletArea);
+        const Component = Ember.Component.extend(Droplet.Area);
         component = Component.create();
 
     });

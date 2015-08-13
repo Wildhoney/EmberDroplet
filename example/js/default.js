@@ -14,6 +14,7 @@
         url: $window.location.origin
     });
 
-    App.XDropletAreaComponent = Ember.Component.extend($window.DropletArea);
+    App.XDropletAreaComponent    = Ember.Component.extend($window.Droplet.Area);
+    App.XDropletPreviewComponent = Ember.Component.extend($window.Droplet.Preview);
 
 })(window);
