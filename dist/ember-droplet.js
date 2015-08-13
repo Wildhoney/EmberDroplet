@@ -379,30 +379,53 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           return file.statusType & STATUS_TYPES.VALID;
         });
 
-        void (url, isFunction);
-
         set(this, 'uploadStatus.uploading', true);
         set(this, 'uploadStatus.error', false);
 
-        return new $Ember.RSVP.Promise(function (resolve, reject) {
-
+        /**
+         * @method resolver
+         * @param {Function} resolve
+         * @param {Function} reject
+         * @return {void}
+         */
+        var resolver = function resolver(resolve, reject) {
           _this3.invokeHook('promiseResolver', resolve, reject, files);
-        }).then(function (response) {
+        };
 
+        /**
+         * @method resolved
+         * @param {Object} response
+         * @return {void}
+         */
+        var resolved = function resolved(response) {
           _this3.invokeHook.apply(_this3, ['didUpload'].concat(_toConsumableArray(response.files)));
-        }, function (_ref) {
+        };
+
+        /**
+         * @method rejected
+         * @param {Object} request
+         * @param {String} textStatus
+         * @param {Number} errorThrown
+         */
+        var rejected = function rejected(_ref) {
           var request = _ref.request;
           var textStatus = _ref.textStatus;
           var errorThrown = _ref.errorThrown;
 
           var args = { request: request, textStatus: textStatus, errorThrown: errorThrown };
           set(_this3, 'uploadStatus.error', args);
-        })['finally'](function () {
+        };
 
-          // We always want to revert the uploading status upon completion.
+        /**
+         * @method always
+         * @return {void}
+         */
+        var always = function always() {
           set(_this3, 'uploadStatus.uploading', false);
           _this3.invokeHook('didComplete');
-        });
+        };
+
+        return new $Ember.RSVP.Promise(resolver).then(resolved, rejected)['finally'](always);
       },
 
       /**

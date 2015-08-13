@@ -323,31 +323,50 @@
                 const url         = isFunction(get(this, 'url')) ? get(this, 'url').apply(this) : get(this, 'url');
                 const files       = get(this, 'files').filter(file => file.statusType & STATUS_TYPES.VALID);
 
-                void(url, isFunction);
-
                 set(this, 'uploadStatus.uploading', true);
                 set(this, 'uploadStatus.error', false);
 
-                return new $Ember.RSVP.Promise((resolve, reject) => {
 
+                /**
+                 * @method resolver
+                 * @param {Function} resolve
+                 * @param {Function} reject
+                 * @return {void}
+                 */
+                const resolver = (resolve, reject) => {
                     this.invokeHook('promiseResolver', resolve, reject, files);
+                };
 
-                }).then(response => {
-
+                /**
+                 * @method resolved
+                 * @param {Object} response
+                 * @return {void}
+                 */
+                const resolved = response => {
                     this.invokeHook('didUpload', ...response.files);
+                };
 
-                }, ({ request, textStatus, errorThrown }) => {
-
+                /**
+                 * @method rejected
+                 * @param {Object} request
+                 * @param {String} textStatus
+                 * @param {Number} errorThrown
+                 */
+                const rejected = ({ request, textStatus, errorThrown }) => {
                     const args = { request, textStatus, errorThrown };
                     set(this, 'uploadStatus.error', args);
+                };
 
-                }).finally(() => {
-
-                    // We always want to revert the uploading status upon completion.
+                /**
+                 * @method always
+                 * @return {void}
+                 */
+                const always = () => {
                     set(this, 'uploadStatus.uploading', false);
                     this.invokeHook('didComplete');
+                };
 
-                });
+                return new $Ember.RSVP.Promise(resolver).then(resolved, rejected).finally(always);
 
             },
 
