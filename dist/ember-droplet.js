@@ -854,9 +854,19 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @return {void}
      */
     handleFiles: function handleFiles(files) {
-      var _get;
 
-      this.get('parentView').send && (_get = this.get('parentView')).send.apply(_get, ['prepareFiles'].concat(_toConsumableArray(fromArray(files))));
+      var parentView = this.get('parentView');
+      var ancestorView = parentView.get('parentView');
+
+      /* todo: Add a better way to communicate between Ember.Components. */
+
+      try {
+        ancestorView.send.apply(ancestorView, ['prepareFiles'].concat(_toConsumableArray(fromArray(files))));
+      } catch (_) {}
+
+      try {
+        parentView.send.apply(parentView, ['prepareFiles'].concat(_toConsumableArray(fromArray(files))));
+      } catch (_) {}
     }
 
   });

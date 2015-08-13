@@ -793,7 +793,17 @@
          * @return {void}
          */
         handleFiles(files) {
-            this.get('parentView').send && this.get('parentView').send('prepareFiles', ...fromArray(files));
+
+            const parentView   = this.get('parentView');
+            const ancestorView = parentView.get('parentView');
+
+            /* todo: Add a better way to communicate between Ember.Components. */
+
+            try { ancestorView.send('prepareFiles', ...fromArray(files));
+            } catch (_) {}
+
+            try { parentView.send('prepareFiles', ...fromArray(files));
+            } catch(_) {}
         }
         
     });
