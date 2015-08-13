@@ -156,12 +156,6 @@
         statusTypes: STATUS_TYPES,
 
         /**
-         * @property promise
-         * @type {Ember.RSVP.Promise|Object}
-         */
-        promise: $Ember.RSVP.Promise,
-
-        /**
          * @method init
          * @return {void}
          */
@@ -169,7 +163,6 @@
 
             set(this, 'files', []);
             set(this, 'hooks', { didAdd: () => {}, didDelete: () => {}, didUpload: () => {} });
-            set(this, 'promise', $Ember.RSVP.Promise);
 
             Object.keys(DEFAULT_OPTIONS).forEach(key => {
 
@@ -327,30 +320,32 @@
             uploadFiles() {
 
                 const isFunction  = value => typeof value === 'function';
-                const PromiseRSVP = get(this, 'promise');
                 const url         = isFunction(get(this, 'url')) ? get(this, 'url').apply(this) : get(this, 'url');
                 const files       = get(this, 'files').filter(file => file.statusType & STATUS_TYPES.VALID);
 
                 set(this, 'uploadStatus.uploading', true);
                 set(this, 'uploadStatus.error', false);
 
-                return new PromiseRSVP((resolve, reject) => {
+                return new $Ember.RSVP.Promise((resolve, reject) => {
 
-                    resolve({ files });
+                    this.invokeHook('promiseResolver', resolve, reject, files);
 
-                }).then(run.bind(this, function(response) {
+                }).then(response => {
 
                     this.invokeHook('didUpload', ...response.files);
 
-                }), run.bind(this, function ajaxError(jqXHR, textStatus, errorThrown) {
+                }, ({ request, textStatus, errorThrown }) => {
 
-                    console.log('YEy!');
+                    const args = { request, textStatus, errorThrown };
+                    set(this, 'uploadStatus.error', args);
 
-                    //const args = { jqXHR: jqXHR, textStatus: textStatus, errorThrown: errorThrown};
-                    //set(this, 'uploadStatus.uploading', false);
-                    //set(this, 'uploadStatus.error', args);
+                }).finally(() => {
 
-                }));
+                    // We always want to revert the uploading status upon completion.
+                    set(this, 'uploadStatus.uploading', false);
+                    this.invokeHook('didComplete');
+
+                });
 
             },
 

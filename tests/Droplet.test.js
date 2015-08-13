@@ -148,6 +148,10 @@ describe('Ember Droplet', () => {
             expect(files[0]).toEqual(validFiles[0]);
             expect(files[1]).toEqual(validFiles[1]);
             expect(component.hooks.didUpload.calls.count()).toEqual(1);
+        };
+
+        component.hooks.didComplete = () => {
+            expect(component.get('uploadStatus.uploading')).toEqual(false);
             done();
         };
 
@@ -156,17 +160,37 @@ describe('Ember Droplet', () => {
         component.send('addFiles', ...[...validFiles, ...invalidFiles]);
         expect(component.get('validFiles.length')).toEqual(2);
         expect(component.get('invalidFiles.length')).toEqual(2);
+
+        component.hooks.promiseResolver = (resolve, reject, files) => {
+            resolve({ files });
+        };
+
         component.send('uploadFiles');
 
     });
 
-    it('Should be able to set the error messages when the request fails;', () => {
+    it('Should be able to set the error messages when the request fails;', done => {
+
+        const request     = {};
+        const textStatus  = 'An unknown error was thrown!';
+        const errorThrown = 301;
+
+        component.hooks.didComplete = () => {
+            expect(component.get('uploadStatus.uploading')).toEqual(false);
+            expect(component.get('uploadStatus.error.request')).toEqual(request);
+            expect(component.get('uploadStatus.error.textStatus')).toEqual(textStatus);
+            expect(component.get('uploadStatus.error.errorThrown')).toEqual(errorThrown);
+            done();
+        };
 
         const firstValid  = new Model({ type: 'image/png' });
         const secondValid = new Model({ type: 'image/jpg' });
 
+        component.hooks.promiseResolver = (resolve, reject) => {
+            reject({ request, errorThrown, textStatus });
+        };
+
         component.send('addFiles', firstValid, secondValid);
-        component.promise = Promise;
         component.send('uploadFiles');
 
     });
