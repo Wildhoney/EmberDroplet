@@ -57,12 +57,6 @@
     const MIME_MODE = { PUSH: 'push', SET: 'set' };
 
     /**
-     * @constant MIME_TYPES
-     * @type {String[]}
-     */
-    const MIME_TYPES = ['image/jpeg', 'image/jpg', 'image/gif', 'image/png', 'image/tiff', 'image/bmp'];
-
-    /**
      * @constant DEFAULT_OPTIONS
      * @type {Object}
      */
@@ -96,7 +90,7 @@
          * @property mimeTypes
          * @type {Array}
          */
-        mimeTypes: [...MIME_TYPES]
+        mimeTypes: ['image/jpeg', 'image/jpg', 'image/gif', 'image/png', 'image/tiff', 'image/bmp']
 
     };
 
@@ -164,17 +158,15 @@
          */
         init() {
 
+            this._super();
             $ember.set(this, 'files', []);
 
             Object.keys(DEFAULT_OPTIONS).forEach(key => {
 
-                // Copy across all of the options into the object.
+                // Copy across all of the options into the options map.
                 $ember.set(this, `options.${key}`, DEFAULT_OPTIONS[key]);
 
             });
-
-            $ember.set(this, 'options.mimeTypes', [...MIME_TYPES]);
-            this._super();
 
         },
 

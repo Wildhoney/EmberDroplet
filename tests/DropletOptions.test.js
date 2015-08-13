@@ -43,4 +43,4 @@ describe('Ember Droplet: Options', () => {
 
     });
 
-});
+})
