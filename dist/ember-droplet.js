@@ -351,7 +351,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * @return {Ember.RSVP.Promise}
        */
       uploadFiles: function uploadFiles() {
-        var _this3 = this;
 
         var isFunction = function isFunction(value) {
           return typeof value === 'function';
@@ -364,18 +363,26 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         return new $Ember.RSVP.Promise(function (resolve, reject) {
 
           resolve({ files: files });
-        }).then(function (response) {
+        }).then(run.bind(this, function (response) {
           var _get;
 
-          (_get = get(_this3, 'hooks')).didUpload.apply(_get, _toConsumableArray(response.files));
-        }, function (jqXHR, textStatus, error) {});
+          (_get = get(this, 'hooks')).didUpload.apply(_get, _toConsumableArray(response.files));
+        }), run.bind(this, function ajaxError(jqXHR, textStatus, errorThrown) {}));
       },
 
       /**
        * @method abortUpload
        * @return {void}
        */
-      abortUpload: function abortUpload() {},
+      abortUpload: function abortUpload() {
+
+        var request = get(this, 'lastRequest');
+
+        if (request && get(this, 'uploadStatus.uploading')) {
+          request.abort();
+          set(this, 'uploadStatus.uploading', false);
+        }
+      },
 
       /**
        * @method mimeTypes
@@ -399,7 +406,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        */
       addFiles: function addFiles() {
         var _get2,
-            _this4 = this;
+            _this3 = this;
 
         for (var _len2 = arguments.length, files = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
           files[_key2] = arguments[_key2];
@@ -409,8 +416,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
           if (file instanceof Model) {
 
-            file.setStatusType(_this4.isValid(file) ? STATUS_TYPES.VALID : STATUS_TYPES.INVALID);
-            get(_this4, 'files').pushObject(file);
+            file.setStatusType(_this3.isValid(file) ? STATUS_TYPES.VALID : STATUS_TYPES.INVALID);
+            get(_this3, 'files').pushObject(file);
             return file;
           }
         }).filter(function (file) {
@@ -427,7 +434,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        */
       deleteFiles: function deleteFiles() {
         var _get3,
-            _this5 = this;
+            _this4 = this;
 
         for (var _len3 = arguments.length, files = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
           files[_key3] = arguments[_key3];
@@ -435,12 +442,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         var deletedFiles = files.map(function (file) {
 
-          var contains = !! ~get(_this5, 'files').indexOf(file);
+          var contains = !! ~get(_this4, 'files').indexOf(file);
 
           if (contains && file instanceof Model) {
 
             file.setStatusType(STATUS_TYPES.DELETED);
-            get(_this5, 'files').removeObject(file);
+            get(_this4, 'files').removeObject(file);
             return file;
           }
         }).filter(function (file) {
@@ -455,10 +462,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * @return {void}
        */
       clearFiles: function clearFiles() {
-        var _this6 = this;
+        var _this5 = this;
 
         this.files.forEach(function (file) {
-          return _this6.send('deleteFiles', file);
+          return _this5.send('deleteFiles', file);
         });
         this.files.length = 0;
       }
@@ -614,7 +621,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
      * @return {void}
      */
     didInsertElement: function didInsertElement() {
-      var _this7 = this;
+      var _this6 = this;
 
       var reader = this.get('reader'),
           image = get(this, 'image.file');
@@ -625,11 +632,79 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
 
       reader.addEventListener('load', run.bind(this, function (event) {
-        set(_this7, 'src', event.target.result);
+        set(_this6, 'src', event.target.result);
       }));
 
       reader.readAsDataURL(image);
     }
 
+  });
+
+  /**
+   * @module Droplet
+   * @submodule MultipleInput
+   * @author Adam Timberlake
+   * @see https://github.com/Wildhoney/EmberDroplet
+   */
+  $window.Droplet.MultipleInput = Mixin.create({
+
+    /**
+     * @property tagName
+     * @type {String}
+     */
+    tagName: 'input',
+
+    /**
+     * @property classNames
+     * @type {String}
+     */
+    classNames: 'files',
+
+    /**
+     * @property attributeBindings
+     * @type {Array}
+     */
+    attributeBindings: ['disabled', 'name', 'type', 'multiple'],
+
+    /**
+     * @property file
+     * @type {String}
+     */
+    type: 'file',
+
+    /**
+     * @property multiple
+     * @type {String}
+     */
+    multiple: 'multiple',
+
+    /**
+     * @method traverseFiles
+     * @param {Array} files
+     * @return {void}
+     */
+    traverseFiles: function traverseFiles(files) {
+      this.get('parentView').traverseFiles(files);
+    },
+
+    /**
+     * @method change
+     * @return {void}
+     */
+    change: function change() {
+      var files = this.get('element').files;
+      this.traverseFiles(Array.isArray(files) ? files : [files]);
+    }
+
+  });
+
+  /**
+   * @module Droplet
+   * @submodule SingleInput
+   * @author Adam Timberlake
+   * @see https://github.com/Wildhoney/EmberDroplet
+   */
+  $window.Droplet.SingleInput = Mixin.create($window.Droplet.MultipleInput, {
+    multiple: false
   });
 })(window, window.Ember, window.FileReader);

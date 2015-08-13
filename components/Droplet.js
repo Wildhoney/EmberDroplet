@@ -330,7 +330,7 @@
              */
             abortUpload() {
 
-                var request = get(this, 'lastRequest');
+                const request = get(this, 'lastRequest');
 
                 if (request && get(this, 'uploadStatus.uploading')) {
                     request.abort();
@@ -565,7 +565,7 @@
          */
         didInsertElement() {
 
-            var reader  = this.get('reader'),
+            const reader  = this.get('reader'),
                 image   = get(this, 'image.file');
 
             if (!this.isImage(image)) {
@@ -581,6 +581,74 @@
 
         }
 
+    });
+
+    /**
+     * @module Droplet
+     * @submodule MultipleInput
+     * @author Adam Timberlake
+     * @see https://github.com/Wildhoney/EmberDroplet
+     */
+    $window.Droplet.MultipleInput = Mixin.create({
+
+        /**
+         * @property tagName
+         * @type {String}
+         */
+        tagName: 'input',
+
+        /**
+         * @property classNames
+         * @type {String}
+         */
+        classNames: 'files',
+
+        /**
+         * @property attributeBindings
+         * @type {Array}
+         */
+        attributeBindings: ['disabled', 'name', 'type', 'multiple'],
+
+        /**
+         * @property file
+         * @type {String}
+         */
+        type: 'file',
+
+        /**
+         * @property multiple
+         * @type {String}
+         */
+        multiple: 'multiple',
+
+        /**
+         * @method traverseFiles
+         * @param {Array} files
+         * @return {void}
+         */
+        traverseFiles(files) {
+            this.get('parentView').traverseFiles(files);
+        },
+
+        /**
+         * @method change
+         * @return {void}
+         */
+        change() {
+            const files = this.get('element').files;
+            this.traverseFiles(Array.isArray(files) ? files : [files]);
+        }
+        
+    });
+
+    /**
+     * @module Droplet
+     * @submodule SingleInput
+     * @author Adam Timberlake
+     * @see https://github.com/Wildhoney/EmberDroplet
+     */
+    $window.Droplet.SingleInput = Mixin.create($window.Droplet.MultipleInput, {
+        multiple: false
     });
 
 })(window, window.Ember, window.FileReader);
