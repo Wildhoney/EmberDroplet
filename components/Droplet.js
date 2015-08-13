@@ -314,13 +314,13 @@
 
                     resolve({ files });
 
-                }).then(response => {
+                }).then(run.bind(this, function(response) {
 
                     get(this, 'hooks').didUpload(...response.files);
 
-                }, (jqXHR, textStatus, error) => {
+                }), run.bind(this, function ajaxError(jqXHR, textStatus, errorThrown) {
 
-                });
+                }));
 
             },
 
