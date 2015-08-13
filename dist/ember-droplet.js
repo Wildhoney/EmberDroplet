@@ -1,16 +1,15 @@
 'use strict';
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 (function main($window, $Ember, $FileReader) {
 
   "use strict";
 
   // Extract the commonly accessed Ember methods.
+
+  var _computed, _computed2, _computed3, _computed4, _computed5;
+
   var Mixin = $Ember.Mixin;
   var String = $Ember.String;
   var computed = $Ember.computed;
@@ -25,67 +24,50 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   var STATUS_TYPES = { NONE: 0, VALID: 1, INVALID: 2, DELETED: 4, UPLOADED: 8, FAILED: 16 };
 
   /**
-   * @constructor
-   * @type {Model}
+   * @property Model
+   * @type {Ember.Object}
    */
-
-  var Model = (function () {
+  var Model = $Ember.Object.extend({
 
     /**
-     * @constructor
-     * @param {File} [file={}]
+     * @method init
+     * @return {void}
      */
-
-    function Model() {
-      var file = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-
-      _classCallCheck(this, Model);
-
-      this.file = file;
+    init: function init() {
       this.statusType = STATUS_TYPES.NONE;
-    }
-
-    /**
-     * @constant MIME_MODE
-     * @type {Object}
-     */
+    },
 
     /**
      * @method getMIMEType
      * @return {String}
      */
+    getMIMEType: function getMIMEType() {
+      return this.file.type || '';
+    },
 
-    _createClass(Model, [{
-      key: 'getMIMEType',
-      value: function getMIMEType() {
-        return this.file.type || '';
-      }
+    /**
+     * @method getFileSize
+     * @return {Number}
+     */
+    getFileSize: function getFileSize() {
+      return typeof this.file.size !== 'undefined' ? this.file.size : Infinity;
+    },
 
-      /**
-       * @method getFileSize
-       * @return {Number}
-       */
-    }, {
-      key: 'getFileSize',
-      value: function getFileSize() {
-        return typeof this.file.size !== 'undefined' ? this.file.size : Infinity;
-      }
+    /**
+     * @method setStatusType
+     * @param {Number} statusType
+     * @return {void}
+     */
+    setStatusType: function setStatusType(statusType) {
+      this.set('statusType', Number(statusType));
+    }
 
-      /**
-       * @method setStatusType
-       * @param {Number} statusType
-       * @return {void}
-       */
-    }, {
-      key: 'setStatusType',
-      value: function setStatusType(statusType) {
-        this.statusType = Number(statusType);
-      }
-    }]);
+  });
 
-    return Model;
-  })();
-
+  /**
+   * @constant MIME_MODE
+   * @type {Object}
+   */
   var MIME_MODE = { PUSH: 'push', SET: 'set' };
 
   /**
@@ -122,7 +104,19 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
      * @property mimeTypes
      * @type {Array}
      */
-    mimeTypes: ['image/jpeg', 'image/jpg', 'image/gif', 'image/png', 'image/tiff', 'image/bmp']
+    mimeTypes: ['image/jpeg', 'image/jpg', 'image/gif', 'image/png', 'image/tiff', 'image/bmp'],
+
+    /**
+     * @property requestHeaders
+     * @type {Object}
+     */
+    requestHeaders: {},
+
+    /**
+     * @property requestPostData
+     * @type {Object}
+     */
+    requestPostData: {}
 
   };
 
@@ -130,7 +124,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    * @constant COMPUTED_OBSERVER
    * @type {Array}
    */
-  var COMPUTED_OBSERVER = String.w('files.length', 'files.@each.statusType');
+  var COMPUTED_OBSERVER = String.w('files.length files.@each.statusType');
 
   /**
    * @constant MESSAGES
@@ -157,6 +151,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     },
 
     /**
+     * @property model
+     * @type {Ember.Object}
+     */
+    model: Model,
+
+    /**
      * @property options
      * @type {Object}
      */
@@ -166,19 +166,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
      * @property hooks
      * @type {Object}
      */
-    hooks: { didAdd: function didAdd() {}, didDelete: function didDelete() {}, didUpload: function didUpload() {} },
+    hooks: {},
 
     /**
      * @property files
      * @type {Array}
      */
     files: [],
-
-    /**
-     * @property model
-     * @type {Model}
-     */
-    model: Model,
 
     /**
      * @property statusTypes
@@ -194,7 +188,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       var _this = this;
 
       set(this, 'files', []);
-      set(this, 'hooks', { didAdd: function didAdd() {}, didDelete: function didDelete() {}, didUpload: function didUpload() {} });
+      set(this, 'hooks', {});
 
       Object.keys(DEFAULT_OPTIONS).forEach(function (key) {
 
@@ -233,33 +227,41 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
      * @property validFiles
      * @return {Array}
      */
-    validFiles: computed(function () {
+    validFiles: (_computed = computed(function () {
       return this.getFiles(STATUS_TYPES.VALID);
-    }).property(COMPUTED_OBSERVER),
+    })).property.apply(_computed, _toConsumableArray(COMPUTED_OBSERVER)),
 
     /**
      * @property invalidFiles
      * @return {Array}
      */
-    invalidFiles: computed(function () {
+    invalidFiles: (_computed2 = computed(function () {
       return this.getFiles(STATUS_TYPES.INVALID);
-    }).property(COMPUTED_OBSERVER),
+    })).property.apply(_computed2, _toConsumableArray(COMPUTED_OBSERVER)),
 
     /**
      * @property uploadedFiles
      * @return {Array}
      */
-    uploadedFiles: computed(function () {
+    uploadedFiles: (_computed3 = computed(function () {
       return this.getFiles(STATUS_TYPES.UPLOADED);
-    }).property(COMPUTED_OBSERVER),
+    })).property.apply(_computed3, _toConsumableArray(COMPUTED_OBSERVER)),
 
     /**
      * @property deletedFiles
      * @return {Array}
      */
-    deletedFiles: computed(function () {
+    deletedFiles: (_computed4 = computed(function () {
       return this.getFiles(STATUS_TYPES.DELETED);
-    }).property(COMPUTED_OBSERVER),
+    })).property.apply(_computed4, _toConsumableArray(COMPUTED_OBSERVER)),
+
+    /**
+     * @property deletedModels
+     * @return {Array}
+     */
+    deletedModels: (_computed5 = computed(function () {
+      return this.getFiles(STATUS_TYPES.DELETED);
+    })).property.apply(_computed5, _toConsumableArray(COMPUTED_OBSERVER)),
 
     /**
      * @property requestSize
@@ -277,9 +279,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
      * @return {Array}
      */
     getFiles: function getFiles(statusType) {
-      return this.files.filter(function (file) {
+      return statusType ? this.files.filter(function (file) {
         return file.statusType & statusType;
-      });
+      }) : this.files;
     },
 
     /**
@@ -289,6 +291,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
      */
     isValid: function isValid(model) {
       var _this2 = this;
+
+      if (!(model instanceof Ember.Object)) {
+        return false;
+      }
 
       /**
        * @method validMime
@@ -359,18 +365,24 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
     /**
      * @method getFormData
-     * @return {Object}
+     * @return {FormData}
      */
     getFormData: function getFormData() {
-      return {};
-    },
 
-    /**
-     * @method getHeaders
-     * @return {Object}
-     */
-    getHeaders: function getHeaders() {
-      return {};
+      var formData = new $window.FormData();
+      var fieldName = this.get('options.useArray') ? 'file[]' : 'file';
+      var postData = this.get('options.requestPostData');
+      var files = get(this, 'validFiles').map(function (model) {
+        return model.file;
+      });
+
+      formData.append(fieldName, files);
+
+      Object.keys(postData).forEach(function (key) {
+        formData.append(key, postData[key]);
+      });
+
+      return formData;
     },
 
     /**
@@ -378,21 +390,27 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
      * @param {Ember.$.ajaxSettings.xhr} xhr
      * @return {void}
      */
-    addProgressListener: function addProgressListener(xhr) {},
+    addProgressListener: function addProgressListener(xhr) {
+      return void xhr;
+    },
 
     /**
      * @method addSuccessListener
      * @param {Ember.$.ajaxSettings.xhr} xhr
      * @return {void}
      */
-    addSuccessListener: function addSuccessListener(xhr) {},
+    addSuccessListener: function addSuccessListener(xhr) {
+      return void xhr;
+    },
 
     /**
      * @method addErrorListener
      * @param {Ember.$.ajaxSettings.xhr} xhr
      * @return {void}
      */
-    addErrorListener: function addErrorListener(xhr) {},
+    addErrorListener: function addErrorListener(xhr) {
+      return void xhr;
+    },
 
     /**
      * @method getRequest
@@ -407,7 +425,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       var url = isFunction(get(this, 'url')) ? get(this, 'url').apply(this) : get(this, 'url');
       var method = get(this, 'options.requestMethod') || 'POST';
       var data = this.getFormData();
-      var headers = this.getHeaders();
+      var headers = this.get('requestHeaders');
       var request = $Ember.$.ajax({ url: url, method: method, headers: headers, data: data, processData: false, contentType: false,
 
         /**
@@ -443,7 +461,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       uploadFiles: function uploadFiles() {
         var _this4 = this;
 
-        var files = get(this, 'files').filter(function (file) {
+        var models = get(this, 'files').filter(function (file) {
           return file.statusType & STATUS_TYPES.VALID;
         });
         var request = this.getRequest();
@@ -458,7 +476,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
          * @return {void}
          */
         var resolver = function resolver(resolve, reject) {
-          _this4.invokeHook('promiseResolver', resolve, reject, files);
+          _this4.invokeHook('promiseResolver', resolve, reject, models);
           request.done(resolve).fail(reject);
         };
 
@@ -469,6 +487,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
          */
         var resolved = function resolved(response) {
           _this4.invokeHook.apply(_this4, ['didUpload'].concat(_toConsumableArray(response.files)));
+          models.map(function (model) {
+            return model.setStatusType(STATUS_TYPES.UPLOADED);
+          });
         };
 
         /**
@@ -538,19 +559,46 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           files[_key3] = arguments[_key3];
         }
 
-        var addedFiles = files.map(function (file) {
+        var addedModels = files.map(function (model) {
 
-          if (file instanceof Model) {
-
-            file.setStatusType(_this5.isValid(file) ? STATUS_TYPES.VALID : STATUS_TYPES.INVALID);
-            get(_this5, 'files').pushObject(file);
-            return file;
+          if (model instanceof Ember.Object) {
+            model.setStatusType(_this5.isValid(model) ? STATUS_TYPES.VALID : STATUS_TYPES.INVALID);
+            get(_this5, 'files').pushObject(model);
+            return model;
           }
-        }).filter(function (file) {
-          return typeof file !== 'undefined';
+        }).filter(function (model) {
+          return typeof model !== 'undefined';
         });
 
-        addedFiles.length && this.invokeHook.apply(this, ['didAdd'].concat(_toConsumableArray(addedFiles)));
+        addedModels.length && this.invokeHook.apply(this, ['didAdd'].concat(_toConsumableArray(addedModels)));
+      },
+
+      /**
+       * @method prepareFiles
+       * @param {FileList|Array} files
+       * @return {Array}
+       */
+      prepareFiles: function prepareFiles() {
+        for (var _len4 = arguments.length, files = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+          files[_key4] = arguments[_key4];
+        }
+
+        // Convert the FileList object into an actual array.
+        files = Array.from ? Array.from(files) : Array.prototype.slice.call(files);
+
+        var models = files.reduce(function (current, file) {
+
+          var model = Model.create({
+            file: file
+          });
+
+          current.push(model);
+          return current;
+        }, []);
+
+        // Add the files using the Droplet component.
+        this.send.apply(this, ['addFiles'].concat(_toConsumableArray(models)));
+        return models;
       },
 
       /**
@@ -561,25 +609,23 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       deleteFiles: function deleteFiles() {
         var _this6 = this;
 
-        for (var _len4 = arguments.length, files = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-          files[_key4] = arguments[_key4];
+        for (var _len5 = arguments.length, files = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+          files[_key5] = arguments[_key5];
         }
 
-        var deletedFiles = files.map(function (file) {
+        var deletedModels = files.map(function (model) {
 
-          var contains = !! ~get(_this6, 'files').indexOf(file);
+          var contains = !! ~get(_this6, 'files').indexOf(model);
 
-          if (contains && file instanceof Model) {
-
-            file.setStatusType(STATUS_TYPES.DELETED);
-            get(_this6, 'files').removeObject(file);
-            return file;
+          if (contains) {
+            model.setStatusType(STATUS_TYPES.DELETED);
+            return model;
           }
-        }).filter(function (file) {
-          return typeof file !== 'undefined';
+        }).filter(function (model) {
+          return typeof model !== 'undefined';
         });
 
-        deletedFiles.length && this.invokeHook.apply(this, ['didDelete'].concat(_toConsumableArray(deletedFiles)));
+        deletedModels.length && this.invokeHook.apply(this, ['didDelete'].concat(_toConsumableArray(deletedModels)));
       },
 
       /**
@@ -592,7 +638,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.files.forEach(function (file) {
           return _this7.send('deleteFiles', file);
         });
-        this.files.length = 0;
       }
 
     }
@@ -624,10 +669,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     classNames: ['droppable'],
 
     /**
-     * @method parentView
+     * @method getParent
      * @return {Object}
      */
-    parentView: function parentView() {
+    getParent: function getParent() {
       return this.context.get('parentView') || {};
     },
 
@@ -638,43 +683,24 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
      */
     drop: function drop(event) {
       squashEvent(event);
-      return this.traverseFiles(event.dataTransfer.files);
+      return this.handleFiles(event.dataTransfer.files);
     },
 
     /**
-     * @method files
-     * @param {FileList|Array} files
-     * @return {Array}
-     */
-    traverseFiles: function traverseFiles(files) {
-
-      // Convert the FileList object into an actual array.
-      files = Array.from ? Array.from(files) : Array.prototype.slice.call(files);
-
-      var models = files.reduce(function (current, file) {
-
-        var model = new Model(file);
-        current.push(model);
-        return current;
-      }, []);
-
-      // Add the files using the Droplet component.
-      this.addFiles(files);
-      return models;
-    },
-
-    /**
-     * @method addFiles
+     * @method handleFiles
      * @param {Array} models
-     * @return {void}
+     * @return {Model[]}
      */
-    addFiles: function addFiles(models) {
+    handleFiles: function handleFiles(models) {
 
-      if (models.length && this.parentView().send) {
+      if (models.length && this.getParent().send) {
+        var _getParent;
 
         // Add the models to the parent if the parent exists, otherwise it's a no-op.
-        this.parentView().send('addFiles', models);
+        (_getParent = this.getParent()).send.apply(_getParent, ['prepareFiles'].concat(_toConsumableArray(models)));
       }
+
+      return models;
     },
 
     /**
@@ -724,7 +750,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
      * @method reader
      * @type {FileReader|Object}
      */
-    reader: new $FileReader(),
+    reader: $FileReader,
 
     /**
      * @property image
@@ -748,8 +774,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     didInsertElement: function didInsertElement() {
       var _this8 = this;
 
-      var reader = this.get('reader'),
-          image = get(this, 'image.file');
+      var Reader = this.get('reader');
+      var reader = new Reader();
+      var image = get(this, 'image.file');
 
       if (!this.isImage(image)) {
         this.destroy();
@@ -804,21 +831,24 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     multiple: 'multiple',
 
     /**
-     * @method traverseFiles
-     * @param {Array} files
-     * @return {void}
-     */
-    traverseFiles: function traverseFiles(files) {
-      this.get('parentView').traverseFiles(files);
-    },
-
-    /**
      * @method change
      * @return {void}
      */
     change: function change() {
-      var files = this.get('element').files;
-      this.traverseFiles(Array.isArray(files) ? files : [files]);
+      var element = this.get('element');
+      var files = Array.isArray(element.files) ? element.files : [element.files];
+      this.handleFiles(files);
+    },
+
+    /**
+     * @method handleFiles
+     * @param {Model[]} files
+     * @return {void}
+     */
+    handleFiles: function handleFiles(files) {
+      var _get;
+
+      (_get = this.get('parentView')).send.apply(_get, ['prepareFiles'].concat(_toConsumableArray(files)));
     }
 
   });

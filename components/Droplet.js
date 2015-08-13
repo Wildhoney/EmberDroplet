@@ -12,46 +12,45 @@
     const STATUS_TYPES = { NONE: 0, VALID: 1, INVALID: 2, DELETED: 4, UPLOADED: 8, FAILED: 16 };
 
     /**
-     * @constructor
-     * @type {Model}
+     * @property Model
+     * @type {Ember.Object}
      */
-    class Model {
+    const Model = $Ember.Object.extend({
 
         /**
-         * @constructor
-         * @param {File} [file={}]
+         * @method init
+         * @return {void}
          */
-        constructor(file = {}) {
-            this.file       = file;
+        init: function() {
             this.statusType = STATUS_TYPES.NONE;
-        }
+        },
 
         /**
          * @method getMIMEType
          * @return {String}
          */
-        getMIMEType() {
+        getMIMEType: function() {
             return this.file.type || '';
-        }
+        },
 
         /**
          * @method getFileSize
          * @return {Number}
          */
-        getFileSize() {
+        getFileSize: function() {
             return typeof this.file.size !== 'undefined' ? this.file.size : Infinity;
-        }
+        },
 
         /**
          * @method setStatusType
          * @param {Number} statusType
          * @return {void}
          */
-        setStatusType(statusType) {
-            this.statusType = Number(statusType);
+        setStatusType: function(statusType) {
+            this.set('statusType', Number(statusType));
         }
 
-    }
+    });
 
     /**
      * @constant MIME_MODE
@@ -113,7 +112,7 @@
      * @constant COMPUTED_OBSERVER
      * @type {Array}
      */
-    const COMPUTED_OBSERVER = String.w('files.length', 'files.@each.statusType');
+    const COMPUTED_OBSERVER = String.w('files.length files.@each.statusType');
 
     /**
      * @constant MESSAGES
@@ -135,7 +134,13 @@
          * @throws {Error}
          * @type {Function}
          */
-        url: () => { throw new Error(MESSAGES.URL_REQUIRED) },
+        url: () => { throw new Error(MESSAGES.URL_REQUIRED); },
+
+        /**
+         * @property model
+         * @type {Ember.Object}
+         */
+        model: Model,
 
         /**
          * @property options
@@ -147,19 +152,13 @@
          * @property hooks
          * @type {Object}
          */
-        hooks: { didAdd: () => {}, didDelete: () => {}, didUpload: () => {} },
+        hooks: {},
 
         /**
          * @property files
          * @type {Array}
          */
         files: [],
-
-        /**
-         * @property model
-         * @type {Model}
-         */
-        model: Model,
 
         /**
          * @property statusTypes
@@ -174,7 +173,7 @@
         init() {
 
             set(this, 'files', []);
-            set(this, 'hooks', { didAdd: () => {}, didDelete: () => {}, didUpload: () => {} });
+            set(this, 'hooks', {});
 
             Object.keys(DEFAULT_OPTIONS).forEach(key => {
 
@@ -212,7 +211,7 @@
          */
         validFiles: computed(function() {
             return this.getFiles(STATUS_TYPES.VALID);
-        }).property(COMPUTED_OBSERVER),
+        }).property(...COMPUTED_OBSERVER),
 
         /**
          * @property invalidFiles
@@ -220,7 +219,7 @@
          */
         invalidFiles: computed(function() {
             return this.getFiles(STATUS_TYPES.INVALID);
-        }).property(COMPUTED_OBSERVER),
+        }).property(...COMPUTED_OBSERVER),
 
         /**
          * @property uploadedFiles
@@ -228,7 +227,7 @@
          */
         uploadedFiles: computed(function() {
             return this.getFiles(STATUS_TYPES.UPLOADED);
-        }).property(COMPUTED_OBSERVER),
+        }).property(...COMPUTED_OBSERVER),
 
         /**
          * @property deletedFiles
@@ -236,7 +235,15 @@
          */
         deletedFiles: computed(function() {
             return this.getFiles(STATUS_TYPES.DELETED);
-        }).property(COMPUTED_OBSERVER),
+        }).property(...COMPUTED_OBSERVER),
+
+        /**
+         * @property deletedModels
+         * @return {Array}
+         */
+        deletedModels: computed(function() {
+            return this.getFiles(STATUS_TYPES.DELETED);
+        }).property(...COMPUTED_OBSERVER),
 
         /**
          * @property requestSize
@@ -252,7 +259,7 @@
          * @return {Array}
          */
         getFiles(statusType) {
-            return this.files.filter(file => file.statusType & statusType);
+            return statusType ? this.files.filter(file => file.statusType & statusType) : this.files;
         },
 
         /**
@@ -261,6 +268,10 @@
          * @return {Boolean}
          */
         isValid(model) {
+
+            if (!(model instanceof Ember.Object)) {
+                return false;
+            }
 
             /**
              * @method validMime
@@ -345,7 +356,7 @@
          * @return {void}
          */
         addProgressListener(xhr) {
-
+            return void xhr;
         },
 
         /**
@@ -354,7 +365,7 @@
          * @return {void}
          */
         addSuccessListener(xhr) {
-
+            return void xhr;
         },
 
         /**
@@ -363,7 +374,7 @@
          * @return {void}
          */
         addErrorListener(xhr) {
-
+            return void xhr;
         },
 
         /**
@@ -413,8 +424,8 @@
              */
             uploadFiles() {
 
-                const files      = get(this, 'files').filter(file => file.statusType & STATUS_TYPES.VALID);
-                const request    = this.getRequest();
+                const models  = get(this, 'files').filter(file => file.statusType & STATUS_TYPES.VALID);
+                const request = this.getRequest();
 
                 set(this, 'uploadStatus.uploading', true);
                 set(this, 'uploadStatus.error', false);
@@ -426,7 +437,7 @@
                  * @return {void}
                  */
                 const resolver = (resolve, reject) => {
-                    this.invokeHook('promiseResolver', resolve, reject, files);
+                    this.invokeHook('promiseResolver', resolve, reject, models);
                     request.done(resolve).fail(reject);
                 };
 
@@ -437,6 +448,7 @@
                  */
                 const resolved = response => {
                     this.invokeHook('didUpload', ...response.files);
+                    models.map(model => model.setStatusType(STATUS_TYPES.UPLOADED));
                 };
 
                 /**
@@ -497,19 +509,44 @@
              */
             addFiles(...files) {
 
-                const addedFiles = files.map(file => {
+                const addedModels = files.map(model => {
 
-                    if (file instanceof Model) {
-
-                        file.setStatusType(this.isValid(file) ? STATUS_TYPES.VALID : STATUS_TYPES.INVALID);
-                        get(this, 'files').pushObject(file);
-                        return file;
-
+                    if (model instanceof Ember.Object) {
+                        model.setStatusType(this.isValid(model) ? STATUS_TYPES.VALID : STATUS_TYPES.INVALID);
+                        get(this, 'files').pushObject(model);
+                        return model;
                     }
 
-                }).filter(file => typeof file !== 'undefined');
+                }).filter(model => typeof model !== 'undefined');
 
-                addedFiles.length && this.invokeHook('didAdd', ...addedFiles);
+                addedModels.length && this.invokeHook('didAdd', ...addedModels);
+
+            },
+
+            /**
+             * @method prepareFiles
+             * @param {FileList|Array} files
+             * @return {Array}
+             */
+            prepareFiles(...files) {
+
+                // Convert the FileList object into an actual array.
+                files = Array.from ? Array.from(files) : Array.prototype.slice.call(files);
+
+                const models = files.reduce((current, file) => {
+
+                    const model = Model.create({
+                        file: file
+                    });
+
+                    current.push(model);
+                    return current;
+
+                }, []);
+
+                // Add the files using the Droplet component.
+                this.send('addFiles', ...models);
+                return models;
 
             },
 
@@ -520,21 +557,18 @@
              */
             deleteFiles(...files) {
 
-                const deletedFiles = files.map((file) => {
+                const deletedModels = files.map(model => {
 
-                    const contains = !!~get(this, 'files').indexOf(file);
+                    const contains = !!~get(this, 'files').indexOf(model);
 
-                    if (contains && file instanceof Model) {
-
-                        file.setStatusType(STATUS_TYPES.DELETED);
-                        get(this, 'files').removeObject(file);
-                        return file;
-
+                    if (contains) {
+                        model.setStatusType(STATUS_TYPES.DELETED);
+                        return model;
                     }
 
-                }).filter(file => typeof file !== 'undefined');
+                }).filter(model => typeof model !== 'undefined');
 
-                deletedFiles.length && this.invokeHook('didDelete', ...deletedFiles);
+                deletedModels.length && this.invokeHook('didDelete', ...deletedModels);
 
             },
 
@@ -544,7 +578,6 @@
              */
             clearFiles() {
                 this.files.forEach(file => this.send('deleteFiles', file));
-                this.files.length = 0;
             }
 
         }
@@ -576,10 +609,10 @@
         classNames: ['droppable'],
 
         /**
-         * @method parentView
+         * @method getParent
          * @return {Object}
          */
-        parentView() {
+        getParent() {
             return this.context.get('parentView') || {};
         },
 
@@ -590,46 +623,24 @@
          */
         drop(event) {
             squashEvent(event);
-            return this.traverseFiles(event.dataTransfer.files);
+            return this.handleFiles(event.dataTransfer.files);
         },
 
         /**
-         * @method files
-         * @param {FileList|Array} files
-         * @return {Array}
-         */
-        traverseFiles(files) {
-
-            // Convert the FileList object into an actual array.
-            files = Array.from ? Array.from(files) : Array.prototype.slice.call(files);
-
-            const models = files.reduce((current, file) => {
-
-                const model = new Model(file);
-                current.push(model);
-                return current;
-
-            }, []);
-
-            // Add the files using the Droplet component.
-            this.addFiles(files);
-            return models;
-
-        },
-
-        /**
-         * @method addFiles
+         * @method handleFiles
          * @param {Array} models
-         * @return {void}
+         * @return {Model[]}
          */
-        addFiles(models) {
+        handleFiles(models) {
 
-            if (models.length && this.parentView().send) {
+            if (models.length && this.getParent().send) {
 
                 // Add the models to the parent if the parent exists, otherwise it's a no-op.
-                this.parentView().send('addFiles', models);
+                this.getParent().send('prepareFiles', ...models);
 
             }
+
+            return models;
 
         },
 
@@ -680,7 +691,7 @@
          * @method reader
          * @type {FileReader|Object}
          */
-        reader: new $FileReader(),
+        reader: $FileReader,
 
         /**
          * @property image
@@ -703,8 +714,9 @@
          */
         didInsertElement() {
 
-            const reader = this.get('reader'),
-                  image  = get(this, 'image.file');
+            const Reader = this.get('reader');
+            const reader = new Reader();
+            const image  = get(this, 'image.file');
 
             if (!this.isImage(image)) {
                 this.destroy();
@@ -760,21 +772,22 @@
         multiple: 'multiple',
 
         /**
-         * @method traverseFiles
-         * @param {Array} files
-         * @return {void}
-         */
-        traverseFiles(files) {
-            this.get('parentView').traverseFiles(files);
-        },
-
-        /**
          * @method change
          * @return {void}
          */
         change() {
-            const files = this.get('element').files;
-            this.traverseFiles(Array.isArray(files) ? files : [files]);
+            const element = this.get('element');
+            const files   = Array.isArray(element.files) ? element.files : [element.files];
+            this.handleFiles(files);
+        },
+
+        /**
+         * @method handleFiles
+         * @param {Model[]} files
+         * @return {void}
+         */
+        handleFiles(files) {
+            this.get('parentView').send('prepareFiles', ...files);
         }
         
     });

@@ -49,5 +49,8 @@
     $gulp.task('test', ['lint', 'karma']);
     $gulp.task('build', ['compile']);
     $gulp.task('default', ['test', 'build']);
+    $gulp.task('watch', function watch() {
+        $gulp.watch(config.module, ['build']);
+    });
 
 })(require('gulp'));

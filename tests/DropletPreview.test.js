@@ -3,15 +3,15 @@ describe('Ember Droplet: Preview', () => {
     let component, imageData = 'abc', mockLoadEvent = () => {};
 
     const mockEvent  = { target: { result: imageData } };
-    const mockReader = new class {
+    const mockReader = class {
         addEventListener(_, fn) { mockLoadEvent = fn }
         readAsDataURL() {}
     };
 
     beforeEach(() => {
 
-        spyOn(mockReader, 'readAsDataURL').and.callThrough();
-        spyOn(mockReader, 'addEventListener').and.callThrough();
+        spyOn(mockReader.prototype, 'readAsDataURL').and.callThrough();
+        spyOn(mockReader.prototype, 'addEventListener').and.callThrough();
 
         const Component = Ember.Component.extend(Droplet.Preview, {
             reader: mockReader,
@@ -28,8 +28,8 @@ describe('Ember Droplet: Preview', () => {
         component.didInsertElement();
         mockLoadEvent(mockEvent);
 
-        expect(mockReader.readAsDataURL).toHaveBeenCalled();
-        expect(mockReader.addEventListener).toHaveBeenCalledWith('load', jasmine.any(Function));
+        expect(mockReader.prototype.readAsDataURL).toHaveBeenCalled();
+        expect(mockReader.prototype.addEventListener).toHaveBeenCalledWith('load', jasmine.any(Function));
         expect(component.get('src')).toEqual(imageData);
         expect(component.isImage).toHaveBeenCalled();
 

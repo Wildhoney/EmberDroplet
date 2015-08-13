@@ -12,7 +12,7 @@ describe('Ember Droplet', () => {
         });
 
         component = Component.create();
-        Model     = component.get('model');
+        Model     = component.model;
 
     });
 
@@ -32,34 +32,36 @@ describe('Ember Droplet', () => {
 
     it('Should be able to add, remove, and clear files;', () => {
 
-        const mockModels = { first: new Model(), second: new Model(), third: new Model() };
-        component.send('addFiles', mockModels.first, mockModels.third);
+        const mockModels = { first: {}, second: {}, third: {} };
+        component.send('prepareFiles', mockModels.first, mockModels.third);
 
+        expect(component.get('files.length')).toEqual(2);
+        expect(component.get('files')[0].file).toEqual(mockModels.first);
+        expect(component.get('files')[1].file).toEqual(mockModels.third);
+
+        component.send('deleteFiles', component.get('files')[0]);
         expect(component.get('files').length).toEqual(2);
-        expect(component.get('files')[0]).toEqual(mockModels.first);
-        expect(component.get('files')[1]).toEqual(mockModels.third);
+        expect(component.get('deletedFiles.length')).toEqual(1);
 
-        component.send('deleteFiles', mockModels.first);
-        expect(component.get('files').length).toEqual(1);
-        expect(component.get('files')[0]).toEqual(mockModels.third);
+        component.send('prepareFiles', mockModels.second);
+        component.send('prepareFiles', mockModels.first);
+        expect(component.get('files.length')).toEqual(4);
+        expect(component.get('deletedFiles.length')).toEqual(1);
+        expect(component.get('invalidFiles.length')).toEqual(3);
+        expect(component.get('files')[0].file).toEqual(mockModels.third);
+        expect(component.get('files')[1].file).toEqual(mockModels.second);
+        expect(component.get('files')[2].file).toEqual(mockModels.first);
 
-        component.send('addFiles', mockModels.second);
-        component.send('addFiles', mockModels.first);
-        expect(component.get('files').length).toEqual(3);
-        expect(component.get('files')[0]).toEqual(mockModels.third);
-        expect(component.get('files')[1]).toEqual(mockModels.second);
-        expect(component.get('files')[2]).toEqual(mockModels.first);
-
-        component.send('deleteFiles', mockModels.first, mockModels.second);
-        expect(component.get('files').length).toEqual(1);
-        expect(component.get('files')[0]).toEqual(mockModels.third);
+        component.send('deleteFiles', component.get('files')[0], component.get('files')[1]);
+        expect(component.get('files.length')).toEqual(4);
+        expect(component.get('files')[0].file).toEqual(mockModels.third);
 
         component.send('clearFiles');
-        expect(component.get('files').length).toEqual(0);
+        expect(component.get('deletedFiles.length')).toEqual(4);
 
         // Adding invalid models shouldn't have any effect.
         component.send('addFiles', 'Non-model');
-        expect(component.get('files').length).toEqual(0);
+        expect(component.get('files.length')).toEqual(4);
 
     });
 
@@ -87,19 +89,22 @@ describe('Ember Droplet', () => {
 
     it('Should be able to handle the callback hooks when performing actions;', () => {
 
-        const mockModels = { first: new Model(), second: new Model(), third: new Model() };
+        const mockModels = { first: {}, second: {}, third: {} };
+
+        component.hooks.didAdd    = () => {};
+        component.hooks.didDelete = () => {};
 
         spyOn(component.hooks, 'didAdd');
         spyOn(component.hooks, 'didDelete');
 
-        component.send('addFiles', mockModels.first, mockModels.second, mockModels.third);
+        component.send('prepareFiles', mockModels.first, mockModels.second, mockModels.third);
         expect(component.hooks.didAdd.calls.count()).toEqual(1);
 
-        component.send('deleteFiles', mockModels.first, mockModels.second);
+        component.send('deleteFiles', component.get('files')[0], component.get('files')[1]);
         expect(component.hooks.didDelete.calls.count()).toEqual(1);
 
         // Deleting a non-existent model shouldn't invoke the didAdd callback.
-        component.send('deleteFiles', mockModels.first, mockModels.second);
+        component.send('deleteFiles', {}, {}, {});
         expect(component.hooks.didDelete.calls.count()).toEqual(1);
 
     });
@@ -108,27 +113,27 @@ describe('Ember Droplet', () => {
 
         const statusTypes = component.statusTypes;
 
-        const validMockModel   = new Model({ type: 'image/png' });
-        const invalidMockModel = new Model({ type: 'text/pdf' });
+        const validMockModel   = Model.create({ file: { type: 'image/png' } });
+        const invalidMockModel = Model.create({ file: { type: 'text/pdf'  } });
 
-        expect(validMockModel.statusType).toEqual(statusTypes.NONE);
+        expect(validMockModel.get('statusType')).toEqual(statusTypes.NONE);
         component.send('addFiles', validMockModel);
-        expect(validMockModel.statusType).toEqual(statusTypes.VALID);
+        expect(validMockModel.get('statusType')).toEqual(statusTypes.VALID);
         component.send('deleteFiles', validMockModel);
-        expect(validMockModel.statusType).toEqual(statusTypes.DELETED);
+        expect(validMockModel.get('statusType')).toEqual(statusTypes.DELETED);
 
-        expect(invalidMockModel.statusType).toEqual(statusTypes.NONE);
+        expect(invalidMockModel.get('statusType')).toEqual(statusTypes.NONE);
         component.send('addFiles', invalidMockModel);
-        expect(invalidMockModel.statusType).toEqual(statusTypes.INVALID);
+        expect(invalidMockModel.get('statusType')).toEqual(statusTypes.INVALID);
         component.send('clearFiles');
-        expect(invalidMockModel.statusType).toEqual(statusTypes.DELETED);
+        expect(invalidMockModel.get('statusType')).toEqual(statusTypes.DELETED);
 
     });
 
     it('Should be able to read from the computed properties;', () => {
 
-        const validMockModel   = new Model({ type: 'image/png' });
-        const invalidMockModel = new Model({ type: 'text/pdf' });
+        const validMockModel   = Model.create({ file: { type: 'image/png' } });
+        const invalidMockModel = Model.create({ file: { type: 'text/pdf'  } });
 
         component.send('addFiles', validMockModel, invalidMockModel);
 
@@ -139,8 +144,8 @@ describe('Ember Droplet', () => {
 
     it('Should be able to upload valid files;', done => {
 
-        const validFiles   = [new Model({ type: 'image/png' }), new Model({ type: 'image/gif' })];
-        const invalidFiles = [new Model({ type: 'text/json' }), new Model({ type: 'text/xml' })];
+        const validFiles   = [Model.create({ file: { type: 'image/png' } }), Model.create({ file: { type: 'image/gif' } })];
+        const invalidFiles = [Model.create({ file: { type: 'text/json' } }), Model.create({ file: { type: 'text/xml' } })];
 
         // Resolve the Jasmine test when the hook is invoked.
         component.hooks.didUpload = (...files) => {
@@ -152,6 +157,7 @@ describe('Ember Droplet', () => {
 
         component.hooks.didComplete = () => {
             expect(component.get('uploadStatus.uploading')).toEqual(false);
+            expect(component.get('uploadedFiles.length')).toEqual(2);
             done();
         };
 
@@ -183,8 +189,8 @@ describe('Ember Droplet', () => {
             done();
         };
 
-        const firstValid  = new Model({ type: 'image/png' });
-        const secondValid = new Model({ type: 'image/jpg' });
+        const firstValid  = Model.create({ file: { type: 'image/png' } });
+        const secondValid = Model.create({ file: { type: 'image/jpg' } });
 
         component.hooks.promiseResolver = (resolve, reject) => {
             reject({ request, errorThrown, textStatus });
@@ -197,9 +203,9 @@ describe('Ember Droplet', () => {
 
     it('Should be able to determine the file size for the X-File-Size header;', () => {
 
-        const files = [new Model({ type: 'image/png', size: 100 }),
-                       new Model({ type: 'image/png', size: 1500 }),
-                       new Model({ type: 'image/png', size: 250 })];
+        const files = [Model.create({ file: { type: 'image/png', size: 100 } }),
+                       Model.create({ file: { type: 'image/png', size: 1500 } }),
+                       Model.create({ file: { type: 'image/png', size: 250 } })];
 
         component.send('addFiles', ...files);
         expect(component.get('requestSize')).toEqual(1850);
@@ -208,8 +214,11 @@ describe('Ember Droplet', () => {
 
     it('Should be able to determine when a file is valid or invalid;', () => {
 
-        const validFiles   = [new Model({ size: 100, type: 'image/png' }), new Model({ size: 500,   type: 'image/gif' })];
-        const invalidFiles = [new Model({ size: 55,  type: 'text/json' }), new Model({ size: 15000, type: 'image/png' })];
+        const validFiles   = [Model.create({ file: { size: 100, type: 'image/png' } }),
+                              Model.create({ file: { size: 500, type: 'image/gif' } })];
+
+        const invalidFiles = [Model.create({ file: { size: 55,    type: 'text/json' } }),
+                              Model.create({ file: { size: 15000, type: 'image/png' } })];
 
         component.set('options.maximumSize', 14500);
 
@@ -220,28 +229,28 @@ describe('Ember Droplet', () => {
         expect(component.isValid(invalidFiles[1])).toBe(false);
 
         // Checks to validate the file size limitation can be exact.
-        const exactSizeModel = new Model({ size: 14500, type: 'image/png' });
+        const exactSizeModel = Model.create({ file: { size: 14500, type: 'image/png' } });
         expect(component.isValid(exactSizeModel)).toBe(true);
 
         // Checks to ensure a file without any metadata is considered invalid.
-        expect(component.isValid(new Model())).toBe(false);
+        expect(component.isValid({})).toBe(false);
 
         // Checks to make sure that only a valid MIME type is not enough.
-        expect(component.isValid(new Model({ type: 'image/gif' }))).toBe(false);
+        expect(component.isValid(Model.create({ file: { type: 'image/gif' } }))).toBe(false);
 
-        // Checks to make sure that only a valid file size is insufficient.
-        expect(component.isValid(new Model({ size: 500 }))).toBe(false);
+         // Checks to make sure that only a valid file size is insufficient.
+        expect(component.isValid(Model.create({ file: { size: 500 } }))).toBe(false);
 
     });
 
     it('Should be able to valid MIME types using regular expressions;', () => {
 
-        const firstValid  = new Model({ size: 0, type: 'image/first' });
-        const secondValid = new Model({ size: 0, type: 'image/second' });
-        const thirdValid  = new Model({ size: 0, type: 'text/plain' });
+        const firstValid  = Model.create({ file: { size: 0, type: 'image/first' } });
+        const secondValid = Model.create({ file: { size: 0, type: 'image/second' } });
+        const thirdValid  = Model.create({ file: { size: 0, type: 'text/plain' } });
 
-        const firstInvalid  = new Model({ size: 0,  type: 'text/first' });
-        const secondInvalid = new Model({ size: 0, type: 'application/second' });
+        const firstInvalid  = Model.create({ file: { size: 0,  type: 'text/first' } });
+        const secondInvalid = Model.create({ file: { size: 0, type: 'application/second' } });
 
         component.send('mimeTypes', ['text/plain', /image\/+./], 'set');
 
@@ -293,11 +302,11 @@ describe('Ember Droplet', () => {
 
         component.options.requestPostData = { name: 'Adam', location: 'London' };
 
-        const models = [new Model({ size: 0, type: 'image/jpg' }),
-                        new Model({ size: 0, type: 'image/png' }),
-                        new Model({ size: 0, type: 'image/gif' })];
+        const models = [Model.create({ file: { size: 0, type: 'image/jpg' } }),
+                        Model.create({ file: { size: 0, type: 'image/png' } }),
+                        Model.create({ file: { size: 0, type: 'image/gif' } })];
 
-        const length = (models[0].toString().length) + (models[1].toString().length) + (models[2].toString().length);
+        const length = (models[0].file.toString().length) + (models[1].file.toString().length) + (models[2].file.toString().length);
 
         component.send('addFiles', ...models);
         component.send('uploadFiles');

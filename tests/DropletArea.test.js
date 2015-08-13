@@ -36,18 +36,17 @@ describe('Ember Droplet: Area', () => {
     it('Should be able to a handful of valid and invalid models to the file list;', () => {
 
         const mockEvent    = { stopPropagation: () => {}, preventDefault: () => {}, dataTransfer: { files: [] } };
-        const validFiles   = [{ size: 100, type: 'image/png' }, { size: 500,   type: 'image/gif' }];
-        const invalidFiles = [{ size: 55,  type: 'text/json' }, { size: 15000, type: 'image/png' }];
+        const validFiles   = [{ file: { size: 100, type: 'image/png' } }, { file: { size: 500,   type: 'image/gif' } }];
+        const invalidFiles = [{ file: { size: 55,  type: 'text/json' } }, { file: { size: 15000, type: 'image/png' } }];
 
         mockEvent.dataTransfer.files = [...validFiles, ...invalidFiles];
 
-        spyOn(component, 'addFiles').and.callFake(files => {
+        spyOn(component, 'handleFiles').and.callFake(files => {
             expect(files.length).toEqual(4);
         });
 
-        const addedModels = component.drop(mockEvent);
-        expect(addedModels.length).toEqual(4);
-        expect(component.addFiles).toHaveBeenCalled();
+        component.drop(mockEvent);
+        expect(component.handleFiles).toHaveBeenCalledWith(jasmine.any(Array));
 
     });
 

@@ -30,13 +30,13 @@ describe('Ember Droplet: Input', () => {
 
     it('Should be able to take the files from the properties;', () => {
 
-        spyOn(multipleInput, 'traverseFiles');
+        spyOn(multipleInput, 'handleFiles');
         multipleInput.change();
-        expect(multipleInput.traverseFiles).toHaveBeenCalledWith([imageMock]);
+        expect(multipleInput.handleFiles).toHaveBeenCalledWith([imageMock]);
 
-        spyOn(singleInput, 'traverseFiles');
+        spyOn(singleInput, 'handleFiles');
         singleInput.change();
-        expect(singleInput.traverseFiles).toHaveBeenCalledWith([imageMock, imageMock, imageMock]);
+        expect(singleInput.handleFiles).toHaveBeenCalledWith([imageMock, imageMock, imageMock]);
 
     });
 
