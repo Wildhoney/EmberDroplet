@@ -323,6 +323,8 @@
                 const url         = isFunction(get(this, 'url')) ? get(this, 'url').apply(this) : get(this, 'url');
                 const files       = get(this, 'files').filter(file => file.statusType & STATUS_TYPES.VALID);
 
+                void(url, isFunction);
+
                 set(this, 'uploadStatus.uploading', true);
                 set(this, 'uploadStatus.error', false);
 
