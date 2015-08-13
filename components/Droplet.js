@@ -242,6 +242,11 @@
          */
         isValid(model) {
 
+            /**
+             * @method validMime
+             * @param {String} mimeType
+             * @return {Boolean}
+             */
             const validMime = mimeType => () => {
 
                 const anyRegExp = this.get('options.mimeTypes').some(mimeType => mimeType instanceof RegExp);
@@ -266,6 +271,11 @@
 
             };
 
+            /**
+             * @method validSize
+             * @param {Number} fileSize
+             * @return {void}
+             */
             const validSize = fileSize => () => fileSize <= Number($ember.get(this, 'options.maximumSize'));
 
             /**
