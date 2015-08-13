@@ -354,7 +354,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var _this3 = this;
 
         var isFunction = function isFunction(value) {
-          return typeof get(_this3, 'url') === 'function';
+          return typeof value === 'function';
         };
         var url = isFunction(get(this, 'url')) ? get(this, 'url').apply(this) : get(this, 'url');
         var files = get(this, 'files').filter(function (file) {

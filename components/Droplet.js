@@ -306,7 +306,7 @@
              */
             uploadFiles() {
 
-                const isFunction = value => typeof get(this, 'url') === 'function';
+                const isFunction = value => typeof value === 'function';
                 const url        = isFunction(get(this, 'url')) ? get(this, 'url').apply(this) : get(this, 'url');
                 const files      = get(this, 'files').filter(file => file.statusType & STATUS_TYPES.VALID);
 
