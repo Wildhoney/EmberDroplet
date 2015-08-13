@@ -385,7 +385,9 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         return model.file;
       });
 
-      formData.append(fieldName, files);
+      files.forEach(function (file) {
+        formData.append(fieldName, file);
+      });
 
       Object.keys(postData).forEach(function (key) {
         formData.append(key, postData[key]);

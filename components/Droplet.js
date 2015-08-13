@@ -347,7 +347,9 @@
             const postData  = this.get('options.requestPostData');
             const files     = get(this, 'validFiles').map(model => model.file);
 
-            formData.append(fieldName, files);
+            files.forEach(file => {
+                formData.append(fieldName, file);
+            });
 
             Object.keys(postData).forEach(key => {
                 formData.append(key, postData[key]);

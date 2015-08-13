@@ -10,7 +10,7 @@
     var App = $window.App = Ember.Application.create();
 
     App.XDropletComponent = Ember.Component.extend($window.Droplet, {
-        url: $window.location.origin
+        url: $window.location.origin + '/upload'
     });
 
     App.XDropletAreaComponent    = Ember.Component.extend($window.Droplet.Area);

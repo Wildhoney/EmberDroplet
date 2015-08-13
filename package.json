@@ -19,7 +19,8 @@
     "karma-babel-preprocessor": "^5.2.1",
     "karma-firefox-launcher": "^0.1.6",
     "karma-jasmine": "^0.3.6",
-    "karma-spec-reporter": "0.0.20"
+    "karma-spec-reporter": "0.0.20",
+    "multer": "^1.0.3"
   },
   "repository": {
     "type": "git",

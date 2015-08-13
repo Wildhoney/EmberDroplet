@@ -38,18 +38,14 @@
             <button class="btn" {{action "abortUpload"}}>Abort</button>
         </div>
 
-        {{#if uploadStatus.uploading}}
-            <h3 class="uploading-percentage">Uploaded Percentage: {{uploadStatus.percentComplete}}%</h3>
-        {{/if}}
-
-        {{#if uploadStatus.error}}
-            <div class="error">An error occurred during the upload process. Please try again later.</div>
-        {{/if}}
-
         {{#x-droplet-area}}
 
             {{#if uploadStatus.error}}
                 <div class="error">An error occurred during the upload process. Please try again later.</div>
+            {{/if}}
+
+            {{#if uploadStatus.uploading}}
+                <h3 class="uploading-percentage">Uploaded Percentage: {{uploadStatus.percentComplete}}%</h3>
             {{/if}}
 
             {{#each validFiles as |file|}}
