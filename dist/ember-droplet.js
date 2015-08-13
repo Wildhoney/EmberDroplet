@@ -24,6 +24,15 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
   var STATUS_TYPES = { NONE: 0, VALID: 1, INVALID: 2, DELETED: 4, UPLOADED: 8, FAILED: 16 };
 
   /**
+   * @method fromArray
+   * @param {*} arrayLike
+   * @return {Array}
+   */
+  var fromArray = function fromArray(arrayLike) {
+    return Array.from ? Array.from(arrayLike) : Array.prototype.slice.call(arrayLike);
+  };
+
+  /**
    * @property Model
    * @type {Ember.Object}
    */
@@ -584,7 +593,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         }
 
         // Convert the FileList object into an actual array.
-        files = Array.from ? Array.from(files) : Array.prototype.slice.call(files);
+        files = fromArray(files);
 
         var models = files.reduce(function (current, file) {
 
@@ -697,7 +706,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         var _getParent;
 
         // Add the models to the parent if the parent exists, otherwise it's a no-op.
-        (_getParent = this.getParent()).send.apply(_getParent, ['prepareFiles'].concat(_toConsumableArray(models)));
+        (_getParent = this.getParent()).send.apply(_getParent, ['prepareFiles'].concat(_toConsumableArray(fromArray(models))));
       }
 
       return models;
@@ -835,8 +844,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @return {void}
      */
     change: function change() {
-      var element = this.get('element');
-      var files = Array.isArray(element.files) ? element.files : [element.files];
+      var files = this.get('element').files;
       this.handleFiles(files);
     },
 
@@ -848,7 +856,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     handleFiles: function handleFiles(files) {
       var _get;
 
-      (_get = this.get('parentView')).send.apply(_get, ['prepareFiles'].concat(_toConsumableArray(files)));
+      this.get('parentView').send && (_get = this.get('parentView')).send.apply(_get, ['prepareFiles'].concat(_toConsumableArray(fromArray(files))));
     }
 
   });

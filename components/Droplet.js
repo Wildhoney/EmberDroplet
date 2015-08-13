@@ -12,6 +12,13 @@
     const STATUS_TYPES = { NONE: 0, VALID: 1, INVALID: 2, DELETED: 4, UPLOADED: 8, FAILED: 16 };
 
     /**
+     * @method fromArray
+     * @param {*} arrayLike
+     * @return {Array}
+     */
+    const fromArray = arrayLike => Array.from ? Array.from(arrayLike) : Array.prototype.slice.call(arrayLike);
+
+    /**
      * @property Model
      * @type {Ember.Object}
      */
@@ -531,7 +538,7 @@
             prepareFiles(...files) {
 
                 // Convert the FileList object into an actual array.
-                files = Array.from ? Array.from(files) : Array.prototype.slice.call(files);
+                files = fromArray(files);
 
                 const models = files.reduce((current, file) => {
 
@@ -636,7 +643,7 @@
             if (models.length && this.getParent().send) {
 
                 // Add the models to the parent if the parent exists, otherwise it's a no-op.
-                this.getParent().send('prepareFiles', ...models);
+                this.getParent().send('prepareFiles', ...fromArray(models));
 
             }
 
@@ -776,8 +783,7 @@
          * @return {void}
          */
         change() {
-            const element = this.get('element');
-            const files   = Array.isArray(element.files) ? element.files : [element.files];
+            const files = this.get('element').files;
             this.handleFiles(files);
         },
 
@@ -787,7 +793,7 @@
          * @return {void}
          */
         handleFiles(files) {
-            this.get('parentView').send('prepareFiles', ...files);
+            this.get('parentView').send && this.get('parentView').send('prepareFiles', ...fromArray(files));
         }
         
     });

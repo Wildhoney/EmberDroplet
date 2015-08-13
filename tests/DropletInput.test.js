@@ -32,7 +32,7 @@ describe('Ember Droplet: Input', () => {
 
         spyOn(multipleInput, 'handleFiles');
         multipleInput.change();
-        expect(multipleInput.handleFiles).toHaveBeenCalledWith([imageMock]);
+        expect(multipleInput.handleFiles).toHaveBeenCalledWith(imageMock);
 
         spyOn(singleInput, 'handleFiles');
         singleInput.change();
