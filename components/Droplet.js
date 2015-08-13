@@ -93,7 +93,19 @@
          * @property mimeTypes
          * @type {Array}
          */
-        mimeTypes: ['image/jpeg', 'image/jpg', 'image/gif', 'image/png', 'image/tiff', 'image/bmp']
+        mimeTypes: ['image/jpeg', 'image/jpg', 'image/gif', 'image/png', 'image/tiff', 'image/bmp'],
+
+        /**
+         * @property requestHeaders
+         * @type {Object}
+         */
+        requestHeaders: {},
+
+        /**
+         * @property requestPostData
+         * @type {Object}
+         */
+        requestPostData: {}
 
     };
 
@@ -308,18 +320,23 @@
 
         /**
          * @method getFormData
-         * @return {Object}
+         * @return {FormData}
          */
         getFormData() {
-            return {};
-        },
 
-        /**
-         * @method getHeaders
-         * @return {Object}
-         */
-        getHeaders() {
-            return {};
+            const formData  = new $window.FormData();
+            const fieldName = this.get('options.useArray') ? 'file[]' : 'file';
+            const postData  = this.get('options.requestPostData');
+            const files     = get(this, 'validFiles').map(model => model.file);
+
+            formData.append(fieldName, files);
+
+            Object.keys(postData).forEach(key => {
+                formData.append(key, postData[key]);
+            });
+
+            return formData;
+            
         },
 
         /**
@@ -359,7 +376,7 @@
             const url        = isFunction(get(this, 'url')) ? get(this, 'url').apply(this) : get(this, 'url');
             const method     = get(this, 'options.requestMethod') || 'POST';
             const data       = this.getFormData();
-            const headers    = this.getHeaders();
+            const headers    = this.get('requestHeaders');
             const request    = $Ember.$.ajax({ url, method, headers, data, processData: false, contentType: false,
 
                 /**

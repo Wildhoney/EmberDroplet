@@ -289,4 +289,24 @@ describe('Ember Droplet', () => {
 
     });
 
+    it('Should be able to construct the FormData object using additional POST data;', () => {
+
+        component.options.requestPostData = { name: 'Adam', location: 'London' };
+
+        const models = [new Model({ size: 0, type: 'image/jpg' }),
+                        new Model({ size: 0, type: 'image/png' }),
+                        new Model({ size: 0, type: 'image/gif' })];
+
+        const length = (models[0].toString().length) + (models[1].toString().length) + (models[2].toString().length);
+
+        component.send('addFiles', ...models);
+        component.send('uploadFiles');
+
+        const formData = component.getFormData();
+        expect(formData.get('name')).toEqual('Adam');
+        expect(formData.get('location')).toEqual('London');
+        expect(formData.get('file').length).toEqual(length + models.length - 1);
+
+    });
+
 });

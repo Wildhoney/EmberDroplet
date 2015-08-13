@@ -31,6 +31,12 @@ describe('Ember Droplet: Options', () => {
         component.set('options.includeHeader', false);
         expect(component.get('options.includeHeader')).toEqual(false);
 
+        component.set('options.requestHeaders', 'abc');
+        expect(component.get('options.requestHeaders')).toEqual('abc');
+
+        component.set('options.requestPostData', '123');
+        expect(component.get('options.requestPostData')).toEqual('123');
+
     });
 
     it('Should have reverted all of the options from the previous request;', () => {
@@ -40,6 +46,8 @@ describe('Ember Droplet: Options', () => {
         expect(component.get('options.maximumSize')).toEqual(Infinity);
         expect(component.get('options.useArray')).toEqual(false);
         expect(component.get('options.includeHeader')).toEqual(true);
+        expect(component.get('options.requestHeaders')).toEqual({});
+        expect(component.get('options.requestPostData')).toEqual({});
 
     });
 
