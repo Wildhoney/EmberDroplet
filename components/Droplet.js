@@ -287,7 +287,7 @@
 
             /**
              * @method isValid
-             * @type {Boolean}
+             * @type {Function}
              */
             const isValid = composeEvery(
                 validMime(model.getMIMEType()),
