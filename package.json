@@ -39,6 +39,7 @@
   },
   "scripts": {
     "test": "gulp test",
+    "build": "gulp build",
     "prepare": "bower i",
     "start": "node example/server/default.js"
   },
