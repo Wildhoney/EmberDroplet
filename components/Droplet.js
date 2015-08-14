@@ -280,6 +280,25 @@
         },
 
         /**
+         * @method willDestroy
+         * @return {void}
+         */
+        willDestroy() {
+
+            this._super();
+            
+            const lastRequest = this.get('lastRequest');
+
+            if (lastRequest) {
+                delete lastRequest.upload.onprogress;
+                delete lastRequest.upload.onload;
+                delete lastRequest.upload.onerror;
+                this.send('abortUpload');
+            }
+
+        },
+
+        /**
          * @method invokeHook
          * @param {String} name
          * @param {Array} args
@@ -485,6 +504,7 @@
                     return xhr;
 
                 }
+
             });
 
             set(this, 'lastResolver', request);
