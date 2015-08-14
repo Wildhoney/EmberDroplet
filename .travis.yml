@@ -17,6 +17,7 @@ script:
   - npm install
   - npm run prepare
   - npm run test
+  - npm run build
 
 deploy:
   provider: heroku
