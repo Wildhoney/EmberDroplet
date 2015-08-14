@@ -49,12 +49,18 @@ In addition to the actions, the mixin also has the following computed properties
 
 ## Getting Started
 
-In order to begin using EmberDroplet, you need a to instantiate the necessary `Ember.Component`s:
+In order to begin using EmberDroplet, you need to construct an `Ember.Component` using the `Droplet` mixin:
 
 ```javascript
 App.XDropletComponent = Ember.Component.extend(Droplet, {
     url: location.origin + '/upload'
 });
+```
+
+From there you can then add the component in block form to your application as follows &mdash; the reason we use it in block form is that other `Droplet` related mixins can be added as children to `x-droplet`.;
+
+```html
+{{#x-droplet}}{{/x-droplet}}
 ```
 
 **Note:** Specifying a `url` parameter is mandatory, since no default is assumed.
@@ -79,7 +85,7 @@ Once you have instantiated the `Droplet` `Ember.Component` in your application, 
 App.XDropletAreaComponent = Ember.Component.extend(Droplet.Area);
 ```
 
-Use as singular or in block form:
+Use as singular or in block form &mdash; `Droplet.Area` will create a `div` with the `droppable` class name for you to style accordingly:
 
 ```html
 {{x-droplet-area}}
