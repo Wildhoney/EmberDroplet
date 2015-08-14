@@ -4,6 +4,7 @@
   "author": "Adam Timberlake",
   "dependencies": {},
   "devDependencies": {
+    "bower": "^1.4.1",
     "express": "^4.13.3",
     "gulp": "^3.9.0",
     "gulp-babel": "^5.2.0",
@@ -37,7 +38,8 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "grunt test",
+    "test": "gulp test",
+    "prepare": "bower i",
     "start": "node example/server/default.js"
   },
   "keywords": [
