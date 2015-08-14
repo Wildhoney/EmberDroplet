@@ -260,14 +260,6 @@
         }).property(...COMPUTED_OBSERVER),
 
         /**
-         * @property deletedModels
-         * @return {Array}
-         */
-        deletedModels: computed(function() {
-            return this.getFiles(STATUS_TYPES.DELETED);
-        }).property(...COMPUTED_OBSERVER),
-
-        /**
          * @property requestSize
          * @return {Array}
          */

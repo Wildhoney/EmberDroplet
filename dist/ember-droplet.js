@@ -8,7 +8,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
   // Extract the commonly accessed Ember methods.
 
-  var _computed, _computed2, _computed3, _computed4, _computed5;
+  var _computed, _computed2, _computed3, _computed4;
 
   var Mixin = $Ember.Mixin;
   var String = $Ember.String;
@@ -278,14 +278,6 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     deletedFiles: (_computed4 = computed(function () {
       return this.getFiles(STATUS_TYPES.DELETED);
     })).property.apply(_computed4, _toConsumableArray(COMPUTED_OBSERVER)),
-
-    /**
-     * @property deletedModels
-     * @return {Array}
-     */
-    deletedModels: (_computed5 = computed(function () {
-      return this.getFiles(STATUS_TYPES.DELETED);
-    })).property.apply(_computed5, _toConsumableArray(COMPUTED_OBSERVER)),
 
     /**
      * @property requestSize

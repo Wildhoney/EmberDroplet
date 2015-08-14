@@ -12,9 +12,9 @@
     "bower_components",
     "tests"
   ],
-  "dependencies": {},
-  "devDependencies": {
-    "ember": "2.0.0",
-    "handlebars": "~3.0.3"
-  }
+  "dependencies": {
+    "ember": ">=2.0.0",
+    "handlebars": ">=3.0.3"
+  },
+  "devDependencies": {}
 }
