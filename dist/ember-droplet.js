@@ -98,6 +98,18 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     maximumSize: Infinity,
 
     /**
+     * @property maximumValidFiles
+     * @type {Number|Infinity}
+     */
+    maximumValidFiles: Infinity,
+
+    /**
+     * @property uploadImmediately
+     * @type {Boolean}
+     */
+    uploadImmediately: false,
+
+    /**
      * @property includeHeader
      * @type {Boolean}
      */
@@ -498,6 +510,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
          */
         var resolved = function resolved(response) {
           _this4.invokeHook.apply(_this4, ['didUpload'].concat(_toConsumableArray(response.files)));
+          console.log('x');
           models.map(function (model) {
             return model.setStatusType(STATUS_TYPES.UPLOADED);
           });
@@ -572,16 +585,32 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
         var addedModels = files.map(function (model) {
 
+          var willExceedQuota = _this5.get('validFiles.length') === _this5.get('options.maximumValidFiles');
+
           if (model instanceof Ember.Object) {
-            model.setStatusType(_this5.isValid(model) ? STATUS_TYPES.VALID : STATUS_TYPES.INVALID);
-            get(_this5, 'files').pushObject(model);
-            return model;
+            var _ret = (function () {
+
+              var statusType = _this5.isValid(model) && !willExceedQuota ? STATUS_TYPES.VALID : STATUS_TYPES.INVALID;
+              run(function () {
+                return model.setStatusType(statusType);
+              });
+              get(_this5, 'files').pushObject(model);
+              return {
+                v: model
+              };
+            })();
+
+            if (typeof _ret === 'object') return _ret.v;
           }
         }).filter(function (model) {
           return typeof model !== 'undefined';
         });
 
         addedModels.length && this.invokeHook.apply(this, ['didAdd'].concat(_toConsumableArray(addedModels)));
+
+        if (this.get('options.uploadImmediately')) {
+          this.send.apply(this, ['uploadFiles'].concat(_toConsumableArray(addedModels)));
+        }
       },
 
       /**
