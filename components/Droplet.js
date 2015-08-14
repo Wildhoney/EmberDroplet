@@ -28,7 +28,7 @@
      * @property EventBus
      * @type {Ember.Service}
      */
-    const EventBus = Ember.Service.extend(Ember.Evented, {
+    const EventBus = $Ember.Service.extend($Ember.Evented, {
 
         /**
          * @method publish
@@ -56,7 +56,7 @@
 
     });
 
-    Ember.Application.initializer({
+    $Ember.Application.initializer({
 
         /**
          * @property string
@@ -213,7 +213,7 @@
      * @author Adam Timberlake
      * @see https://github.com/Wildhoney/EmberDroplet
      */
-    $window.Droplet = Mixin.create(Ember.Evented, {
+    $window.Droplet = Mixin.create({
 
         /**
          * @property url
@@ -354,7 +354,7 @@
          */
         isValid(model) {
 
-            if (!(model instanceof Ember.Object)) {
+            if (!(model instanceof $Ember.Object)) {
                 return false;
             }
 
@@ -601,7 +601,7 @@
 
                     const willExceedQuota = this.get('validFiles.length') === this.get('options.maximumValidFiles');
 
-                    if (model instanceof Ember.Object) {
+                    if (model instanceof $Ember.Object) {
 
                         const statusType = this.isValid(model) && !willExceedQuota ? STATUS_TYPES.VALID : STATUS_TYPES.INVALID;
                         run(() => model.setStatusType(statusType));
