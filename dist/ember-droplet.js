@@ -24,6 +24,12 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
   var STATUS_TYPES = { NONE: 0, VALID: 1, INVALID: 2, DELETED: 4, UPLOADED: 8, FAILED: 16 };
 
   /**
+   * @constant EVENT_NAME
+   * @type {String}
+   */
+  var EVENT_NAME = 'droplet/add-files';
+
+  /**
    * @method fromArray
    * @param {*} arrayLike
    * @return {Array}
@@ -31,6 +37,66 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
   var fromArray = function fromArray(arrayLike) {
     return Array.from ? Array.from(arrayLike) : Array.prototype.slice.call(arrayLike);
   };
+
+  /**
+   * @property EventBus
+   * @type {Ember.Service}
+   */
+  var EventBus = Ember.Service.extend(Ember.Evented, {
+
+    /**
+     * @method publish
+     * @return {void}
+     */
+    publish: function publish() {
+      this.trigger.apply(this, arguments);
+    },
+
+    /**
+     * @method subscribe
+     * @return {void}
+     */
+    subscribe: function subscribe() {
+      this.on.apply(this, arguments);
+    },
+
+    /**
+     * @method unsubscribe
+     * @return {void}
+     */
+    unsubscribe: function unsubscribe() {
+      this.off.apply(this, arguments);
+    }
+
+  });
+
+  Ember.Application.initializer({
+
+    /**
+     * @property string
+     * @type {String}
+     */
+    name: 'load-services',
+
+    /**
+     * @method initialize
+     * @param {Object} container
+     * @param {Object} application
+     * @return {void}
+     */
+    initialize: function initialize(container, application) {
+
+      var eventBus = EventBus.create();
+
+      application.register('event-bus:current', eventBus, {
+        instantiate: false
+      });
+
+      application.inject('component', 'DropletEventBus', 'event-bus:current');
+      application.inject('controller', 'DropletEventBus', 'event-bus:current');
+    }
+
+  });
 
   /**
    * @property Model
@@ -160,7 +226,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
    * @author Adam Timberlake
    * @see https://github.com/Wildhoney/EmberDroplet
    */
-  $window.Droplet = Mixin.create({
+  $window.Droplet = Mixin.create(Ember.Evented, {
 
     /**
      * @property url
@@ -220,6 +286,14 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       set(this, 'options.requestHeaders', {});
       set(this, 'options.requestPostData', {});
 
+      this.DropletEventBus && this.DropletEventBus.subscribe(EVENT_NAME, this, function () {
+        for (var _len = arguments.length, files = Array(_len), _key = 0; _key < _len; _key++) {
+          files[_key] = arguments[_key];
+        }
+
+        _this.send.apply(_this, ['prepareFiles'].concat(files));
+      });
+
       this._super();
     },
 
@@ -232,8 +306,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     invokeHook: function invokeHook(name) {
       var method = get(this, 'hooks')[name] || function () {};
 
-      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        args[_key - 1] = arguments[_key];
+      for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+        args[_key2 - 1] = arguments[_key2];
       }
 
       method.apply(undefined, args);
@@ -359,8 +433,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
        * @return {Function}
        */
       var composeEvery = function composeEvery() {
-        for (var _len2 = arguments.length, fns = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-          fns[_key2] = arguments[_key2];
+        for (var _len3 = arguments.length, fns = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+          fns[_key3] = arguments[_key3];
         }
 
         return function (model) {
@@ -571,8 +645,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       addFiles: function addFiles() {
         var _this6 = this;
 
-        for (var _len3 = arguments.length, files = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-          files[_key3] = arguments[_key3];
+        for (var _len4 = arguments.length, files = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+          files[_key4] = arguments[_key4];
         }
 
         var addedModels = files.map(function (model) {
@@ -611,8 +685,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
        * @return {Array}
        */
       prepareFiles: function prepareFiles() {
-        for (var _len4 = arguments.length, files = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-          files[_key4] = arguments[_key4];
+        for (var _len5 = arguments.length, files = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+          files[_key5] = arguments[_key5];
         }
 
         // Convert the FileList object into an actual array.
@@ -641,8 +715,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       deleteFiles: function deleteFiles() {
         var _this7 = this;
 
-        for (var _len5 = arguments.length, files = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
-          files[_key5] = arguments[_key5];
+        for (var _len6 = arguments.length, files = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+          files[_key6] = arguments[_key6];
         }
 
         var deletedModels = files.map(function (model) {
@@ -702,14 +776,6 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     classNames: ['droppable'],
 
     /**
-     * @method getParent
-     * @return {Object}
-     */
-    getParent: function getParent() {
-      return this.context.get('parentView') || {};
-    },
-
-    /**
      * @method drop
      * @param {Object} event
      * @return {Array}
@@ -725,14 +791,9 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @return {Model[]}
      */
     handleFiles: function handleFiles(models) {
+      var _DropletEventBus;
 
-      if (models.length && this.getParent().send) {
-        var _getParent;
-
-        // Add the models to the parent if the parent exists, otherwise it's a no-op.
-        (_getParent = this.getParent()).send.apply(_getParent, ['prepareFiles'].concat(_toConsumableArray(fromArray(models))));
-      }
-
+      this.DropletEventBus && (_DropletEventBus = this.DropletEventBus).publish.apply(_DropletEventBus, [EVENT_NAME].concat(_toConsumableArray(fromArray(models))));
       return models;
     },
 
@@ -877,23 +938,13 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
     /**
      * @method handleFiles
-     * @param {Model[]} files
+     * @param {Model[]} models
      * @return {void}
      */
-    handleFiles: function handleFiles(files) {
+    handleFiles: function handleFiles(models) {
+      var _DropletEventBus2;
 
-      var parentView = this.get('parentView');
-      var ancestorView = parentView.get('parentView');
-
-      /* todo: Add a better way to communicate between Ember.Components. */
-
-      try {
-        ancestorView.send.apply(ancestorView, ['prepareFiles'].concat(_toConsumableArray(fromArray(files))));
-      } catch (_) {}
-
-      try {
-        parentView.send.apply(parentView, ['prepareFiles'].concat(_toConsumableArray(fromArray(files))));
-      } catch (_) {}
+      this.DropletEventBus && (_DropletEventBus2 = this.DropletEventBus).publish.apply(_DropletEventBus2, [EVENT_NAME].concat(_toConsumableArray(fromArray(models))));
     }
 
   });

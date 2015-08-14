@@ -15,7 +15,7 @@
     "expr"          : true,
     "maxparams"     : 5,
     "maxdepth"      : 5,
-    "maxstatements" : 15,
+    "maxstatements" : 20,
     "maxcomplexity" : 5,
 
     "asi"           : true,
