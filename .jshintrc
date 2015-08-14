@@ -13,10 +13,10 @@
     "esnext"        : true,
     "unused"        : true,
     "expr"          : true,
-    "maxparams"     : 10,
+    "maxparams"     : 5,
     "maxdepth"      : 5,
-    "maxstatements" : 25,
-    "maxcomplexity" : 10,
+    "maxstatements" : 15,
+    "maxcomplexity" : 5,
 
     "asi"           : true,
     "eqnull"        : true,
