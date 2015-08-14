@@ -469,6 +469,7 @@
                  */
                 const resolved = response => {
                     this.invokeHook('didUpload', ...response.files);
+                    console.log('x');
                     models.map(model => model.setStatusType(STATUS_TYPES.UPLOADED));
                 };
 
@@ -545,6 +546,10 @@
                 }).filter(model => typeof model !== 'undefined');
 
                 addedModels.length && this.invokeHook('didAdd', ...addedModels);
+
+                if (this.get('options.uploadImmediately')) {
+                    this.send('uploadFiles', ...addedModels);
+                }
 
             },
 

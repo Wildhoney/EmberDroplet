@@ -37,6 +37,12 @@ describe('Ember Droplet: Options', () => {
         component.set('options.requestPostData', '123');
         expect(component.get('options.requestPostData')).toEqual('123');
 
+        component.set('options.maximumValidFiles', 100);
+        expect(component.get('options.maximumValidFiles')).toEqual(100);
+
+        component.set('options.uploadImmediately', true);
+        expect(component.get('options.uploadImmediately')).toEqual(true);
+
     });
 
     it('Should have reverted all of the options from the previous request;', () => {
@@ -48,7 +54,49 @@ describe('Ember Droplet: Options', () => {
         expect(component.get('options.includeHeader')).toEqual(true);
         expect(component.get('options.requestHeaders')).toEqual({});
         expect(component.get('options.requestPostData')).toEqual({});
+        expect(component.get('options.maximumValidFiles')).toEqual(Infinity);
+        expect(component.get('options.uploadImmediately')).toEqual(false);
 
     });
 
-})
+    it('Should be able to reject files when the quota has been met;', () => {
+
+        const models = [Model.create({ file: { size: 0, type: 'image/jpg' } }),
+                        Model.create({ file: { size: 0, type: 'image/png' } }),
+                        Model.create({ file: { size: 0, type: 'image/tiff' } }),
+                        Model.create({ file: { size: 0, type: 'image/gif' } })];
+
+        component.set('options.maximumValidFiles', 3);
+        component.send('addFiles', ...models);
+
+        expect(component.get('validFiles.length')).toEqual(3);
+        expect(component.get('invalidFiles.length')).toEqual(1);
+
+    });
+
+    it('Should be able to upload files immediately;', done => {
+
+        const models = [Model.create({ file: { size: 0, type: 'image/jpg' } }),
+                        Model.create({ file: { size: 0, type: 'image/png' } }),
+                        Model.create({ file: { size: 0, type: 'image/tiff' } }),
+                        Model.create({ file: { size: 0, type: 'image/gif' } })];
+
+        component.set('url', 'http://example.org/');
+        component.set('options.uploadImmediately', true);
+
+        component.hooks.promiseResolver = (resolve, reject, files) => {
+            resolve({ files });
+        };
+
+        component.hooks.didComplete = () => {
+            expect(component.get('uploadedFiles.length')).toEqual(4);
+            done();
+        };
+
+        spyOn(component.actions, 'uploadFiles').and.callThrough();
+        component.send('addFiles', ...models);
+        expect(component.actions.uploadFiles).toHaveBeenCalled();
+
+    });
+
+});

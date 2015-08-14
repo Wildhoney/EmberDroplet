@@ -306,31 +306,13 @@ describe('Ember Droplet', () => {
                         Model.create({ file: { size: 0, type: 'image/png' } }),
                         Model.create({ file: { size: 0, type: 'image/gif' } })];
 
-        const length = (models[0].file.toString().length) + (models[1].file.toString().length) + (models[2].file.toString().length);
-
         component.send('addFiles', ...models);
         component.send('uploadFiles');
 
         const formData = component.getFormData();
         expect(formData.get('name')).toEqual('Adam');
         expect(formData.get('location')).toEqual('London');
-        expect(formData.get('file').length).toEqual(length + models.length - 1);
-
-    });
-
-    it('Should be able to reject files when the quota has been met;', () => {
-
-        const models = [Model.create({ file: { size: 0, type: 'image/jpg' } }),
-                        Model.create({ file: { size: 0, type: 'image/png' } }),
-                        Model.create({ file: { size: 0, type: 'image/tiff' } }),
-                        Model.create({ file: { size: 0, type: 'image/gif' } })];
-
-        component.set('options.maximumValidFiles', 3);
-        component.send('addFiles', ...models);
-
-        expect(component.get('validFiles.length')).toEqual(3);
-        expect(component.get('invalidFiles.length')).toEqual(1);
-
+        expect(formData.get('file')).not.toBeUndefined();
 
     });
 
