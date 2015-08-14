@@ -11,6 +11,7 @@ script:
 
 deploy:
   provider: heroku
+  sudo: false
   skip_cleanup: true
   all_branches: true
   api_key:
