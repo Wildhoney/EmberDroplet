@@ -12,11 +12,78 @@
     const STATUS_TYPES = { NONE: 0, VALID: 1, INVALID: 2, DELETED: 4, UPLOADED: 8, FAILED: 16 };
 
     /**
+     * @constant EVENT_NAME
+     * @type {String}
+     */
+    const EVENT_NAME = 'droplet/add-files';
+
+    /**
      * @method fromArray
      * @param {*} arrayLike
      * @return {Array}
      */
     const fromArray = arrayLike => Array.from ? Array.from(arrayLike) : Array.prototype.slice.call(arrayLike);
+
+    /**
+     * @property EventBus
+     * @type {Ember.Service}
+     */
+    const EventBus = Ember.Service.extend(Ember.Evented, {
+
+        /**
+         * @method publish
+         * @return {void}
+         */
+        publish: function publish() {
+            this.trigger.apply(this, arguments);
+        },
+
+        /**
+         * @method subscribe
+         * @return {void}
+         */
+        subscribe: function() {
+            this.on.apply(this, arguments);
+        },
+
+        /**
+         * @method unsubscribe
+         * @return {void}
+         */
+        unsubscribe: function() {
+            this.off.apply(this, arguments);
+        }
+
+    });
+
+    Ember.Application.initializer({
+
+        /**
+         * @property string
+         * @type {String}
+         */
+        name: 'load-services',
+
+        /**
+         * @method initialize
+         * @param {Object} container
+         * @param {Object} application
+         * @return {void}
+         */
+        initialize: function(container, application) {
+
+            const eventBus = EventBus.create();
+
+            application.register('event-bus:current', eventBus, {
+                instantiate: false
+            });
+
+            application.inject('component', 'DropletEventBus', 'event-bus:current');
+            application.inject('controller', 'DropletEventBus', 'event-bus:current');
+
+        }
+
+    });
 
     /**
      * @property Model
@@ -146,7 +213,7 @@
      * @author Adam Timberlake
      * @see https://github.com/Wildhoney/EmberDroplet
      */
-    $window.Droplet = Mixin.create({
+    $window.Droplet = Mixin.create(Ember.Evented, {
 
         /**
          * @property url
@@ -203,6 +270,10 @@
 
             set(this, 'options.requestHeaders', {});
             set(this, 'options.requestPostData', {});
+
+            this.DropletEventBus && this.DropletEventBus.subscribe(EVENT_NAME, this, (...files) => {
+                this.send('prepareFiles', ...files);
+            });
 
             this._super();
 
@@ -635,14 +706,6 @@
         classNames: ['droppable'],
 
         /**
-         * @method getParent
-         * @return {Object}
-         */
-        getParent() {
-            return this.context.get('parentView') || {};
-        },
-
-        /**
          * @method drop
          * @param {Object} event
          * @return {Array}
@@ -658,16 +721,8 @@
          * @return {Model[]}
          */
         handleFiles(models) {
-
-            if (models.length && this.getParent().send) {
-
-                // Add the models to the parent if the parent exists, otherwise it's a no-op.
-                this.getParent().send('prepareFiles', ...fromArray(models));
-
-            }
-
+            this.DropletEventBus && this.DropletEventBus.publish(EVENT_NAME, ...fromArray(models));
             return models;
-
         },
 
         /**
@@ -812,21 +867,11 @@
 
         /**
          * @method handleFiles
-         * @param {Model[]} files
+         * @param {Model[]} models
          * @return {void}
          */
-        handleFiles(files) {
-
-            const parentView   = this.get('parentView');
-            const ancestorView = parentView.get('parentView');
-
-            /* todo: Add a better way to communicate between Ember.Components. */
-
-            try { ancestorView.send('prepareFiles', ...fromArray(files));
-            } catch (_) {}
-
-            try { parentView.send('prepareFiles', ...fromArray(files));
-            } catch(_) {}
+        handleFiles(models) {
+            this.DropletEventBus && this.DropletEventBus.publish(EVENT_NAME, ...fromArray(models));
         }
         
     });
