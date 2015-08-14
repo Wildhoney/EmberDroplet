@@ -84,6 +84,18 @@
         maximumSize: Infinity,
 
         /**
+         * @property maximumValidFiles
+         * @type {Number|Infinity}
+         */
+        maximumValidFiles: Infinity,
+
+        /**
+         * @property uploadImmediately
+         * @type {Boolean}
+         */
+        uploadImmediately: false,
+
+        /**
          * @property includeHeader
          * @type {Boolean}
          */
@@ -520,8 +532,12 @@
 
                 const addedModels = files.map(model => {
 
+                    const willExceedQuota = this.get('validFiles.length') === this.get('options.maximumValidFiles');
+
                     if (model instanceof Ember.Object) {
-                        model.setStatusType(this.isValid(model) ? STATUS_TYPES.VALID : STATUS_TYPES.INVALID);
+
+                        const statusType = this.isValid(model) && !willExceedQuota ? STATUS_TYPES.VALID : STATUS_TYPES.INVALID;
+                        run(() => model.setStatusType(statusType));
                         get(this, 'files').pushObject(model);
                         return model;
                     }

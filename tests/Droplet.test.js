@@ -318,4 +318,20 @@ describe('Ember Droplet', () => {
 
     });
 
+    it('Should be able to reject files when the quota has been met;', () => {
+
+        const models = [Model.create({ file: { size: 0, type: 'image/jpg' } }),
+                        Model.create({ file: { size: 0, type: 'image/png' } }),
+                        Model.create({ file: { size: 0, type: 'image/tiff' } }),
+                        Model.create({ file: { size: 0, type: 'image/gif' } })];
+
+        component.set('options.maximumValidFiles', 3);
+        component.send('addFiles', ...models);
+
+        expect(component.get('validFiles.length')).toEqual(3);
+        expect(component.get('invalidFiles.length')).toEqual(1);
+
+
+    });
+
 });
