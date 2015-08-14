@@ -28,8 +28,8 @@ describe('Ember Droplet: Options', () => {
         component.set('options.useArray', true);
         expect(component.get('options.useArray')).toEqual(true);
 
-        component.set('options.includeHeader', false);
-        expect(component.get('options.includeHeader')).toEqual(false);
+        component.set('options.includeXFileSize', false);
+        expect(component.get('options.includeXFileSize')).toEqual(false);
 
         component.set('options.requestHeaders', 'abc');
         expect(component.get('options.requestHeaders')).toEqual('abc');
@@ -51,7 +51,7 @@ describe('Ember Droplet: Options', () => {
         expect(component.get('options.requestMethod')).toEqual('POST');
         expect(component.get('options.maximumSize')).toEqual(Infinity);
         expect(component.get('options.useArray')).toEqual(false);
-        expect(component.get('options.includeHeader')).toEqual(true);
+        expect(component.get('options.includeXFileSize')).toEqual(true);
         expect(component.get('options.requestHeaders')).toEqual({});
         expect(component.get('options.requestPostData')).toEqual({});
         expect(component.get('options.maximumValidFiles')).toEqual(Infinity);

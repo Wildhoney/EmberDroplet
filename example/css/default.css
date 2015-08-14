@@ -59,10 +59,12 @@ div.buttons button.btn:hover {
 
 div.droppable {
     background-color: #eee;
-    height: 300px;
+    height: auto;
+    min-height: 300px;
     width: 620px;
     position: relative;
-    padding: 20px;
+    padding: 20px 20px 40px 20px;
+    overflow: hidden;
 }
 
 div.droppable:after {

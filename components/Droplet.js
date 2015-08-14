@@ -96,10 +96,10 @@
         uploadImmediately: false,
 
         /**
-         * @property includeHeader
+         * @property includeXFileSize
          * @type {Boolean}
          */
-        includeHeader: true,
+        includeXFileSize: true,
 
         /**
          * @property useArray
@@ -200,6 +200,9 @@
                 set(this, `options.${key}`, DEFAULT_OPTIONS[key]);
 
             });
+
+            set(this, 'options.requestHeaders', {});
+            set(this, 'options.requestPostData', {});
 
             this._super();
 
@@ -373,29 +376,20 @@
 
         /**
          * @method addProgressListener
-         * @param {Ember.$.ajaxSettings.xhr} xhr
+         * @param {Ember.$.ajaxSettings.xhr} uploadRequest
          * @return {void}
          */
-        addProgressListener(xhr) {
-            return void xhr;
-        },
+        addProgressListener(uploadRequest) {
 
-        /**
-         * @method addSuccessListener
-         * @param {Ember.$.ajaxSettings.xhr} xhr
-         * @return {void}
-         */
-        addSuccessListener(xhr) {
-            return void xhr;
-        },
+            uploadRequest.addEventListener('progress', (event) => {
 
-        /**
-         * @method addErrorListener
-         * @param {Ember.$.ajaxSettings.xhr} xhr
-         * @return {void}
-         */
-        addErrorListener(xhr) {
-            return void xhr;
+                if (event.lengthComputable) {
+                    const percentageLoaded = (event.loaded / get(this, 'requestSize')) * 100;
+                    set(this, 'uploadStatus.percentComplete', Math.round(percentageLoaded));
+                }
+
+            });
+
         },
 
         /**
@@ -408,8 +402,13 @@
             const url        = isFunction(get(this, 'url')) ? get(this, 'url').apply(this) : get(this, 'url');
             const method     = get(this, 'options.requestMethod') || 'POST';
             const data       = this.getFormData();
-            const headers    = this.get('requestHeaders');
-            const request    = $Ember.$.ajax({ url, method, headers, data, processData: false, contentType: false,
+            const headers    = this.get('options.requestHeaders');
+
+            if (get(this, 'options.includeXFileSize')) {
+                headers['X-File-Size'] = this.get('requestSize');
+            }
+
+            const request = $Ember.$.ajax({ url, method, headers, data, processData: false, contentType: false,
 
                 /**
                  * @method xhr
@@ -419,8 +418,6 @@
 
                     const xhr = $Ember.$.ajaxSettings.xhr();
                     this.addProgressListener(xhr.upload);
-                    this.addSuccessListener(xhr.upload);
-                    this.addErrorListener(xhr.upload);
                     set(this, 'lastRequest', xhr);
                     return xhr;
 
@@ -448,6 +445,8 @@
                 const models  = get(this, 'files').filter(file => file.statusType & STATUS_TYPES.VALID);
                 const request = this.getRequest();
 
+                set(this, 'abortedUpload', false);
+                set(this, 'uploadStatus.percentComplete', 0);
                 set(this, 'uploadStatus.uploading', true);
                 set(this, 'uploadStatus.error', false);
 
@@ -469,7 +468,6 @@
                  */
                 const resolved = response => {
                     this.invokeHook('didUpload', ...response.files);
-                    console.log('x');
                     models.map(model => model.setStatusType(STATUS_TYPES.UPLOADED));
                 };
 
@@ -480,7 +478,11 @@
                  * @param {Number} errorThrown
                  */
                 const rejected = ({ request, textStatus, errorThrown }) => {
-                    set(this, 'uploadStatus.error', { request, textStatus, errorThrown });
+
+                    if (get(this, 'abortedUpload') !== true) {
+                        set(this, 'uploadStatus.error', { request, textStatus, errorThrown });
+                    }
+
                 };
 
                 /**
@@ -505,6 +507,7 @@
                 const request = get(this, 'lastResolver');
 
                 if (request && get(this, 'uploadStatus.uploading')) {
+                    set(this, 'abortedUpload', true);
                     request.abort();
                     set(this, 'uploadStatus.uploading', false);
                 }
@@ -607,7 +610,8 @@
              * @return {void}
              */
             clearFiles() {
-                this.files.forEach(file => this.send('deleteFiles', file));
+                const files = [...this.get('validFiles'), ...this.get('invalidFiles')];
+                files.forEach(file => this.send('deleteFiles', file));
             }
 
         }
@@ -754,7 +758,11 @@
             }
 
             reader.addEventListener('load', run.bind(this, event => {
-                set(this, 'src', event.target.result);
+
+                if (this.get('isDestroyed') !== true) {
+                    set(this, 'src', event.target.result);
+                }
+
             }));
 
             reader.readAsDataURL(image);
