@@ -7,7 +7,7 @@ node_js:
 sudo: false
 
 addons:
-  firefox: 38.0
+  firefox: 39.0
 
 before_script:
   - export DISPLAY=:99.0
