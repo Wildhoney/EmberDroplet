@@ -9,7 +9,6 @@ script:
 
 deploy:
   provider: heroku
-  strategy: api
   skip_cleanup: true
   all_branches: true
   api_key:
