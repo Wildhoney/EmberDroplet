@@ -13,7 +13,7 @@ Install via npm: `npm install ember-droplet`.
 Ember Droplet allows HTML5 drag and drop functionality in Ember straight out-of-the-box. Its philosophy is that it doesn't
 impose anything, and instead allows each individual developer to decide how it should work.
 
-<img src="http://i.imgur.com/D07KQOl.png" alt="EmberDroplet Screenshot" />
+<img src="http://i.imgur.com/itTxEjl.png" alt="EmberDroplet Screenshot" />
 
 ## Features
 
@@ -106,8 +106,6 @@ Use in its singular form &ndash; can use either `Droplet.MultipleInput` or `Drop
 ```html
 {{x-droplet-input}}
 ```
-
-Once you have the property `DragDrop` defined, the view and all of its related functionality can be output into the DOM using `{{view.DragDrop}}`. It's worth bearing in mind that this view is quite abstract in order to be customisable &ndash; see index.html for an example.
 
 Example
 -------------
