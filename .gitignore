@@ -1,6 +1,17 @@
-/.idea
-/.grunt
-/.vagrant
-/node_modules
-/example/scripts/vendor
-!/example/scripts/vendor/.gitkeep
+# ide
+.idea
+
+# os
+.DS_Store
+
+# npm
+node_modules
+npm-debug.log
+
+# vendor
+example/vendor
+!example/vendor/.gitkeep
+
+# uploaded files
+example/server/uploaded-files/*
+!example/server/uploaded-files/.gitkeep

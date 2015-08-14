@@ -1,775 +1,961 @@
-(function($window, $ember, $jQuery) {
+'use strict';
 
-    "use strict";
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
+
+(function main($window, $Ember, $FileReader) {
+
+  "use strict";
+
+  // Extract the commonly accessed Ember methods.
+
+  var _computed, _computed2, _computed3, _computed4;
+
+  var Mixin = $Ember.Mixin;
+  var String = $Ember.String;
+  var computed = $Ember.computed;
+  var get = $Ember.get;
+  var set = $Ember.set;
+  var run = $Ember.run;
+
+  /**
+   * @constant STATUS_TYPES
+   * @type {Object}
+   */
+  var STATUS_TYPES = { NONE: 0, VALID: 1, INVALID: 2, DELETED: 4, UPLOADED: 8, FAILED: 16 };
+
+  /**
+   * @constant EVENT_NAME
+   * @type {String}
+   */
+  var EVENT_NAME = 'droplet/add-files';
+
+  /**
+   * @method fromArray
+   * @param {*} arrayLike
+   * @return {Array}
+   */
+  var fromArray = function fromArray(arrayLike) {
+    return Array.from ? Array.from(arrayLike) : Array.prototype.slice.call(arrayLike);
+  };
+
+  /**
+   * @property EventBus
+   * @type {Ember.Service}
+   */
+  var EventBus = Ember.Service.extend(Ember.Evented, {
 
     /**
-     * @module App
-     * @class EmberDropletController
-     * @type Ember.Mixin
-     * @extends Ember.Mixin
+     * @method publish
+     * @return {void}
      */
-    $window.DropletController = $ember.Mixin.create({
-
-        /**
-         * @property mimeTypes
-         * @type {Array}
-         */
-        mimeTypes: ['image/jpeg', 'image/jpg', 'image/gif', 'image/png', 'text/plain'],
-
-        /**
-         * @property extensions
-         * @type {Array}
-         */
-        extensions: ['jpeg', 'jpg', 'gif', 'png'],
-
-        /**
-         * Contains a list of headers to be included in the request made by
-         * uploadAllFiles()
-         *
-         * @property requestHeaders
-         * @type {Object}
-         */
-        requestHeaders: {},
-
-        /**
-         * Contains a dictionary of extra POST data to be included in the
-         * request made by uploadAllFiles()
-         *
-         * @property postData
-         * @type {Object}
-         */
-        postData: {},
-
-        /**
-         * Contains a list of files, both valid, deleted, and invalid.
-         *
-         * @property files
-         * @type {Array}
-         * @default []
-         */
-        files: [],
-
-        /**
-         * @property uploadStatus
-         * @type {Object}
-         */
-        uploadStatus: $ember.computed(function computedFn() {
-            return { uploading: false, percentComplete: 0, error: false };
-        }),
-
-        /**
-         * Clears the file array for each instantiation.
-         *
-         * @constructor
-         * @method init
-         * @return {void}
-         */
-        init: function() {
-            $ember.set(this, 'files', []);
-            this._super();
-        },
-
-        /**
-         * @property actions
-         * @type {Object}
-         */
-        actions: {
-
-            /**
-             * @method addedFiles
-             * @param fileList {Array}
-             * @return {void}
-             */
-            addedFiles: function addedFiles(fileList) {
-                $ember.tryInvoke(this, 'didAddFiles', [fileList]);
-            },
-
-            /**
-             * Adds a valid file to the collection.
-             *
-             * @method addValidFile
-             * @param file {File}
-             * @return {Object}
-             */
-            addValidFile: function addValidFile(file) {
-                return this._addFile(file, true);
-            },
-
-            /**
-             * Adds an invalid file to the collection.
-             *
-             * @method addInvalidFile
-             * @param file {File}
-             * @return {Object}
-             */
-            addInvalidFile: function addInvalidFile(file) {
-                return this._addFile(file, false);
-            },
-
-            /**
-             * Deletes a file from the collection.
-             *
-             * @method deleteFile
-             * @param file
-             * @return {Object}
-             */
-            deleteFile: function deleteFile(file) {
-                $ember.set(file, 'deleted', true);
-                return file;
-            },
-
-            /**
-             * Clears all of the files from the collection.
-             *
-             * @method clearAllFiles
-             * @return {void}
-             */
-            clearAllFiles: function clearAllFiles() {
-                $ember.set(this, 'files', []);
-            },
-
-            /**
-             * Aborts the current upload
-             *
-             * @method abortUpload
-             * @return {Boolean} returns true if it aborted successfully, return false if there are no files to upload.
-             */
-            abortUpload: function abortUpload() {
-                
-                var jqXhr = $ember.get(this, 'lastJqXhr');
-                
-                if (jqXhr && $ember.get(this, 'uploadStatus.uploading')) {
-                    jqXhr.abort();
-                    $ember.set(this, 'uploadStatus.uploading', false);
-                }
-                
-            },
-
-            /**
-             * Uploads all of the files that haven't been uploaded yet, but are valid files.
-             *
-             * @method uploadAllFiles
-             * @return {Object|Boolean} jQuery promise, or false if there are no files to upload.
-             */
-            uploadAllFiles: function uploadAllFiles() {
-
-                /**
-                 * @property defaultOptions
-                 * @type {Object}
-                 */
-                var defaultOptions = {
-                    fileSizeHeader: true,
-                    useArray: true,
-                    method: 'post'
-                };
-
-                if ($ember.get(this, 'validFiles').length === 0) {
-                    // Determine if there are even files to upload.
-                    return false;
-                }
-
-                // Find the URL, set the uploading status, and create our promise.
-                var url             = $ember.get(this, 'dropletUrl'),
-                    options         = $ember.get(this, 'dropletOptions') || defaultOptions,
-                    postData        = this.get('postData'),
-                    requestHeaders  = this.get('requestHeaders');
-
-                if (typeof url === 'function') {
-                    url = url.apply(this);
-                }
-
-                $ember.set(this, 'uploadStatus.uploading', true);
-                $ember.set(this, 'uploadStatus.error', false);
-
-                // Assert that we have the URL specified in the controller that implements the mixin.
-                $ember.assert('You must specify the `dropletUrl` parameter in order to upload files.', !!url);
-
-                // Create a new form data instance based on file and postData.
-                var formData = this._getFormData(postData, options.useArray),
-                    method   = options.method || defaultOptions.method,
-                    headers  = {};
-
-                if (options.fileSizeHeader) {
-
-                    // Set the request size, and then we can upload the files!
-                    headers['X-File-Size'] = this._getSize();
-
-                }
-
-                // Assign any request headers specified in the controller.
-                for (var index in requestHeaders) {
-
-                    if ((requestHeaders.hasOwnProperty(index)) || (index in requestHeaders)) {
-                        headers[index] = requestHeaders[index];
-                    }
-
-                }
-
-                var jqXhr = $jQuery.ajax({
-                    url: url,
-                    method: method,
-                    data: formData,
-                    headers: headers,
-                    processData: false,
-                    contentType: false,
-
-                    xhr: function xhrHook() {
-
-                        var xhr = $jQuery.ajaxSettings.xhr();
-
-                        // Add all of the event listeners.
-                        this._addProgressListener(xhr.upload);
-                        this._addSuccessListener(xhr.upload);
-                        this._addErrorListener(xhr.upload);
-                        $ember.set(this, 'lastRequest', xhr);
-
-                        return xhr;
-
-                    }.bind(this)
-                });
-
-                $ember.set(this, 'lastJqXhr', jqXhr);
-
-                // Return the promise.
-                return new $ember.RSVP.Promise(function(resolve, reject) {
-                  
-                    jqXhr.done(resolve).fail(reject);
-
-                }).then($ember.run.bind(this, function(response) {
-
-                    // Invoke the `didUploadFiles` callback if it exists.
-                    $ember.tryInvoke(this, 'didUploadFiles', [response]);
-                    return response;
-
-                }), $ember.run.bind(this, function ajaxError(jqXHR, textStatus, errorThrown) {
-                  
-                    // As an error occurred, we need to revert everything.
-                    var args = { jqXHR: jqXHR, textStatus: textStatus, errorThrown: errorThrown};
-                    $ember.set(this, 'uploadStatus.uploading', false);
-                    $ember.set(this, 'uploadStatus.error', args);
-                  
-                }));
-            }
-
-        },
-
-        /**
-        * Creates a FormData object based on the valid files and postData provided.
-        *
-        * @method _getFormData
-        * @param postData {Object}
-        * @param useArray {Boolean} If false, use `file` as the field name for files. Otherwise, use `file[]`.
-        * @return {FormData}
-        * @private
-        */
-        _getFormData: function _getFormData(postData, useArray) {
-
-            // Create a new form data instance.
-            var formData = new $window.FormData();
-
-            // Node.js is clever enough to deduce an array of images, whereas Ruby/PHP require the
-            // specifying of an array-like name.
-            var fieldName = useArray ? 'file[]' : 'file';
-
-            // Iterate over each file, and append it to the form data.
-            $ember.EnumerableUtils.forEach($ember.get(this, 'validFiles'), function(file) {
-                formData.append(fieldName, file.file);
-            }, this);
-
-            // Add any extra POST data specified in the controller
-            for (var index in postData) {
-                if (postData.hasOwnProperty(index)) {
-                    formData.append(index, postData[index]);
-                }
-            }
-
-            return formData;
-
-        },
-
-        /**
-         * Clears the request event handlers and cancels the upload
-         *
-         * @property willDestroy
-         * @return {void}
-         */
-        willDestroy: function willDestroy() {
-
-            this._super.apply(this, arguments);
-            var lastRequest = this.get('lastRequest');
-
-            if (lastRequest) {
-                lastRequest.upload.onprogress = undefined;
-                lastRequest.upload.onload = undefined;
-                lastRequest.upload.onerror = undefined;
-                this.send('abortUpload');
-            }
-
-        },
-
-        /**
-         * Finds a list of files that aren't deleted, and are of a valid MIME type.
-         *
-         * @property validFiles
-         * @return {Array}
-         */
-        validFiles: $ember.computed(function computedFn() {
-            return this._filesByProperties({ valid: true, deleted: false, uploaded: false });
-        }).property('files.length', 'files.@each.deleted', 'files.@each.uploaded'),
-
-        /**
-         * Finds a list of files that have an unsupported MIME type.
-         *
-         * @property invalidFiles
-         * @return {Array}
-         */
-        invalidFiles: $ember.computed(function computedFn() {
-            return this._filesByProperties({ valid: false });
-        }).property('files.length', 'files.@each.deleted'),
-
-        /**
-         * Finds a list of files that have been successfully uploaded.
-         *
-         * @property uploadedFiles
-         * @return {Array}
-         */
-        uploadedFiles: $ember.computed(function computedFn() {
-            return this._filesByProperties({ uploaded: true });
-        }).property('files.length', 'files.@each.uploaded'),
-
-        /**
-         * Finds a list of files that have been deleted by the user.
-         *
-         * @property deletedFiles
-         * @return {Array}
-         */
-        deletedFiles: $ember.computed(function computedFn() {
-            return this._filesByProperties({ deleted: true });
-        }).property('files.length', 'files.@each.deleted'),
-
-        /**
-         * Accepts a map of properties that each file must have.
-         *
-         * @method _filesByProperties
-         * @param maps {Object}
-         * @return {Array}
-         * @private
-         */
-        _filesByProperties: function _filesByProperties(maps) {
-
-            // Iterate over each of the files.
-            return $ember.get(this, 'files').filter(function(file) {
-
-                for (var property in maps) {
-
-                    if ((maps.hasOwnProperty(property)) || (property in maps)) {
-
-                        // If the current property doesn't match what we're after from the map,
-                        // then the file is invalid.
-                        if (file[property] !== maps[property]) {
-                            return false;
-                        }
-
-                    }
-
-                }
-
-                // Voila! We have a good file that matches our criteria.
-                return true;
-
-            });
-
-        },
-
-        /**
-         * Determine the size of the request.
-         *
-         * @method _getSize
-         * @return {Number}
-         * @private
-         */
-        _getSize: function _getSize() {
-
-            var size = 0;
-
-            // Iterate over all of the files to determine the size of all valid files.
-            $ember.EnumerableUtils.forEach($ember.get(this, 'validFiles'), function(file) {
-                size += file.file.size;
-            });
-
-            return size;
-
-        },
-
-        /**
-         * @method _addSuccessListener
-         * @param request
-         * @private
-         */
-        _addSuccessListener: function _addSuccessListener(request) {
-
-            // Once the files have been successfully uploaded.
-            request.onload = $ember.run.bind(this, function() {
-                // Set the `uploaded` parameter to true once we've successfully // uploaded the files.
-                $ember.EnumerableUtils.forEach($ember.get(this, 'validFiles'), function(file) {
-                    $ember.set(file, 'uploaded', true);
-                });
-
-                // We want to revert the upload status.
-                $ember.set(this, 'uploadStatus.uploading', false);
-            });
-
-        },
-
-        /**
-         * @method _addErrorListener
-         * @param request
-         * @return {void}
-         * @private
-         */
-        _addErrorListener: function _addErrorListener(request) {
-
-            request.onerror = $ember.run.bind(this, function() {
-                // As an error occurred, we need to revert everything.
-                $ember.set(this, 'uploadStatus.uploading', false);
-                $ember.set(this, 'uploadStatus.error', true);
-            });
-
-        },
-
-        /**
-         * @method _addProgressListener
-         * @param request
-         * @return {void}
-         * @private
-         */
-        _addProgressListener: function _addProgressListener(request) {
-
-            request.onprogress = $ember.run.bind(this, function(event) {
-
-                if (!event.lengthComputable) {
-
-                    // There's not much we can do if the request is not computable.
-                    return;
-
-                }
-
-                // Calculate the percentage remaining.
-                var percentageLoaded = (event.loaded / this._getSize()) * 100;
-                $ember.set(this, 'uploadStatus.percentComplete', Math.round(percentageLoaded));
-
-            });
-
-        },
-
-        /**
-         * Adds a file based on whether it's valid or invalid.
-         *
-         * @method _addFile
-         * @param file {File}
-         * @param valid {Boolean}
-         * @return {Object}
-         * @private
-         */
-        _addFile: function _addFile(file, valid) {
-
-            // Extract the file's extension which allows us to style accordingly.
-            var fileExt   = file.name.substr((~-file.name.lastIndexOf(".") >>> 0) + 2),
-                className = 'extension-%@'.fmt(fileExt).toLowerCase();
-
-            // Create the record with its default parameters, and then add it to the collection.
-            var record = { file: file, valid: valid, uploaded: false, deleted: false, className: className };
-            $ember.get(this, 'files').pushObject(record);
-
-            // Voila!
-            return record;
-
-        }
-
-    });
-
-})(window, window.Ember, window.jQuery);
-;(function($window, $ember) {
-
-    "use strict";
+    publish: function publish() {
+      this.trigger.apply(this, arguments);
+    },
 
     /**
-     * @property MultipleInput
+     * @method subscribe
+     * @return {void}
+     */
+    subscribe: function subscribe() {
+      this.on.apply(this, arguments);
+    },
+
+    /**
+     * @method unsubscribe
+     * @return {void}
+     */
+    unsubscribe: function unsubscribe() {
+      this.off.apply(this, arguments);
+    }
+
+  });
+
+  Ember.Application.initializer({
+
+    /**
+     * @property string
+     * @type {String}
+     */
+    name: 'load-services',
+
+    /**
+     * @method initialize
+     * @param {Object} container
+     * @param {Object} application
+     * @return {void}
+     */
+    initialize: function initialize(container, application) {
+
+      var eventBus = EventBus.create();
+
+      application.register('event-bus:current', eventBus, {
+        instantiate: false
+      });
+
+      application.inject('component', 'DropletEventBus', 'event-bus:current');
+      application.inject('controller', 'DropletEventBus', 'event-bus:current');
+    }
+
+  });
+
+  /**
+   * @property Model
+   * @type {Ember.Object}
+   */
+  var Model = $Ember.Object.extend({
+
+    /**
+     * @method init
+     * @return {void}
+     */
+    init: function init() {
+      this.statusType = STATUS_TYPES.NONE;
+    },
+
+    /**
+     * @method getMIMEType
+     * @return {String}
+     */
+    getMIMEType: function getMIMEType() {
+      return this.file.type || '';
+    },
+
+    /**
+     * @method getFileSize
+     * @return {Number}
+     */
+    getFileSize: function getFileSize() {
+      return typeof this.file.size !== 'undefined' ? this.file.size : Infinity;
+    },
+
+    /**
+     * @method setStatusType
+     * @param {Number} statusType
+     * @return {void}
+     */
+    setStatusType: function setStatusType(statusType) {
+      this.set('statusType', Number(statusType));
+    }
+
+  });
+
+  /**
+   * @constant MIME_MODE
+   * @type {Object}
+   */
+  var MIME_MODE = { PUSH: 'push', SET: 'set' };
+
+  /**
+   * @constant DEFAULT_OPTIONS
+   * @type {Object}
+   */
+  var DEFAULT_OPTIONS = {
+
+    /**
+     * @property requestMethod
+     * @type {String}
+     */
+    requestMethod: 'POST',
+
+    /**
+     * @property maximumSize
+     * @type {Number|Infinity}
+     */
+    maximumSize: Infinity,
+
+    /**
+     * @property maximumValidFiles
+     * @type {Number|Infinity}
+     */
+    maximumValidFiles: Infinity,
+
+    /**
+     * @property uploadImmediately
+     * @type {Boolean}
+     */
+    uploadImmediately: false,
+
+    /**
+     * @property includeXFileSize
+     * @type {Boolean}
+     */
+    includeXFileSize: true,
+
+    /**
+     * @property useArray
+     * @type {Boolean}
+     */
+    useArray: false,
+
+    /**
+     * @property mimeTypes
+     * @type {Array}
+     */
+    mimeTypes: ['image/jpeg', 'image/jpg', 'image/gif', 'image/png', 'image/tiff', 'image/bmp'],
+
+    /**
+     * @property requestHeaders
      * @type {Object}
      */
-    var MultipleInput = {
-
-        /**
-         * @property tagName
-         * @type {String}
-         * @default "input"
-         */
-        tagName: 'input',
-
-        /**
-         * @property classNames
-         * @type {String}
-         * @default "files"
-         */
-        classNames: 'files',
-
-        /**
-         * @property attributeBindings
-         * @type {Array}
-         */
-        attributeBindings: ['disabled', 'name', 'type', 'multiple'],
-
-        /**
-         * @property file
-         * @type {String}
-         * @default "file"
-         */
-        type: 'file',
-
-        /**
-         * @property multiple
-         * @type {String}
-         * @default "multiple"
-         */
-        multiple: 'multiple',
-
-        /**
-         * Invoked when the content of the INPUT changes.
-         *
-         * @method change
-         * @return {Boolean}
-         */
-        change: function() {
-            var files = this.get('element').files;
-            return this.get('parentView').traverseFiles(files);
-        }
-
-    };
+    requestHeaders: {},
 
     /**
-     * @property SingleInput
+     * @property requestPostData
      * @type {Object}
      */
-    var SingleInput      = $ember.copy(MultipleInput);
-    SingleInput.multiple = false;
+    requestPostData: {}
+
+  };
+
+  /**
+   * @constant COMPUTED_OBSERVER
+   * @type {Array}
+   */
+  var COMPUTED_OBSERVER = String.w('files.length files.@each.statusType');
+
+  /**
+   * @constant MESSAGES
+   * @type {Object}
+   */
+  var MESSAGES = {
+    URL_REQUIRED: 'Droplet: You must specify the URL parameter when constructing your component.'
+  };
+
+  /**
+   * @module Droplet
+   * @author Adam Timberlake
+   * @see https://github.com/Wildhoney/EmberDroplet
+   */
+  $window.Droplet = Mixin.create(Ember.Evented, {
 
     /**
-     * @module App
-     * @class DropletView
-     * @type Ember.View
-     * @extends Ember.View
+     * @property url
+     * @throws {Error}
+     * @type {Function}
      */
-    $window.DropletView = $ember.View.extend({
+    url: function url() {
+      throw new Error(MESSAGES.URL_REQUIRED);
+    },
 
-        /**
-         * @property classNames
-         * @type {Array}
-         * @default ['droppable']
-         */
-        classNames: ['droppable'],
+    /**
+     * @property model
+     * @type {Ember.Object}
+     */
+    model: Model,
 
-        /**
-         * @property ImagePreview
-         * @type {Ember.View}
-         */
-        ImagePreview: $ember.View.extend({
+    /**
+     * @property options
+     * @type {Object}
+     */
+    options: {},
 
-            /**
-             * @property tagName
-             * @type {String}
-             * @default "img"
-             */
-            tagName: 'img',
+    /**
+     * @property hooks
+     * @type {Object}
+     */
+    hooks: {},
 
-            /**
-             * @property attributeBindings
-             * @type {Array}
-             * @default ['src']
-             */
-            attributeBindings: ['src'],
+    /**
+     * @property files
+     * @type {Array}
+     */
+    files: [],
 
-            /**
-             * @property src
-             * @type {String}
-             * @default null
-             */
-            src: null,
+    /**
+     * @property statusTypes
+     * @type {Object}
+     */
+    statusTypes: STATUS_TYPES,
 
-            /**
-             * @property image
-             * @type {String}
-             * @default null
-             */
-            image: null,
+    /**
+     * @method init
+     * @return {void}
+     */
+    init: function init() {
+      var _this = this;
 
-            /**
-             * Invoked when the view is inserted into the DOM.
-             *
-             * @method didInsertElement
-             * @return {void}
-             */
-            didInsertElement: function() {
+      set(this, 'files', []);
+      set(this, 'hooks', {});
 
-                // Initialise the FileReader, and find the image that was passed into
-                // the view when instantiating it.
-                var reader  = new $window.FileReader(),
-                    image   = $ember.get(this, 'image.file');
+      Object.keys(DEFAULT_OPTIONS).forEach(function (key) {
 
-                // Ensure that the file we're dealing with is an image.
-                if (!image.type.match(/^image\//i)) {
+        // Copy across all of the options into the options map.
+        set(_this, 'options.' + key, DEFAULT_OPTIONS[key]);
+      });
 
-                    // If it isn't then we'll need to destroy the view immediately.
-                    this.destroy();
-                    return;
+      set(this, 'options.requestHeaders', {});
+      set(this, 'options.requestPostData', {});
 
-                }
-
-                // Invoked when the image preview has been loaded.
-                reader.onload = $ember.run.bind(this, function (event) {
-
-                    if (this.get('isDestroyed') === true) {
-                        // If the view has already been destroyed, then we can't
-                        // load in the image preview.
-                        return;
-                    }
-
-                    // Otherwise we're free to set the SRC attribute to the image's data.
-                    $ember.set(this, 'src', event.target.result);
-
-                });
-
-                // Begin the reading of the image.
-                reader.readAsDataURL(image);
-
-            }
-
-        }),
-
-        /**
-         * @property MultipleInput
-         * @type {Ember.View}
-         */
-        MultipleInput: $ember.View.extend(MultipleInput),
-
-        /**
-         * @property SingleInput
-         * @type {Ember.View}
-         */
-        SingleInput: $ember.View.extend(SingleInput),
-
-        /**
-         * Invoked when the user drops a file onto the droppable area.
-         *
-         * @method drop
-         * @param event {jQuery.Event}
-         * @param [files = []] {Array}
-         * @return {Boolean}
-         */
-        drop: function(event, files) {
-            this._preventDefaultBehaviour(event);
-            return this.traverseFiles(event.dataTransfer.files || files);
-        },
-
-        /**
-         * Accepts a FileList object, and traverses them to determine if they're valid, adding them
-         * as either valid or invalid.
-         *
-         * @method traverseFiles
-         * @param files {FileList}
-         * @return {boolean}
-         */
-        traverseFiles: function(files) {
-
-            // Find the controller, and the `mimeTypes` and `extensions` property.
-            var controller  = $ember.get(this, 'controller'),
-                mimeTypes   = $ember.get(controller, 'mimeTypes') || [],
-                extensions  = $ember.get(controller, 'extensions'),
-                options     = $ember.get(controller, 'dropletOptions') || { limit: Infinity},
-                addedFiles  = [];
-
-            for (var index = 0, numFiles = files.length; index < numFiles; index++) {
-
-                if (!files.hasOwnProperty(index) && (!(index in files))) {
-                    continue;
-                }
-
-                var file        = files[index],
-                    fileExt     = file.name.substr((~-file.name.lastIndexOf('.') >>> 0) + 2).toLowerCase(),
-                    assumeValid = $ember.get(controller, 'mimeTypes') === '*';
-
-                // Determine if the file is valid based on its MIME type or extension, and we haven't exceeded
-                // the user defined limit for the amount of files to upload in one go.
-                var invalidMime   = ($.inArray(file.type, mimeTypes) === -1) && ($.inArray(fileExt, extensions) === -1),
-                    currentLength = $ember.get(controller, 'validFiles').length,
-                    fileSizeLimit = controller.get('fileSizeLimit');
-
-                if (!assumeValid && (invalidMime || currentLength === options.limit)) {
-
-                    // If it isn't valid, then we'll add it as an invalid file.
-                    controller.send('addInvalidFile', file);
-                    addedFiles.push(file);
-                    continue;
-
-                }
-
-                if (fileSizeLimit != null && file.size >= fileSizeLimit) {
-                    controller.send('addInvalidFile', file);
-                    continue;
-                }
-
-                // Otherwise the file has a valid MIME type or extension, and therefore be added as a good file.
-                controller.send('addValidFile', file);
-                addedFiles.push(file);
-
-            }
-
-            // Initialise the event for adding files.
-            controller.send('addedFiles', addedFiles);
-
-            return true;
-
-        },
-
-        /**
-         * Prevents default behaviour and propagation on nodes where it's undesirable.
-         *
-         * @method _preventDefaultBehaviour
-         * @param event {jQuery.Event}
-         * @return {void}
-         * @private
-         */
-        _preventDefaultBehaviour: function(event) {
-            event.preventDefault();
-            event.stopPropagation();
-        },
-
-        /**
-         * @method dragOver
-         * @param event {jQuery.Event}
-         * @return {void}
-         */
-        dragOver: function(event) {
-            this._preventDefaultBehaviour(event);
-        },
-
-        /**
-         * @method dragEnter
-         * @param event {jQuery.Event}
-         * @return {void}
-         */
-        dragEnter: function(event) {
-            this._preventDefaultBehaviour(event);
-        },
-
-        /**
-         * @method dragLeave
-         * @param event {jQuery.Event}
-         * @return {void}
-         */
-        dragLeave: function(event) {
-            this._preventDefaultBehaviour(event);
+      this.DropletEventBus && this.DropletEventBus.subscribe(EVENT_NAME, this, function () {
+        for (var _len = arguments.length, files = Array(_len), _key = 0; _key < _len; _key++) {
+          files[_key] = arguments[_key];
         }
 
-    });
+        _this.send.apply(_this, ['prepareFiles'].concat(files));
+      });
 
-})(window, window.Ember);
+      this._super();
+    },
+
+    /**
+     * @method invokeHook
+     * @param {String} name
+     * @param {Array} args
+     * @return {void}
+     */
+    invokeHook: function invokeHook(name) {
+      var method = get(this, 'hooks')[name] || function () {};
+
+      for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+        args[_key2 - 1] = arguments[_key2];
+      }
+
+      method.apply(undefined, args);
+    },
+
+    /**
+     * @property uploadStatus
+     * @type {Object}
+     */
+    uploadStatus: computed(function () {
+      return { uploading: false, percentComplete: 0, error: false };
+    }),
+
+    /**
+     * @property validFiles
+     * @return {Array}
+     */
+    validFiles: (_computed = computed(function () {
+      return this.getFiles(STATUS_TYPES.VALID);
+    })).property.apply(_computed, _toConsumableArray(COMPUTED_OBSERVER)),
+
+    /**
+     * @property invalidFiles
+     * @return {Array}
+     */
+    invalidFiles: (_computed2 = computed(function () {
+      return this.getFiles(STATUS_TYPES.INVALID);
+    })).property.apply(_computed2, _toConsumableArray(COMPUTED_OBSERVER)),
+
+    /**
+     * @property uploadedFiles
+     * @return {Array}
+     */
+    uploadedFiles: (_computed3 = computed(function () {
+      return this.getFiles(STATUS_TYPES.UPLOADED);
+    })).property.apply(_computed3, _toConsumableArray(COMPUTED_OBSERVER)),
+
+    /**
+     * @property deletedFiles
+     * @return {Array}
+     */
+    deletedFiles: (_computed4 = computed(function () {
+      return this.getFiles(STATUS_TYPES.DELETED);
+    })).property.apply(_computed4, _toConsumableArray(COMPUTED_OBSERVER)),
+
+    /**
+     * @property requestSize
+     * @return {Array}
+     */
+    requestSize: computed(function () {
+      return get(this, 'validFiles').reduce(function (size, model) {
+        return size + model.getFileSize();
+      }, 0);
+    }).property(COMPUTED_OBSERVER),
+
+    /**
+     * @method getFiles
+     * @param {Number} statusType
+     * @return {Array}
+     */
+    getFiles: function getFiles(statusType) {
+      return statusType ? this.files.filter(function (file) {
+        return file.statusType & statusType;
+      }) : this.files;
+    },
+
+    /**
+     * @method isValid
+     * @param {Model} model
+     * @return {Boolean}
+     */
+    isValid: function isValid(model) {
+      var _this2 = this;
+
+      if (!(model instanceof Ember.Object)) {
+        return false;
+      }
+
+      /**
+       * @method validMime
+       * @param {String} mimeType
+       * @return {Function}
+       */
+      var validMime = function validMime(mimeType) {
+        return function () {
+
+          var anyRegExp = _this2.get('options.mimeTypes').some(function (mimeType) {
+            return mimeType instanceof RegExp;
+          });
+          var mimeTypes = get(_this2, 'options.mimeTypes');
+
+          if (!anyRegExp) {
+
+            // Simply indexOf check because none of the MIME types are regular expressions.
+            return !! ~mimeTypes.indexOf(mimeType);
+          }
+
+          // Otherwise we'll need to iterate and validate individually.
+          return mimeTypes.some(function (validMimeType) {
+
+            var isExact = validMimeType === mimeType;
+            var isRegExp = !!mimeType.match(validMimeType);
+
+            return isExact || isRegExp;
+          });
+        };
+      };
+
+      /**
+       * @method validSize
+       * @param {Number} fileSize
+       * @return {Function}
+       */
+      var validSize = function validSize(fileSize) {
+        return function () {
+          return fileSize <= Number(get(_this2, 'options.maximumSize'));
+        };
+      };
+
+      /**
+       * @method composeEvery
+       * @param {Function} fns
+       * @return {Function}
+       */
+      var composeEvery = function composeEvery() {
+        for (var _len3 = arguments.length, fns = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+          fns[_key3] = arguments[_key3];
+        }
+
+        return function (model) {
+          return fns.reverse().every(function (fn) {
+            return fn(model);
+          });
+        };
+      };
+
+      /**
+       * @method isValid
+       * @type {Function}
+       */
+      var isValid = composeEvery(validMime(model.getMIMEType()), validSize(model.getFileSize()));
+
+      return isValid(model);
+    },
+
+    /**
+     * @method getFormData
+     * @return {FormData}
+     */
+    getFormData: function getFormData() {
+
+      var formData = new $window.FormData();
+      var fieldName = this.get('options.useArray') ? 'file[]' : 'file';
+      var postData = this.get('options.requestPostData');
+      var files = get(this, 'validFiles').map(function (model) {
+        return model.file;
+      });
+
+      files.forEach(function (file) {
+        formData.append(fieldName, file);
+      });
+
+      Object.keys(postData).forEach(function (key) {
+        formData.append(key, postData[key]);
+      });
+
+      return formData;
+    },
+
+    /**
+     * @method addProgressListener
+     * @param {Ember.$.ajaxSettings.xhr} uploadRequest
+     * @return {void}
+     */
+    addProgressListener: function addProgressListener(uploadRequest) {
+      var _this3 = this;
+
+      uploadRequest.addEventListener('progress', function (event) {
+
+        if (event.lengthComputable) {
+          var percentageLoaded = event.loaded / get(_this3, 'requestSize') * 100;
+          set(_this3, 'uploadStatus.percentComplete', Math.round(percentageLoaded));
+        }
+      });
+    },
+
+    /**
+     * @method getRequest
+     * @return {Ember.$.ajax}
+     */
+    getRequest: function getRequest() {
+      var _this4 = this;
+
+      var isFunction = function isFunction(value) {
+        return typeof value === 'function';
+      };
+      var url = isFunction(get(this, 'url')) ? get(this, 'url').apply(this) : get(this, 'url');
+      var method = get(this, 'options.requestMethod') || 'POST';
+      var data = this.getFormData();
+      var headers = this.get('options.requestHeaders');
+
+      if (get(this, 'options.includeXFileSize')) {
+        headers['X-File-Size'] = this.get('requestSize');
+      }
+
+      var request = $Ember.$.ajax({ url: url, method: method, headers: headers, data: data, processData: false, contentType: false,
+
+        /**
+         * @method xhr
+         * @return {Ember.$.ajaxSettings.xhr}
+         */
+        xhr: function xhr() {
+
+          var xhr = $Ember.$.ajaxSettings.xhr();
+          _this4.addProgressListener(xhr.upload);
+          set(_this4, 'lastRequest', xhr);
+          return xhr;
+        }
+      });
+
+      set(this, 'lastResolver', request);
+      return request;
+    },
+
+    /**
+     * @property actions
+     * @type {Object}
+     * @return {void}
+     */
+    actions: {
+
+      /**
+       * @method uploadFiles
+       * @return {Ember.RSVP.Promise}
+       */
+      uploadFiles: function uploadFiles() {
+        var _this5 = this;
+
+        var models = get(this, 'files').filter(function (file) {
+          return file.statusType & STATUS_TYPES.VALID;
+        });
+        var request = this.getRequest();
+
+        set(this, 'abortedUpload', false);
+        set(this, 'uploadStatus.percentComplete', 0);
+        set(this, 'uploadStatus.uploading', true);
+        set(this, 'uploadStatus.error', false);
+
+        /**
+         * @method resolver
+         * @param {Function} resolve
+         * @param {Function} reject
+         * @return {void}
+         */
+        var resolver = function resolver(resolve, reject) {
+          _this5.invokeHook('promiseResolver', resolve, reject, models);
+          request.done(resolve).fail(reject);
+        };
+
+        /**
+         * @method resolved
+         * @param {Object} response
+         * @return {void}
+         */
+        var resolved = function resolved(response) {
+          _this5.invokeHook.apply(_this5, ['didUpload'].concat(_toConsumableArray(response.files)));
+          models.map(function (model) {
+            return model.setStatusType(STATUS_TYPES.UPLOADED);
+          });
+        };
+
+        /**
+         * @method rejected
+         * @param {Object} request
+         * @param {String} textStatus
+         * @param {Number} errorThrown
+         */
+        var rejected = function rejected(_ref) {
+          var request = _ref.request;
+          var textStatus = _ref.textStatus;
+          var errorThrown = _ref.errorThrown;
+
+          if (get(_this5, 'abortedUpload') !== true) {
+            set(_this5, 'uploadStatus.error', { request: request, textStatus: textStatus, errorThrown: errorThrown });
+          }
+        };
+
+        /**
+         * @method always
+         * @return {void}
+         */
+        var always = function always() {
+          set(_this5, 'uploadStatus.uploading', false);
+          _this5.invokeHook('didComplete');
+        };
+
+        return new $Ember.RSVP.Promise(resolver).then(resolved, rejected)['finally'](always);
+      },
+
+      /**
+       * @method abortUpload
+       * @return {void}
+       */
+      abortUpload: function abortUpload() {
+
+        var request = get(this, 'lastResolver');
+
+        if (request && get(this, 'uploadStatus.uploading')) {
+          set(this, 'abortedUpload', true);
+          request.abort();
+          set(this, 'uploadStatus.uploading', false);
+        }
+      },
+
+      /**
+       * @method mimeTypes
+       * @param {Array} mimeTypes
+       * @param {Object} [mode=MIME_MODE.PUSH]
+       * @return {void}
+       */
+      mimeTypes: function mimeTypes(_mimeTypes) {
+        var mode = arguments.length <= 1 || arguments[1] === undefined ? MIME_MODE.PUSH : arguments[1];
+
+        mode === MIME_MODE.SET && set(this, 'options.mimeTypes', []);
+        _mimeTypes = Array.isArray(_mimeTypes) ? _mimeTypes : [_mimeTypes];
+        var types = [].concat(_toConsumableArray(get(this, 'options.mimeTypes')), _toConsumableArray(_mimeTypes));
+        set(this, 'options.mimeTypes', types);
+      },
+
+      /**
+       * @method addFiles
+       * @param {Model[]} files
+       * @return {void}
+       */
+      addFiles: function addFiles() {
+        var _this6 = this;
+
+        for (var _len4 = arguments.length, files = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+          files[_key4] = arguments[_key4];
+        }
+
+        var addedModels = files.map(function (model) {
+
+          var willExceedQuota = _this6.get('validFiles.length') === _this6.get('options.maximumValidFiles');
+
+          if (model instanceof Ember.Object) {
+            var _ret = (function () {
+
+              var statusType = _this6.isValid(model) && !willExceedQuota ? STATUS_TYPES.VALID : STATUS_TYPES.INVALID;
+              run(function () {
+                return model.setStatusType(statusType);
+              });
+              get(_this6, 'files').pushObject(model);
+              return {
+                v: model
+              };
+            })();
+
+            if (typeof _ret === 'object') return _ret.v;
+          }
+        }).filter(function (model) {
+          return typeof model !== 'undefined';
+        });
+
+        addedModels.length && this.invokeHook.apply(this, ['didAdd'].concat(_toConsumableArray(addedModels)));
+
+        if (this.get('options.uploadImmediately')) {
+          this.send.apply(this, ['uploadFiles'].concat(_toConsumableArray(addedModels)));
+        }
+      },
+
+      /**
+       * @method prepareFiles
+       * @param {FileList|Array} files
+       * @return {Array}
+       */
+      prepareFiles: function prepareFiles() {
+        for (var _len5 = arguments.length, files = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+          files[_key5] = arguments[_key5];
+        }
+
+        // Convert the FileList object into an actual array.
+        files = fromArray(files);
+
+        var models = files.reduce(function (current, file) {
+
+          var model = Model.create({
+            file: file
+          });
+
+          current.push(model);
+          return current;
+        }, []);
+
+        // Add the files using the Droplet component.
+        this.send.apply(this, ['addFiles'].concat(_toConsumableArray(models)));
+        return models;
+      },
+
+      /**
+       * @method deleteFiles
+       * @param {Model[]} files
+       * @return {void}
+       */
+      deleteFiles: function deleteFiles() {
+        var _this7 = this;
+
+        for (var _len6 = arguments.length, files = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+          files[_key6] = arguments[_key6];
+        }
+
+        var deletedModels = files.map(function (model) {
+
+          var contains = !! ~get(_this7, 'files').indexOf(model);
+
+          if (contains) {
+            model.setStatusType(STATUS_TYPES.DELETED);
+            return model;
+          }
+        }).filter(function (model) {
+          return typeof model !== 'undefined';
+        });
+
+        deletedModels.length && this.invokeHook.apply(this, ['didDelete'].concat(_toConsumableArray(deletedModels)));
+      },
+
+      /**
+       * @method clearFiles
+       * @return {void}
+       */
+      clearFiles: function clearFiles() {
+        var _this8 = this;
+
+        var files = [].concat(_toConsumableArray(this.get('validFiles')), _toConsumableArray(this.get('invalidFiles')));
+        files.forEach(function (file) {
+          return _this8.send('deleteFiles', file);
+        });
+      }
+
+    }
+
+  });
+
+  /**
+   * @method squashEvent
+   * @param {Object} event
+   * @return {void}
+   */
+  var squashEvent = function squashEvent(event) {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
+  /**
+   * @module Droplet
+   * @submodule Area
+   * @author Adam Timberlake
+   * @see https://github.com/Wildhoney/EmberDroplet
+   */
+  $window.Droplet.Area = Mixin.create({
+
+    /**
+     * @property classNames
+     * @type {Array}
+     */
+    classNames: ['droppable'],
+
+    /**
+     * @method drop
+     * @param {Object} event
+     * @return {Array}
+     */
+    drop: function drop(event) {
+      squashEvent(event);
+      return this.handleFiles(event.dataTransfer.files);
+    },
+
+    /**
+     * @method handleFiles
+     * @param {Array} models
+     * @return {Model[]}
+     */
+    handleFiles: function handleFiles(models) {
+      var _DropletEventBus;
+
+      this.DropletEventBus && (_DropletEventBus = this.DropletEventBus).publish.apply(_DropletEventBus, [EVENT_NAME].concat(_toConsumableArray(fromArray(models))));
+      return models;
+    },
+
+    /**
+     * @method dragEnter
+     * @param {Object} event
+     * @return {void}
+     */
+    dragEnter: squashEvent,
+
+    /**
+     * @method dragOver
+     * @param {Object} event
+     * @return {void}
+     */
+    dragOver: squashEvent,
+
+    /**
+     * @method dragLeave
+     * @param {Object} event
+     * @return {void}
+     */
+    dragLeave: squashEvent
+
+  });
+
+  /**
+   * @module Droplet
+   * @submodule Preview
+   * @author Adam Timberlake
+   * @see https://github.com/Wildhoney/EmberDroplet
+   */
+  $window.Droplet.Preview = Mixin.create({
+
+    /**
+     * @property tagName
+     * @type {String}
+     */
+    tagName: 'img',
+
+    /**
+     * @property attributeBindings
+     * @type {Array}
+     */
+    attributeBindings: ['src'],
+
+    /**
+     * @method reader
+     * @type {FileReader|Object}
+     */
+    reader: $FileReader,
+
+    /**
+     * @property image
+     * @type {File|Object}
+     */
+    image: { file: { type: '' } },
+
+    /**
+     * @method isImage
+     * @type {File|Object} image
+     * @return {Boolean}
+     */
+    isImage: function isImage(image) {
+      return !!image.type.match(/^image\//i);
+    },
+
+    /**
+     * @method didInsertElement
+     * @return {void}
+     */
+    didInsertElement: function didInsertElement() {
+      var _this9 = this;
+
+      var Reader = this.get('reader');
+      var reader = new Reader();
+      var image = get(this, 'image.file');
+
+      if (!this.isImage(image)) {
+        this.destroy();
+        return;
+      }
+
+      reader.addEventListener('load', run.bind(this, function (event) {
+
+        if (_this9.get('isDestroyed') !== true) {
+          set(_this9, 'src', event.target.result);
+        }
+      }));
+
+      reader.readAsDataURL(image);
+    }
+
+  });
+
+  /**
+   * @module Droplet
+   * @submodule MultipleInput
+   * @author Adam Timberlake
+   * @see https://github.com/Wildhoney/EmberDroplet
+   */
+  $window.Droplet.MultipleInput = Mixin.create({
+
+    /**
+     * @property tagName
+     * @type {String}
+     */
+    tagName: 'input',
+
+    /**
+     * @property classNames
+     * @type {String}
+     */
+    classNames: 'files',
+
+    /**
+     * @property attributeBindings
+     * @type {Array}
+     */
+    attributeBindings: ['disabled', 'name', 'type', 'multiple'],
+
+    /**
+     * @property file
+     * @type {String}
+     */
+    type: 'file',
+
+    /**
+     * @property multiple
+     * @type {String}
+     */
+    multiple: 'multiple',
+
+    /**
+     * @method change
+     * @return {void}
+     */
+    change: function change() {
+      var files = this.get('element').files;
+      this.handleFiles(files);
+    },
+
+    /**
+     * @method handleFiles
+     * @param {Model[]} models
+     * @return {void}
+     */
+    handleFiles: function handleFiles(models) {
+      var _DropletEventBus2;
+
+      this.DropletEventBus && (_DropletEventBus2 = this.DropletEventBus).publish.apply(_DropletEventBus2, [EVENT_NAME].concat(_toConsumableArray(fromArray(models))));
+    }
+
+  });
+
+  /**
+   * @module Droplet
+   * @submodule SingleInput
+   * @author Adam Timberlake
+   * @see https://github.com/Wildhoney/EmberDroplet
+   */
+  $window.Droplet.SingleInput = Mixin.create($window.Droplet.MultipleInput, {
+    multiple: false
+  });
+})(window, window.Ember, window.FileReader);

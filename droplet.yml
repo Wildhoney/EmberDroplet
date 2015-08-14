@@ -1,0 +1,16 @@
+name: ember-droplet
+
+module:
+  components/Droplet.js
+
+locations:
+  vendor: example/vendor
+  release: dist
+
+tests:
+  tests/*.test.js
+
+dependencies:
+  - example/vendor/jquery/dist/jquery.js
+  - example/vendor/handlebars/handlebars.js
+  - example/vendor/ember/ember.debug.js

@@ -1,29 +1,27 @@
 <html>
 <head>
 
-    <title>EmberDragDrop by Wildhoney</title>
+    <title>Ember Droplet</title>
 
-    <link rel="stylesheet" type="text/css" href="styles/default.css" />
+    <link rel="stylesheet" type="text/css" href="css/default.css" />
     <link href='http://fonts.googleapis.com/css?family=Lato:100,300,400,700,900,100italic,300italic,400italic,700italic,900italic' rel='stylesheet' type='text/css'>
 
-    <script type="text/javascript" src="scripts/vendor/jquery/jquery.js"></script>
-    <script type="text/javascript" src="scripts/vendor/handlebars/handlebars.js"></script>
-    <script type="text/javascript" src="scripts/vendor/ember/ember.js"></script>
+    <script type="text/javascript" src="vendor/jquery/dist/jquery.js"></script>
+    <script type="text/javascript" src="vendor/handlebars/handlebars.js"></script>
+    <script type="text/javascript" src="vendor/ember/ember.debug.js"></script>
+    <script type="text/javascript" src="vendor/ember/ember-template-compiler.js"></script>
+    <script type="text/javascript" src="vendor/ember-droplet/ember-droplet.js"></script>
 
-    <script type="text/javascript" src="scripts/default.js"></script>
-    <script type="text/javascript" src="scripts/package/ember-droplet-mixin.js"></script>
-    <script type="text/javascript" src="scripts/package/ember-droplet-view.js"></script>
-    <script type="text/javascript" src="scripts/controller.js"></script>
-    <script type="text/javascript" src="scripts/view.js"></script>
+    <script type="text/javascript" src="js/application.js"></script>
 
 </head>
 <body>
 
     <script type="text/x-handlebars">
-        {{outlet}}
+        {{x-droplet}}
     </script>
 
-    <script type="text/x-handlebars" data-template-name="index">
+    <script type="text/x-handlebars" data-template-name="components/x-droplet">
 
         <h1>Upload Files ({{files.length}} in total)</h1>
 
@@ -35,34 +33,34 @@
         </ul>
 
         <div class="buttons">
-            <button class="btn" {{action "uploadAllFiles"}}>Upload All</button>
-            <button class="btn" {{action "clearAllFiles"}}>Clear</button>
-            <button class="btn" {{action "abortUpload"}}>Abort Upload</button>
+            <button class="btn" {{action "uploadFiles"}}>Upload All</button>
+            <button class="btn" {{action "clearFiles"}}>Clear</button>
+            <button class="btn" {{action "abortUpload"}}>Abort</button>
         </div>
 
         {{#if uploadStatus.uploading}}
             <h3 class="uploading-percentage">Uploaded Percentage: {{uploadStatus.percentComplete}}%</h3>
         {{/if}}
 
-        {{#view view.DragDrop}}
+        {{#x-droplet-area}}
 
             {{#if uploadStatus.error}}
                 <div class="error">An error occurred during the upload process. Please try again later.</div>
             {{/if}}
 
-            {{#each controller.validFiles}}
+            {{#each validFiles as |file|}}
 
-                <div {{bind-attr class="className :file"}}>
-                    {{name}}
-                    <a class="remove" {{action "deleteFile" this}}>Discard.</a>
-                    {{view view.ImagePreview imageBinding="this"}}
-                </div>
+            <div class="file">
+                {{name}}
+                <a class="remove" {{action "deleteFiles" file}}>Discard.</a>
+                {{x-droplet-preview image=file}}
+            </div>
 
             {{/each}}
 
-            {{view view.SingleInput}}
+            {{x-droplet-input}}
 
-        {{/view}}
+        {{/x-droplet-area}}
 
     </script>
 
