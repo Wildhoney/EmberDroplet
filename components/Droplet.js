@@ -355,7 +355,7 @@
          */
         requestSize: computed(function() {
             return get(this, 'validFiles').reduce((size, model) => size + model.getFileSize(), 0);
-        }).property(COMPUTED_OBSERVER),
+        }).property(...COMPUTED_OBSERVER),
 
         /**
          * @method getFiles
