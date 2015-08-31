@@ -35,14 +35,14 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
    * @return {Array}
    */
   var fromArray = function fromArray(arrayLike) {
-    return Array.from ? Array.from(arrayLike) : Array.prototype.slice.call(arrayLike);
+    return typeof Array.from === 'function' ? Array.from(arrayLike) : Array.prototype.slice.call(arrayLike);
   };
 
   /**
    * @property EventBus
    * @type {Ember.Service}
    */
-  var EventBus = Ember.Service.extend(Ember.Evented, {
+  var EventBus = $Ember.Service.extend($Ember.Evented, {
 
     /**
      * @method publish
@@ -70,7 +70,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
   });
 
-  Ember.Application.initializer({
+  $Ember.Application.initializer({
 
     /**
      * @property string
@@ -226,7 +226,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
    * @author Adam Timberlake
    * @see https://github.com/Wildhoney/EmberDroplet
    */
-  $window.Droplet = Mixin.create(Ember.Evented, {
+  $window.Droplet = Mixin.create({
 
     /**
      * @property url
@@ -295,6 +295,24 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       });
 
       this._super();
+    },
+
+    /**
+     * @method willDestroy
+     * @return {void}
+     */
+    willDestroy: function willDestroy() {
+
+      this._super();
+
+      var lastRequest = this.get('lastRequest');
+
+      if (lastRequest) {
+        delete lastRequest.upload.onprogress;
+        delete lastRequest.upload.onload;
+        delete lastRequest.upload.onerror;
+        this.send('abortUpload');
+      }
     },
 
     /**
@@ -382,7 +400,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     isValid: function isValid(model) {
       var _this2 = this;
 
-      if (!(model instanceof Ember.Object)) {
+      if (!(model instanceof $Ember.Object)) {
         return false;
       }
 
@@ -526,6 +544,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
           set(_this4, 'lastRequest', xhr);
           return xhr;
         }
+
       });
 
       set(this, 'lastResolver', request);
@@ -653,7 +672,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
           var willExceedQuota = _this6.get('validFiles.length') === _this6.get('options.maximumValidFiles');
 
-          if (model instanceof Ember.Object) {
+          if (model instanceof $Ember.Object) {
             var _ret = (function () {
 
               var statusType = _this6.isValid(model) && !willExceedQuota ? STATUS_TYPES.VALID : STATUS_TYPES.INVALID;

@@ -22,7 +22,7 @@
      * @param {*} arrayLike
      * @return {Array}
      */
-    const fromArray = arrayLike => Array.from ? Array.from(arrayLike) : Array.prototype.slice.call(arrayLike);
+    const fromArray = arrayLike => typeof Array.from === 'function' ? Array.from(arrayLike) : Array.prototype.slice.call(arrayLike);
 
     /**
      * @property EventBus
