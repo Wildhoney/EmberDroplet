@@ -8,6 +8,10 @@ describe('Ember Droplet', () => {
     beforeEach(() => {
 
         const Component = Ember.Component.extend(Droplet, {
+            hooks: {
+              didAdd: () => {},
+              didDelete: () => {}
+            },
             url: exampleUrl
         });
 
@@ -90,9 +94,6 @@ describe('Ember Droplet', () => {
     it('Should be able to handle the callback hooks when performing actions;', () => {
 
         const mockModels = { first: {}, second: {}, third: {} };
-
-        component.hooks.didAdd    = () => {};
-        component.hooks.didDelete = () => {};
 
         spyOn(component.hooks, 'didAdd');
         spyOn(component.hooks, 'didDelete');

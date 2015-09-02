@@ -259,7 +259,6 @@
         init() {
 
             set(this, 'files', []);
-            set(this, 'hooks', {});
 
             Object.keys(DEFAULT_OPTIONS).forEach(key => {
 
@@ -286,7 +285,7 @@
         willDestroy() {
 
             this._super();
-            
+
             const lastRequest = this.get('lastRequest');
 
             if (lastRequest) {
@@ -453,7 +452,7 @@
             });
 
             return formData;
-            
+
         },
 
         /**
@@ -893,7 +892,7 @@
         handleFiles(models) {
             this.DropletEventBus && this.DropletEventBus.publish(EVENT_NAME, ...fromArray(models));
         }
-        
+
     });
 
     /**
