@@ -232,7 +232,7 @@
          * @property options
          * @type {Object}
          */
-        options: {},
+        options: Ember.computed(() => {return {}}),
 
         /**
          * @property hooks
@@ -261,15 +261,20 @@
             set(this, 'files', []);
             set(this, 'hooks', {});
 
+            // Copy across all of the default options into the options map.
             Object.keys(DEFAULT_OPTIONS).forEach(key => {
-
-                // Copy across all of the options into the options map.
-                set(this, `options.${key}`, DEFAULT_OPTIONS[key]);
-
+                if (get(this, `options.${key}`) === undefined) {
+                    set(this, `options.${key}`, DEFAULT_OPTIONS[key]);
+                }
             });
 
-            set(this, 'options.requestHeaders', {});
-            set(this, 'options.requestPostData', {});
+            if (get(this, 'options.requestHeaders') === undefined) {
+                set(this, 'options.requestHeaders', {});
+            }
+
+            if (get(this, 'options.requestPostData') === undefined) {
+                set(this, 'options.requestPostData', {});
+            }
 
             this.DropletEventBus && this.DropletEventBus.subscribe(EVENT_NAME, this, (...files) => {
                 this.send('prepareFiles', ...files);
@@ -286,7 +291,7 @@
         willDestroy() {
 
             this._super();
-            
+
             const lastRequest = this.get('lastRequest');
 
             if (lastRequest) {
@@ -453,7 +458,7 @@
             });
 
             return formData;
-            
+
         },
 
         /**
@@ -893,7 +898,7 @@
         handleFiles(models) {
             this.DropletEventBus && this.DropletEventBus.publish(EVENT_NAME, ...fromArray(models));
         }
-        
+
     });
 
     /**

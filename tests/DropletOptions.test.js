@@ -1,47 +1,46 @@
 describe('Ember Droplet: Options', () => {
 
-    let component, Model;
+    let component, component_w_options, Model;
 
     beforeEach(() => {
 
         const Component = Ember.Component.extend(Droplet);
-        component = Component.create();
-        Model     = component.get('model');
+        const ComponentWithOptions = Ember.Component.extend(Droplet, {
+          options: {
+            requestMethod: 'GET',
+            maximumSize: 4000,
+            useArray: true,
+            includeXFileSize: false,
+            requestHeaders: 'abc',
+            requestPostData: '123',
+            maximumValidFiles: 100,
+            uploadImmediately: true
+          }
+        });
+
+        component_w_options = ComponentWithOptions.create();
+        component           = Component.create();
+        Model               = component.get('model');
 
     });
 
     it('Should be able to define a handful of options;', () => {
 
-        const defaultMimeTypesLength = component.get('options.mimeTypes.length');
+        const defaultMimeTypesLength = component_w_options.get('options.mimeTypes.length');
 
         // In the default push mode the new item should be appended.
-        component.send('mimeTypes', 'application/pdf');
-        expect(component.get('options.mimeTypes.length')).toEqual(defaultMimeTypesLength + 1);
-        expect(component.get('options.mimeTypes')[defaultMimeTypesLength]).toEqual('application/pdf');
+        component_w_options.send('mimeTypes', 'application/pdf');
+        expect(component_w_options.get('options.mimeTypes.length')).toEqual(defaultMimeTypesLength + 1);
+        expect(component_w_options.get('options.mimeTypes')[defaultMimeTypesLength]).toEqual('application/pdf');
 
-        component.set('options.requestMethod', 'GET');
-        expect(component.get('options.requestMethod')).toEqual('GET');
-
-        component.set('options.maximumSize', 4000);
-        expect(component.get('options.maximumSize')).toEqual(4000);
-
-        component.set('options.useArray', true);
-        expect(component.get('options.useArray')).toEqual(true);
-
-        component.set('options.includeXFileSize', false);
-        expect(component.get('options.includeXFileSize')).toEqual(false);
-
-        component.set('options.requestHeaders', 'abc');
-        expect(component.get('options.requestHeaders')).toEqual('abc');
-
-        component.set('options.requestPostData', '123');
-        expect(component.get('options.requestPostData')).toEqual('123');
-
-        component.set('options.maximumValidFiles', 100);
-        expect(component.get('options.maximumValidFiles')).toEqual(100);
-
-        component.set('options.uploadImmediately', true);
-        expect(component.get('options.uploadImmediately')).toEqual(true);
+        expect(component_w_options.get('options.requestMethod')).toEqual('GET');
+        expect(component_w_options.get('options.maximumSize')).toEqual(4000);
+        expect(component_w_options.get('options.useArray')).toEqual(true);
+        expect(component_w_options.get('options.includeXFileSize')).toEqual(false);
+        expect(component_w_options.get('options.requestHeaders')).toEqual('abc');
+        expect(component_w_options.get('options.requestPostData')).toEqual('123');
+        expect(component_w_options.get('options.maximumValidFiles')).toEqual(100);
+        expect(component_w_options.get('options.uploadImmediately')).toEqual(true);
 
     });
 
@@ -52,7 +51,7 @@ describe('Ember Droplet: Options', () => {
         expect(component.get('options.maximumSize')).toEqual(Infinity);
         expect(component.get('options.useArray')).toEqual(false);
         expect(component.get('options.includeXFileSize')).toEqual(true);
-        expect(component.get('options.requestHeaders')).toEqual({});
+        expect(component.get('options.requestHeaders')).toEqual({'X-File-Size': 0});
         expect(component.get('options.requestPostData')).toEqual({});
         expect(component.get('options.maximumValidFiles')).toEqual(Infinity);
         expect(component.get('options.uploadImmediately')).toEqual(false);
