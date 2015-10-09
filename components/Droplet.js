@@ -232,7 +232,7 @@
          * @property options
          * @type {Object}
          */
-        options: {},
+        options: { ...DEFAULT_OPTIONS },
 
         /**
          * @property hooks
@@ -259,17 +259,19 @@
         init() {
 
             set(this, 'files', []);
-            set(this, 'hooks', {});
-
-            Object.keys(DEFAULT_OPTIONS).forEach(key => {
-
-                // Copy across all of the options into the options map.
-                set(this, `options.${key}`, DEFAULT_OPTIONS[key]);
-
-            });
-
-            set(this, 'options.requestHeaders', {});
-            set(this, 'options.requestPostData', {});
+            
+            //set(this, 'hooks', {});
+            //
+            //Object.keys(DEFAULT_OPTIONS).forEach(key => {
+            //
+            //    // Copy across all of the options into the options map.
+            //    set(this, `options.${key}`, DEFAULT_OPTIONS[key]);
+            //
+            //});
+            //
+            //set(this, 'options.requestHeaders', {});
+            //set(this, 'options.requestPostData', {});
+            //
 
             this.DropletEventBus && this.DropletEventBus.subscribe(EVENT_NAME, this, (...files) => {
                 this.send('prepareFiles', ...files);
@@ -862,6 +864,7 @@
          * @property attributeBindings
          * @type {Array}
          */
+        attributeBindings: ['disabled', 'name', 'type', 'multiple'],
         attributeBindings: ['disabled', 'name', 'type', 'multiple'],
 
         /**
