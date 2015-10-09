@@ -1,5 +1,7 @@
 'use strict';
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
 
 (function main($window, $Ember, $FileReader) {
@@ -8,7 +10,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
   // Extract the commonly accessed Ember methods.
 
-  var _computed, _computed2, _computed3, _computed4;
+  var _computed, _computed2, _computed3, _computed4, _computed5;
 
   var Mixin = $Ember.Mixin;
   var String = $Ember.String;
@@ -247,7 +249,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @property options
      * @type {Object}
      */
-    options: {},
+    options: _extends({}, DEFAULT_OPTIONS),
 
     /**
      * @property hooks
@@ -275,16 +277,19 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       var _this = this;
 
       set(this, 'files', []);
-      set(this, 'hooks', {});
 
-      Object.keys(DEFAULT_OPTIONS).forEach(function (key) {
-
-        // Copy across all of the options into the options map.
-        set(_this, 'options.' + key, DEFAULT_OPTIONS[key]);
-      });
-
-      set(this, 'options.requestHeaders', {});
-      set(this, 'options.requestPostData', {});
+      //set(this, 'hooks', {});
+      //
+      //Object.keys(DEFAULT_OPTIONS).forEach(key => {
+      //
+      //    // Copy across all of the options into the options map.
+      //    set(this, `options.${key}`, DEFAULT_OPTIONS[key]);
+      //
+      //});
+      //
+      //set(this, 'options.requestHeaders', {});
+      //set(this, 'options.requestPostData', {});
+      //
 
       this.DropletEventBus && this.DropletEventBus.subscribe(EVENT_NAME, this, function () {
         for (var _len = arguments.length, files = Array(_len), _key = 0; _key < _len; _key++) {
@@ -375,11 +380,11 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @property requestSize
      * @return {Array}
      */
-    requestSize: computed(function () {
+    requestSize: (_computed5 = computed(function () {
       return get(this, 'validFiles').reduce(function (size, model) {
         return size + model.getFileSize();
       }, 0);
-    }).property(COMPUTED_OBSERVER),
+    })).property.apply(_computed5, _toConsumableArray(COMPUTED_OBSERVER)),
 
     /**
      * @method getFiles
@@ -932,6 +937,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @property attributeBindings
      * @type {Array}
      */
+    attributeBindings: ['disabled', 'name', 'type', 'multiple'],
     attributeBindings: ['disabled', 'name', 'type', 'multiple'],
 
     /**
