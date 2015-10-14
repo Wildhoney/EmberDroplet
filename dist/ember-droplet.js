@@ -1,7 +1,5 @@
 'use strict';
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
 
 (function main($window, $Ember, $FileReader) {
@@ -249,7 +247,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @property options
      * @type {Object}
      */
-    options: _extends({}, DEFAULT_OPTIONS),
+    options: {},
 
     /**
      * @property hooks
@@ -278,18 +276,12 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
       set(this, 'files', []);
 
-      //set(this, 'hooks', {});
-      //
-      //Object.keys(DEFAULT_OPTIONS).forEach(key => {
-      //
-      //    // Copy across all of the options into the options map.
-      //    set(this, `options.${key}`, DEFAULT_OPTIONS[key]);
-      //
-      //});
-      //
-      //set(this, 'options.requestHeaders', {});
-      //set(this, 'options.requestPostData', {});
-      //
+      var hooks = Ember.merge({}, this.get("hooks"));
+      set(this, 'hooks', hooks);
+
+      var options = Ember.merge({}, DEFAULT_OPTIONS);
+      options = Ember.merge(options, this.get('options'));
+      set(this, "options", options);
 
       this.DropletEventBus && this.DropletEventBus.subscribe(EVENT_NAME, this, function () {
         for (var _len = arguments.length, files = Array(_len), _key = 0; _key < _len; _key++) {
@@ -530,7 +522,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       var url = isFunction(get(this, 'url')) ? get(this, 'url').apply(this) : get(this, 'url');
       var method = get(this, 'options.requestMethod') || 'POST';
       var data = this.getFormData();
-      var headers = this.get('options.requestHeaders');
+      var headers = Ember.merge({}, this.get('options.requestHeaders'));
 
       if (get(this, 'options.includeXFileSize')) {
         headers['X-File-Size'] = this.get('requestSize');
@@ -937,7 +929,6 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @property attributeBindings
      * @type {Array}
      */
-    attributeBindings: ['disabled', 'name', 'type', 'multiple'],
     attributeBindings: ['disabled', 'name', 'type', 'multiple'],
 
     /**
