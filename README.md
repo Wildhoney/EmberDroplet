@@ -92,6 +92,20 @@ options object:
 Once you have instantiated the `Droplet` `Ember.Component` in your application, 
 you can instantiate other provided `Ember.Component` objects for additional functionality:
 
+### Hooks
+
+To attach hooks, define them in the hooks object:
+
+```javascript
+  App.XDropletComponent = Ember.Component.extend(Droplet, {
+    hooks: {
+      didUpload: function() {
+        console.log("did an upload");
+      }
+    }
+  });
+```
+
 ### Droppable Area
 
 ```javascript
