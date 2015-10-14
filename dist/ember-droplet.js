@@ -319,13 +319,15 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @return {void}
      */
     invokeHook: function invokeHook(name) {
-      var method = get(this, 'hooks')[name] || function () {};
-
       for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
         args[_key2 - 1] = arguments[_key2];
       }
 
-      method.apply(undefined, args);
+      var method = get(this, 'hooks')[name] || function () {};
+      var self = this;
+      Ember.run(function () {
+        method.apply(self, args);
+      });
     },
 
     /**
@@ -589,7 +591,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
          * @return {void}
          */
         var resolved = function resolved(response) {
-          _this5.invokeHook.apply(_this5, ['didUpload'].concat(_toConsumableArray(response.files)));
+          _this5.invokeHook('didUpload', response);
           models.map(function (model) {
             return model.setStatusType(STATUS_TYPES.UPLOADED);
           });

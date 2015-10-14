@@ -148,11 +148,12 @@ describe('Ember Droplet', () => {
         const invalidFiles = [Model.create({ file: { type: 'text/json' } }), Model.create({ file: { type: 'text/xml' } })];
 
         // Resolve the Jasmine test when the hook is invoked.
-        component.hooks.didUpload = (response) => {
+        component.hooks.didUpload = function(response) {
             expect(response).toEqual({
               something: "from the server"
             });
             expect(component.hooks.didUpload.calls.count()).toEqual(1);
+            expect(this).toBe(component);
         };
 
         component.hooks.didComplete = () => {
@@ -163,7 +164,9 @@ describe('Ember Droplet', () => {
 
         spyOn(component.hooks, 'didUpload').and.callThrough();
 
-        component.send('addFiles', ...[...validFiles, ...invalidFiles]);
+        Ember.run(function() {
+          component.send('addFiles', ...[...validFiles, ...invalidFiles]);
+        });
         expect(component.get('validFiles.length')).toEqual(2);
         expect(component.get('invalidFiles.length')).toEqual(2);
 
