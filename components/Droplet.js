@@ -545,7 +545,7 @@
                  * @return {void}
                  */
                 const resolved = response => {
-                    this.invokeHook('didUpload', ...response.files);
+                    this.invokeHook('didUpload', response);
                     models.map(model => model.setStatusType(STATUS_TYPES.UPLOADED));
                 };
 

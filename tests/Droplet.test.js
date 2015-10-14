@@ -148,10 +148,10 @@ describe('Ember Droplet', () => {
         const invalidFiles = [Model.create({ file: { type: 'text/json' } }), Model.create({ file: { type: 'text/xml' } })];
 
         // Resolve the Jasmine test when the hook is invoked.
-        component.hooks.didUpload = (...files) => {
-            expect(files.length).toEqual(2);
-            expect(files[0]).toEqual(validFiles[0]);
-            expect(files[1]).toEqual(validFiles[1]);
+        component.hooks.didUpload = (response) => {
+            expect(response).toEqual({
+              something: "from the server"
+            });
             expect(component.hooks.didUpload.calls.count()).toEqual(1);
         };
 
@@ -168,7 +168,9 @@ describe('Ember Droplet', () => {
         expect(component.get('invalidFiles.length')).toEqual(2);
 
         component.hooks.promiseResolver = (resolve, reject, files) => {
-            resolve({ files });
+            resolve({
+              something: "from the server"
+            });
         };
 
         component.send('uploadFiles');
