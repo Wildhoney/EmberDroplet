@@ -63,9 +63,12 @@ From there you can then add the component in block form to your application as f
 {{#x-droplet}}{{/x-droplet}}
 ```
 
+### Options
+
 **Note:** Specifying a `url` parameter is mandatory, since no default is assumed.
 
-Properties that can be defined when instantiating the `Ember.Component` are as follows:
+To override the default options you can assign the following properties on the 
+options object:
 
  * `requestMethod` &ndash; Changed the request verb from default `POST`;
  * `maximumSize` &ndash; Set the maximum size for each individual file;
@@ -77,7 +80,17 @@ Properties that can be defined when instantiating the `Ember.Component` are as f
  * `requestHeaders` &ndash; Additional request headers to be sent;
  * `requestPostData` &ndash; Additional POST data to be sent;
 
-Once you have instantiated the `Droplet` `Ember.Component` in your application, you can instantiate other provided `Ember.Component` objects for additional functionality:
+```javascript
+  App.XDropletComponent = Ember.Component.extend(Droplet, {
+    options: {
+      requestMethod: "PATCH"
+      // ...
+    }
+  });
+```
+
+Once you have instantiated the `Droplet` `Ember.Component` in your application, 
+you can instantiate other provided `Ember.Component` objects for additional functionality:
 
 ### Droppable Area
 
