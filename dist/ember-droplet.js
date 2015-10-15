@@ -276,12 +276,11 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
       set(this, 'files', []);
 
-      var hooks = Ember.merge({}, this.get("hooks"));
+      var hooks = $Ember.merge({}, this.get('hooks'));
       set(this, 'hooks', hooks);
 
-      var options = Ember.merge({}, DEFAULT_OPTIONS);
-      options = Ember.merge(options, this.get('options'));
-      set(this, "options", options);
+      var options = $Ember.merge({}, DEFAULT_OPTIONS, this.get('options'));
+      set(this, 'options', options);
 
       this.DropletEventBus && this.DropletEventBus.subscribe(EVENT_NAME, this, function () {
         for (var _len = arguments.length, files = Array(_len), _key = 0; _key < _len; _key++) {
@@ -524,7 +523,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       var url = isFunction(get(this, 'url')) ? get(this, 'url').apply(this) : get(this, 'url');
       var method = get(this, 'options.requestMethod') || 'POST';
       var data = this.getFormData();
-      var headers = Ember.merge({}, this.get('options.requestHeaders'));
+      var headers = $Ember.merge({}, this.get('options.requestHeaders'));
 
       if (get(this, 'options.includeXFileSize')) {
         headers['X-File-Size'] = this.get('requestSize');
