@@ -329,9 +329,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       }
 
       var method = get(this, 'hooks')[name] || function () {};
-      var self = this;
-      Ember.run(function () {
-        method.apply(self, args);
+      $Ember.run(function () {
+        return method.apply(undefined, args);
       });
     },
 

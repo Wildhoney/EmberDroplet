@@ -308,8 +308,8 @@
         invokeHook(name, ...args) {
 
             const method = get(this, 'hooks')[name] || (() => {});
-            $Ember.run(() => method(...args));
-
+            $Ember.run(() => method.apply(this, args));
+            
         },
 
         /**
