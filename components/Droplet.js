@@ -257,14 +257,14 @@
          * @return {void}
          */
         init() {
+            
             set(this, 'files', []);
 
-            var hooks = Ember.merge({}, this.get("hooks"));
+            const hooks = $Ember.merge({}, this.get('hooks'));
             set(this, 'hooks', hooks);
 
-            var options = Ember.merge({}, DEFAULT_OPTIONS);
-            options = Ember.merge(options, this.get('options'));
-            set(this, "options", options);
+            const options = $Ember.merge({}, DEFAULT_OPTIONS, this.get('options'));
+            set(this, 'options', options);
 
             this.DropletEventBus && this.DropletEventBus.subscribe(EVENT_NAME, this, (...files) => {
                 this.send('prepareFiles', ...files);
@@ -479,7 +479,7 @@
             const url        = isFunction(get(this, 'url')) ? get(this, 'url').apply(this) : get(this, 'url');
             const method     = get(this, 'options.requestMethod') || 'POST';
             const data       = this.getFormData();
-            const headers    = Ember.merge({}, this.get('options.requestHeaders'));
+            const headers    = $Ember.merge({}, this.get('options.requestHeaders'));
 
             if (get(this, 'options.includeXFileSize')) {
                 headers['X-File-Size'] = this.get('requestSize');
