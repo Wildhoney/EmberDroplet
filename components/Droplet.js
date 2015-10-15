@@ -306,11 +306,10 @@
          * @return {void}
          */
         invokeHook(name, ...args) {
+
             const method = get(this, 'hooks')[name] || (() => {});
-            var self = this;
-            Ember.run(function() {
-              method.apply(self, args);
-            });
+            $Ember.run(() => method(...args));
+
         },
 
         /**
