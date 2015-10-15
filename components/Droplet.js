@@ -12,6 +12,12 @@
     const STATUS_TYPES = { NONE: 0, VALID: 1, INVALID: 2, DELETED: 4, UPLOADED: 8, FAILED: 16 };
 
     /**
+     * @constant REQUEST_METHODS
+     * @type {{PATCH: string, POST: string, PUT: string}}
+     */
+    const REQUEST_METHODS = { PATCH: 'PATCH', POST: 'POST', PUT: 'PUT' };
+
+    /**
      * @constant EVENT_NAME
      * @type {String}
      */
@@ -142,7 +148,7 @@
          * @property requestMethod
          * @type {String}
          */
-        requestMethod: 'POST',
+        requestMethod: REQUEST_METHODS.POST,
 
         /**
          * @property maximumSize
@@ -903,5 +909,11 @@
     $window.Droplet.SingleInput = Mixin.create($window.Droplet.MultipleInput, {
         multiple: false
     });
+
+    /**
+     * @constant $window.Droplet.METHOD
+     * @type {Object}
+     */
+    $window.Droplet.METHOD = REQUEST_METHODS;
 
 })(window, window.Ember, window.FileReader);

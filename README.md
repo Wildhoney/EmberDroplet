@@ -83,7 +83,7 @@ options object:
 ```javascript
   App.XDropletComponent = Ember.Component.extend(Droplet, {
     options: {
-      requestMethod: "PATCH"
+      requestMethod: Droplet.METHOD.PATCH
       // ...
     }
   });

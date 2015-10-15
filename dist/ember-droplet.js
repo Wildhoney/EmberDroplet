@@ -24,6 +24,12 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
   var STATUS_TYPES = { NONE: 0, VALID: 1, INVALID: 2, DELETED: 4, UPLOADED: 8, FAILED: 16 };
 
   /**
+   * @constant REQUEST_METHODS
+   * @type {{PATCH: string, POST: string, PUT: string}}
+   */
+  var REQUEST_METHODS = { PATCH: 'PATCH', POST: 'POST', PUT: 'PUT' };
+
+  /**
    * @constant EVENT_NAME
    * @type {String}
    */
@@ -155,7 +161,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @property requestMethod
      * @type {String}
      */
-    requestMethod: 'POST',
+    requestMethod: REQUEST_METHODS.POST,
 
     /**
      * @property maximumSize
@@ -975,4 +981,10 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
   $window.Droplet.SingleInput = Mixin.create($window.Droplet.MultipleInput, {
     multiple: false
   });
+
+  /**
+   * @constant $window.Droplet.METHOD
+   * @type {Object}
+   */
+  $window.Droplet.METHOD = REQUEST_METHODS;
 })(window, window.Ember, window.FileReader);

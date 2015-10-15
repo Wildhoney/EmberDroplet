@@ -19,8 +19,8 @@ describe('Ember Droplet: Options', () => {
         expect(component.get('options.mimeTypes.length')).toEqual(defaultMimeTypesLength + 1);
         expect(component.get('options.mimeTypes')[defaultMimeTypesLength]).toEqual('application/pdf');
 
-        component.set('options.requestMethod', 'GET');
-        expect(component.get('options.requestMethod')).toEqual('GET');
+        component.set('options.requestMethod', Droplet.METHOD.PATCH);
+        expect(component.get('options.requestMethod')).toEqual('PATCH');
 
         component.set('options.maximumSize', 4000);
         expect(component.get('options.maximumSize')).toEqual(4000);
