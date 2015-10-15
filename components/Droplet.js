@@ -301,7 +301,10 @@
          */
         invokeHook(name, ...args) {
             const method = get(this, 'hooks')[name] || (() => {});
-            method(...args);
+            var self = this;
+            Ember.run(function() {
+              method.apply(self, args);
+            });
         },
 
         /**
@@ -545,7 +548,7 @@
                  * @return {void}
                  */
                 const resolved = response => {
-                    this.invokeHook('didUpload', ...response.files);
+                    this.invokeHook('didUpload', response);
                     models.map(model => model.setStatusType(STATUS_TYPES.UPLOADED));
                 };
 
