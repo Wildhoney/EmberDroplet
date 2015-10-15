@@ -324,13 +324,15 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @return {void}
      */
     invokeHook: function invokeHook(name) {
+      var _this2 = this;
+
       for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
         args[_key2 - 1] = arguments[_key2];
       }
 
       var method = get(this, 'hooks')[name] || function () {};
       $Ember.run(function () {
-        return method.apply(undefined, args);
+        return method.apply(_this2, args);
       });
     },
 
@@ -401,7 +403,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @return {Boolean}
      */
     isValid: function isValid(model) {
-      var _this2 = this;
+      var _this3 = this;
 
       if (!(model instanceof $Ember.Object)) {
         return false;
@@ -415,10 +417,10 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       var validMime = function validMime(mimeType) {
         return function () {
 
-          var anyRegExp = _this2.get('options.mimeTypes').some(function (mimeType) {
+          var anyRegExp = _this3.get('options.mimeTypes').some(function (mimeType) {
             return mimeType instanceof RegExp;
           });
-          var mimeTypes = get(_this2, 'options.mimeTypes');
+          var mimeTypes = get(_this3, 'options.mimeTypes');
 
           if (!anyRegExp) {
 
@@ -444,7 +446,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
        */
       var validSize = function validSize(fileSize) {
         return function () {
-          return fileSize <= Number(get(_this2, 'options.maximumSize'));
+          return fileSize <= Number(get(_this3, 'options.maximumSize'));
         };
       };
 
@@ -504,13 +506,13 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @return {void}
      */
     addProgressListener: function addProgressListener(uploadRequest) {
-      var _this3 = this;
+      var _this4 = this;
 
       uploadRequest.addEventListener('progress', function (event) {
 
         if (event.lengthComputable) {
-          var percentageLoaded = event.loaded / get(_this3, 'requestSize') * 100;
-          set(_this3, 'uploadStatus.percentComplete', Math.round(percentageLoaded));
+          var percentageLoaded = event.loaded / get(_this4, 'requestSize') * 100;
+          set(_this4, 'uploadStatus.percentComplete', Math.round(percentageLoaded));
         }
       });
     },
@@ -520,7 +522,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @return {Ember.$.ajax}
      */
     getRequest: function getRequest() {
-      var _this4 = this;
+      var _this5 = this;
 
       var isFunction = function isFunction(value) {
         return typeof value === 'function';
@@ -543,8 +545,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         xhr: function xhr() {
 
           var xhr = $Ember.$.ajaxSettings.xhr();
-          _this4.addProgressListener(xhr.upload);
-          set(_this4, 'lastRequest', xhr);
+          _this5.addProgressListener(xhr.upload);
+          set(_this5, 'lastRequest', xhr);
           return xhr;
         }
 
@@ -566,7 +568,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
        * @return {Ember.RSVP.Promise}
        */
       uploadFiles: function uploadFiles() {
-        var _this5 = this;
+        var _this6 = this;
 
         var models = get(this, 'files').filter(function (file) {
           return file.statusType & STATUS_TYPES.VALID;
@@ -585,7 +587,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
          * @return {void}
          */
         var resolver = function resolver(resolve, reject) {
-          _this5.invokeHook('promiseResolver', resolve, reject, models);
+          _this6.invokeHook('promiseResolver', resolve, reject, models);
           request.done(resolve).fail(reject);
         };
 
@@ -595,7 +597,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
          * @return {void}
          */
         var resolved = function resolved(response) {
-          _this5.invokeHook('didUpload', response);
+          _this6.invokeHook('didUpload', response);
           models.map(function (model) {
             return model.setStatusType(STATUS_TYPES.UPLOADED);
           });
@@ -612,8 +614,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
           var textStatus = _ref.textStatus;
           var errorThrown = _ref.errorThrown;
 
-          if (get(_this5, 'abortedUpload') !== true) {
-            set(_this5, 'uploadStatus.error', { request: request, textStatus: textStatus, errorThrown: errorThrown });
+          if (get(_this6, 'abortedUpload') !== true) {
+            set(_this6, 'uploadStatus.error', { request: request, textStatus: textStatus, errorThrown: errorThrown });
           }
         };
 
@@ -622,8 +624,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
          * @return {void}
          */
         var always = function always() {
-          set(_this5, 'uploadStatus.uploading', false);
-          _this5.invokeHook('didComplete');
+          set(_this6, 'uploadStatus.uploading', false);
+          _this6.invokeHook('didComplete');
         };
 
         return new $Ember.RSVP.Promise(resolver).then(resolved, rejected)['finally'](always);
@@ -665,7 +667,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
        * @return {void}
        */
       addFiles: function addFiles() {
-        var _this6 = this;
+        var _this7 = this;
 
         for (var _len4 = arguments.length, files = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
           files[_key4] = arguments[_key4];
@@ -673,16 +675,16 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
         var addedModels = files.map(function (model) {
 
-          var willExceedQuota = _this6.get('validFiles.length') === _this6.get('options.maximumValidFiles');
+          var willExceedQuota = _this7.get('validFiles.length') === _this7.get('options.maximumValidFiles');
 
           if (model instanceof $Ember.Object) {
             var _ret = (function () {
 
-              var statusType = _this6.isValid(model) && !willExceedQuota ? STATUS_TYPES.VALID : STATUS_TYPES.INVALID;
+              var statusType = _this7.isValid(model) && !willExceedQuota ? STATUS_TYPES.VALID : STATUS_TYPES.INVALID;
               run(function () {
                 return model.setStatusType(statusType);
               });
-              get(_this6, 'files').pushObject(model);
+              get(_this7, 'files').pushObject(model);
               return {
                 v: model
               };
@@ -735,7 +737,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
        * @return {void}
        */
       deleteFiles: function deleteFiles() {
-        var _this7 = this;
+        var _this8 = this;
 
         for (var _len6 = arguments.length, files = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
           files[_key6] = arguments[_key6];
@@ -743,7 +745,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
         var deletedModels = files.map(function (model) {
 
-          var contains = !! ~get(_this7, 'files').indexOf(model);
+          var contains = !! ~get(_this8, 'files').indexOf(model);
 
           if (contains) {
             model.setStatusType(STATUS_TYPES.DELETED);
@@ -761,11 +763,11 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
        * @return {void}
        */
       clearFiles: function clearFiles() {
-        var _this8 = this;
+        var _this9 = this;
 
         var files = [].concat(_toConsumableArray(this.get('validFiles')), _toConsumableArray(this.get('invalidFiles')));
         files.forEach(function (file) {
-          return _this8.send('deleteFiles', file);
+          return _this9.send('deleteFiles', file);
         });
       }
 
@@ -888,7 +890,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @return {void}
      */
     didInsertElement: function didInsertElement() {
-      var _this9 = this;
+      var _this10 = this;
 
       var Reader = this.get('reader');
       var reader = new Reader();
@@ -901,8 +903,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
       reader.addEventListener('load', run.bind(this, function (event) {
 
-        if (_this9.get('isDestroyed') !== true) {
-          set(_this9, 'src', event.target.result);
+        if (_this10.get('isDestroyed') !== true) {
+          set(_this10, 'src', event.target.result);
         }
       }));
 
