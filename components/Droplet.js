@@ -232,7 +232,7 @@
          * @property options
          * @type {Object}
          */
-        options: { ...DEFAULT_OPTIONS },
+        options: {},
 
         /**
          * @property hooks
@@ -257,21 +257,14 @@
          * @return {void}
          */
         init() {
-
             set(this, 'files', []);
-            
-            //set(this, 'hooks', {});
-            //
-            //Object.keys(DEFAULT_OPTIONS).forEach(key => {
-            //
-            //    // Copy across all of the options into the options map.
-            //    set(this, `options.${key}`, DEFAULT_OPTIONS[key]);
-            //
-            //});
-            //
-            //set(this, 'options.requestHeaders', {});
-            //set(this, 'options.requestPostData', {});
-            //
+
+            var hooks = Ember.merge({}, this.get("hooks"));
+            set(this, 'hooks', hooks);
+
+            var options = Ember.merge({}, DEFAULT_OPTIONS);
+            options = Ember.merge(options, this.get('options'));
+            set(this, "options", options);
 
             this.DropletEventBus && this.DropletEventBus.subscribe(EVENT_NAME, this, (...files) => {
                 this.send('prepareFiles', ...files);
@@ -486,7 +479,7 @@
             const url        = isFunction(get(this, 'url')) ? get(this, 'url').apply(this) : get(this, 'url');
             const method     = get(this, 'options.requestMethod') || 'POST';
             const data       = this.getFormData();
-            const headers    = this.get('options.requestHeaders');
+            const headers    = Ember.merge({}, this.get('options.requestHeaders'));
 
             if (get(this, 'options.includeXFileSize')) {
                 headers['X-File-Size'] = this.get('requestSize');
@@ -864,7 +857,6 @@
          * @property attributeBindings
          * @type {Array}
          */
-        attributeBindings: ['disabled', 'name', 'type', 'multiple'],
         attributeBindings: ['disabled', 'name', 'type', 'multiple'],
 
         /**
