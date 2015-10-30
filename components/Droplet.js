@@ -306,10 +306,8 @@
          * @return {void}
          */
         invokeHook(name, ...args) {
-
             const method = get(this, 'hooks')[name] || (() => {});
             $Ember.run(() => method.apply(this, args));
-            
         },
 
         /**
