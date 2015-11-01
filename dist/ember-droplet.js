@@ -285,7 +285,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       var hooks = $Ember.merge({}, this.get('hooks'));
       set(this, 'hooks', hooks);
 
-      var options = $Ember.merge({}, DEFAULT_OPTIONS, this.get('options'));
+      var options = $Ember.merge({}, DEFAULT_OPTIONS);
+      $Ember.merge(options, this.get('options'));
       set(this, 'options', options);
 
       this.DropletEventBus && this.DropletEventBus.subscribe(EVENT_NAME, this, function () {
