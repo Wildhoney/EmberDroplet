@@ -269,7 +269,8 @@
             const hooks = $Ember.merge({}, this.get('hooks'));
             set(this, 'hooks', hooks);
 
-            const options = $Ember.merge({}, DEFAULT_OPTIONS, this.get('options'));
+            const options = $Ember.merge({}, DEFAULT_OPTIONS);
+            $Ember.merge(options, this.get('options'));
             set(this, 'options', options);
 
             this.DropletEventBus && this.DropletEventBus.subscribe(EVENT_NAME, this, (...files) => {
