@@ -523,11 +523,17 @@
 
             /**
              * @method uploadFiles
-             * @return {Ember.RSVP.Promise}
+             * @return {Ember.RSVP.Promise|Boolean}
              */
             uploadFiles() {
 
                 const models  = get(this, 'files').filter(file => file.statusType & STATUS_TYPES.VALID);
+
+                if (models.length === 0) {
+                    // Don't do anything if there aren't any files to upload.
+                    return false;
+                }
+
                 const request = this.getRequest();
 
                 set(this, 'abortedUpload', false);
