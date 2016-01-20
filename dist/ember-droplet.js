@@ -566,7 +566,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
       /**
        * @method uploadFiles
-       * @return {Ember.RSVP.Promise}
+       * @return {Ember.RSVP.Promise|Boolean}
        */
       uploadFiles: function uploadFiles() {
         var _this6 = this;
@@ -574,6 +574,12 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         var models = get(this, 'files').filter(function (file) {
           return file.statusType & STATUS_TYPES.VALID;
         });
+
+        if (models.length === 0) {
+          // Don't do anything if there aren't any files to upload.
+          return false;
+        }
+
         var request = this.getRequest();
 
         set(this, 'abortedUpload', false);
