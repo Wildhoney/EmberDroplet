@@ -72,11 +72,10 @@
 
         /**
          * @method initialize
-         * @param {Object} container
          * @param {Object} application
          * @return {void}
          */
-        initialize: function(container, application) {
+        initialize: function(application) {
 
             const eventBus = EventBus.create();
 
@@ -288,6 +287,8 @@
         willDestroy() {
 
             this._super();
+
+            this.DropletEventBus && this.DropletEventBus.unsubscribe(EVENT_NAME, this);
             
             const lastRequest = this.get('lastRequest');
 
