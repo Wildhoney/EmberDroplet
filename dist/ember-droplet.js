@@ -231,7 +231,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
    * @author Adam Timberlake
    * @see https://github.com/Wildhoney/EmberDroplet
    */
-  $window.Droplet = Mixin.create({
+  $window.Droplet = {
 
     /**
      * @property url
@@ -775,7 +775,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
     }
 
-  });
+  };
 
   /**
    * @method squashEvent
