@@ -6,9 +6,29 @@
 
 **Heroku**: http://ember-droplet.herokuapp.com/
 
+## Installation
+
 Install via npm: `npm install ember-droplet`.
 
-[See this comment](https://github.com/Wildhoney/EmberDroplet/issues/36#issuecomment-50809709) for installing for Ember CLI.
+### Using with Ember CLI 
+
+#### ember-cli > 1.13
+
+`bower install ember-droplet --save`
+
+Add the following import to your `ember-cli-build.js` file:
+
+`app.import('bower_components/ember-droplet/dist/ember-droplet.js');`
+
+#### ember-cli <= 1.13
+
+`bower install ember-droplet --save`
+
+Add the following to import to your `Brocfile.js`:
+
+`app.import('vendor/ember-droplet/dist/ember-droplet.min.js');`
+
+## Features
 
 Ember Droplet allows HTML5 drag and drop functionality in Ember straight out-of-the-box. Its philosophy is that it doesn't
 impose anything, and instead allows each individual developer to decide how it should work.
@@ -17,7 +37,6 @@ impose anything, and instead allows each individual developer to decide how it s
 
 **Note:** For pre-Ember 2.0.0 support [use `v0.10.0`](https://github.com/Wildhoney/EmberDroplet/tree/v0.10.0).
 
-## Features
 
  * Upload with HTML5's drag and drop;
  * MIME type restrictions on permitted file types;
