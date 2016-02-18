@@ -218,7 +218,7 @@
      * @author Adam Timberlake
      * @see https://github.com/Wildhoney/EmberDroplet
      */
-    $window.Droplet = Mixin.create({
+    $window.Droplet = {
 
         /**
          * @property url
@@ -702,7 +702,7 @@
 
         }
 
-    });
+    };
 
     /**
      * @method squashEvent
