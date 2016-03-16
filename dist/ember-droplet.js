@@ -700,7 +700,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
         addedModels.length && this.invokeHook.apply(this, ['didAdd'].concat(_toConsumableArray(addedModels)));
 
-        if (this.get('options.uploadImmediately')) {
+        if (this.get('options.uploadImmediately') && this.getFiles(STATUS_TYPES.VALID).length > 0) {
           this.send.apply(this, ['uploadFiles'].concat(_toConsumableArray(addedModels)));
         }
       },
