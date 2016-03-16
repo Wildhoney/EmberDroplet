@@ -636,7 +636,7 @@
 
                 addedModels.length && this.invokeHook('didAdd', ...addedModels);
 
-                if (this.get('options.uploadImmediately')) {
+                if (this.get('options.uploadImmediately') && this.getFiles(STATUS_TYPES.VALID).length > 0) {
                     this.send('uploadFiles', ...addedModels);
                 }
 
