@@ -288,12 +288,14 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       $Ember.merge(options, this.get('options'));
       set(this, 'options', options);
 
-      this.DropletEventBus && this.DropletEventBus.subscribe(EVENT_NAME, this, function () {
-        for (var _len = arguments.length, files = Array(_len), _key = 0; _key < _len; _key++) {
-          files[_key] = arguments[_key];
+      this.DropletEventBus && this.DropletEventBus.subscribe(EVENT_NAME, this, function (ctx) {
+        for (var _len = arguments.length, files = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+          files[_key - 1] = arguments[_key];
         }
 
-        _this.send.apply(_this, ['prepareFiles'].concat(files));
+        if (!ctx || ctx === _this) {
+          _this.send.apply(_this, ['prepareFiles'].concat(files));
+        }
       });
 
       this._super();
@@ -819,7 +821,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     handleFiles: function handleFiles(models) {
       var _DropletEventBus;
 
-      this.DropletEventBus && (_DropletEventBus = this.DropletEventBus).publish.apply(_DropletEventBus, [EVENT_NAME].concat(_toConsumableArray(fromArray(models))));
+      this.DropletEventBus && (_DropletEventBus = this.DropletEventBus).publish.apply(_DropletEventBus, [EVENT_NAME, this.get('ctx')].concat(_toConsumableArray(fromArray(models))));
       return models;
     },
 
@@ -970,7 +972,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     handleFiles: function handleFiles(models) {
       var _DropletEventBus2;
 
-      this.DropletEventBus && (_DropletEventBus2 = this.DropletEventBus).publish.apply(_DropletEventBus2, [EVENT_NAME].concat(_toConsumableArray(fromArray(models))));
+      this.DropletEventBus && (_DropletEventBus2 = this.DropletEventBus).publish.apply(_DropletEventBus2, [EVENT_NAME, this.get('ctx')].concat(_toConsumableArray(fromArray(models))));
     }
 
   });
