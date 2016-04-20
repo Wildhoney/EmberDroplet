@@ -272,8 +272,10 @@
             $Ember.merge(options, this.get('options'));
             set(this, 'options', options);
 
-            this.DropletEventBus && this.DropletEventBus.subscribe(EVENT_NAME, this, (...files) => {
-                this.send('prepareFiles', ...files);
+            this.DropletEventBus && this.DropletEventBus.subscribe(EVENT_NAME, this, (ctx, ...files) => {
+                if (!ctx || ctx === this) {
+                    this.send('prepareFiles', ...files);
+                }
             });
 
             this._super();
@@ -744,7 +746,8 @@
          * @return {Model[]}
          */
         handleFiles(models) {
-            this.DropletEventBus && this.DropletEventBus.publish(EVENT_NAME, ...fromArray(models));
+            this.DropletEventBus && this.DropletEventBus.publish(
+                EVENT_NAME, this.get('ctx'), ...fromArray(models));
             return models;
         },
 
@@ -894,7 +897,8 @@
          * @return {void}
          */
         handleFiles(models) {
-            this.DropletEventBus && this.DropletEventBus.publish(EVENT_NAME, ...fromArray(models));
+            this.DropletEventBus && this.DropletEventBus.publish(
+                EVENT_NAME, this.get('ctx'), ...fromArray(models));
         }
         
     });

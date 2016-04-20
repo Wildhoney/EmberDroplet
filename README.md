@@ -137,6 +137,12 @@ Use as singular or in block form &mdash; `Droplet.Area` will create a `div` with
 {{x-droplet-area}}
 ```
 
+If you need have several droppable areas on the same page handling hooks independently, a context must be supplied:
+
+```html
+{{x-droplet-area ctx=this}}
+```
+
 ### Image Preview
 
 ```javascript
@@ -159,6 +165,12 @@ Use in its singular form &ndash; can use either `Droplet.MultipleInput` or `Drop
 
 ```html
 {{x-droplet-input}}
+```
+
+If you need have several input fields on the same page handling hooks independently, a context must be supplied:
+
+```html
+{{x-droplet-input ctx=this}}
 ```
 
 Example
