@@ -13,7 +13,7 @@
     "tests"
   ],
   "dependencies": {
-    "ember": ">=2.0.0",
+    "ember": ">=2.0.0 <2.4",
     "handlebars": ">=3.0.3"
   },
   "devDependencies": {}
