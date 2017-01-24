@@ -613,14 +613,12 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
          * @param {String} textStatus
          * @param {Number} errorThrown
          */
-        var rejected = function rejected(_ref) {
-          var request = _ref.request;
-          var textStatus = _ref.textStatus;
-          var errorThrown = _ref.errorThrown;
+        var rejected = function rejected(request, textStatus, errorThrown) {
 
           if (get(_this6, 'abortedUpload') !== true) {
             set(_this6, 'uploadStatus.error', { request: request, textStatus: textStatus, errorThrown: errorThrown });
           }
+          _this6.invokeHook('rejected', request, textStatus, errorThrown);
         };
 
         /**
