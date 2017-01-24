@@ -1,54 +1,41 @@
-'use strict';
-
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
-
 (function main($window, $Ember, $FileReader) {
 
   "use strict";
 
   // Extract the commonly accessed Ember methods.
 
-  var _computed, _computed2, _computed3, _computed4, _computed5;
-
-  var Mixin = $Ember.Mixin;
-  var String = $Ember.String;
-  var computed = $Ember.computed;
-  var get = $Ember.get;
-  var set = $Ember.set;
-  var run = $Ember.run;
+  const { Mixin, String, computed, get, set, run } = $Ember;
 
   /**
    * @constant STATUS_TYPES
    * @type {Object}
    */
-  var STATUS_TYPES = { NONE: 0, VALID: 1, INVALID: 2, DELETED: 4, UPLOADED: 8, FAILED: 16 };
+  const STATUS_TYPES = { NONE: 0, VALID: 1, INVALID: 2, DELETED: 4, UPLOADED: 8, FAILED: 16 };
 
   /**
    * @constant REQUEST_METHODS
    * @type {{PATCH: string, POST: string, PUT: string}}
    */
-  var REQUEST_METHODS = { PATCH: 'PATCH', POST: 'POST', PUT: 'PUT' };
+  const REQUEST_METHODS = { PATCH: 'PATCH', POST: 'POST', PUT: 'PUT' };
 
   /**
    * @constant EVENT_NAME
    * @type {String}
    */
-  var EVENT_NAME = 'droplet/add-files';
+  const EVENT_NAME = 'droplet/add-files';
 
   /**
    * @method fromArray
    * @param {*} arrayLike
    * @return {Array}
    */
-  var fromArray = function fromArray(arrayLike) {
-    return typeof Array.from === 'function' ? Array.from(arrayLike) : Array.prototype.slice.call(arrayLike);
-  };
+  const fromArray = arrayLike => typeof Array.from === 'function' ? Array.from(arrayLike) : Array.prototype.slice.call(arrayLike);
 
   /**
    * @property EventBus
    * @type {Ember.Service}
    */
-  var EventBus = $Ember.Service.extend($Ember.Evented, {
+  const EventBus = $Ember.Service.extend($Ember.Evented, {
 
     /**
      * @method publish
@@ -62,7 +49,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @method subscribe
      * @return {void}
      */
-    subscribe: function subscribe() {
+    subscribe: function () {
       this.on.apply(this, arguments);
     },
 
@@ -70,7 +57,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @method unsubscribe
      * @return {void}
      */
-    unsubscribe: function unsubscribe() {
+    unsubscribe: function () {
       this.off.apply(this, arguments);
     }
 
@@ -89,9 +76,9 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @param {Object} application
      * @return {void}
      */
-    initialize: function initialize(application) {
+    initialize: function (application) {
 
-      var eventBus = EventBus.create();
+      const eventBus = EventBus.create();
 
       application.register('event-bus:current', eventBus, {
         instantiate: false
@@ -107,13 +94,13 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
    * @property Model
    * @type {Ember.Object}
    */
-  var Model = $Ember.Object.extend({
+  const Model = $Ember.Object.extend({
 
     /**
      * @method init
      * @return {void}
      */
-    init: function init() {
+    init: function () {
       this.statusType = STATUS_TYPES.NONE;
     },
 
@@ -121,7 +108,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @method getMIMEType
      * @return {String}
      */
-    getMIMEType: function getMIMEType() {
+    getMIMEType: function () {
       return this.file.type || '';
     },
 
@@ -129,7 +116,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @method getFileSize
      * @return {Number}
      */
-    getFileSize: function getFileSize() {
+    getFileSize: function () {
       return typeof this.file.size !== 'undefined' ? this.file.size : Infinity;
     },
 
@@ -138,7 +125,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @param {Number} statusType
      * @return {void}
      */
-    setStatusType: function setStatusType(statusType) {
+    setStatusType: function (statusType) {
       this.set('statusType', Number(statusType));
     }
 
@@ -148,13 +135,13 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
    * @constant MIME_MODE
    * @type {Object}
    */
-  var MIME_MODE = { PUSH: 'push', SET: 'set' };
+  const MIME_MODE = { PUSH: 'push', SET: 'set' };
 
   /**
    * @constant DEFAULT_OPTIONS
    * @type {Object}
    */
-  var DEFAULT_OPTIONS = {
+  const DEFAULT_OPTIONS = {
 
     /**
      * @property requestMethod
@@ -216,13 +203,13 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
    * @constant COMPUTED_OBSERVER
    * @type {Array}
    */
-  var COMPUTED_OBSERVER = String.w('files.length files.@each.statusType');
+  const COMPUTED_OBSERVER = String.w('files.length files.@each.statusType');
 
   /**
    * @constant MESSAGES
    * @type {Object}
    */
-  var MESSAGES = {
+  const MESSAGES = {
     URL_REQUIRED: 'Droplet: You must specify the URL parameter when constructing your component.'
   };
 
@@ -238,7 +225,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @throws {Error}
      * @type {Function}
      */
-    url: function url() {
+    url: () => {
       throw new Error(MESSAGES.URL_REQUIRED);
     },
 
@@ -276,25 +263,20 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @method init
      * @return {void}
      */
-    init: function init() {
-      var _this = this;
+    init() {
 
       set(this, 'files', []);
 
-      var hooks = $Ember.merge({}, this.get('hooks'));
+      const hooks = $Ember.merge({}, this.get('hooks'));
       set(this, 'hooks', hooks);
 
-      var options = $Ember.merge({}, DEFAULT_OPTIONS);
+      const options = $Ember.merge({}, DEFAULT_OPTIONS);
       $Ember.merge(options, this.get('options'));
       set(this, 'options', options);
 
-      this.DropletEventBus && this.DropletEventBus.subscribe(EVENT_NAME, this, function (ctx) {
-        for (var _len = arguments.length, files = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-          files[_key - 1] = arguments[_key];
-        }
-
-        if (!ctx || ctx === _this) {
-          _this.send.apply(_this, ['prepareFiles'].concat(files));
+      this.DropletEventBus && this.DropletEventBus.subscribe(EVENT_NAME, this, (ctx, ...files) => {
+        if (!ctx || ctx === this) {
+          this.send('prepareFiles', ...files);
         }
       });
 
@@ -305,13 +287,13 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @method willDestroy
      * @return {void}
      */
-    willDestroy: function willDestroy() {
+    willDestroy() {
 
       this._super();
 
       this.DropletEventBus && this.DropletEventBus.unsubscribe(EVENT_NAME, this);
 
-      var lastRequest = this.get('lastRequest');
+      const lastRequest = this.get('lastRequest');
 
       if (lastRequest) {
         delete lastRequest.upload.onprogress;
@@ -327,17 +309,9 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @param {Array} args
      * @return {void}
      */
-    invokeHook: function invokeHook(name) {
-      var _this2 = this;
-
-      for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-        args[_key2 - 1] = arguments[_key2];
-      }
-
-      var method = get(this, 'hooks')[name] || function () {};
-      $Ember.run(function () {
-        return method.apply(_this2, args);
-      });
+    invokeHook(name, ...args) {
+      const method = get(this, 'hooks')[name] || (() => {});
+      $Ember.run(() => method.apply(this, args));
     },
 
     /**
@@ -352,53 +326,49 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @property validFiles
      * @return {Array}
      */
-    validFiles: (_computed = computed(function () {
+    validFiles: computed(function () {
       return this.getFiles(STATUS_TYPES.VALID);
-    })).property.apply(_computed, _toConsumableArray(COMPUTED_OBSERVER)),
+    }).property(...COMPUTED_OBSERVER),
 
     /**
      * @property invalidFiles
      * @return {Array}
      */
-    invalidFiles: (_computed2 = computed(function () {
+    invalidFiles: computed(function () {
       return this.getFiles(STATUS_TYPES.INVALID);
-    })).property.apply(_computed2, _toConsumableArray(COMPUTED_OBSERVER)),
+    }).property(...COMPUTED_OBSERVER),
 
     /**
      * @property uploadedFiles
      * @return {Array}
      */
-    uploadedFiles: (_computed3 = computed(function () {
+    uploadedFiles: computed(function () {
       return this.getFiles(STATUS_TYPES.UPLOADED);
-    })).property.apply(_computed3, _toConsumableArray(COMPUTED_OBSERVER)),
+    }).property(...COMPUTED_OBSERVER),
 
     /**
      * @property deletedFiles
      * @return {Array}
      */
-    deletedFiles: (_computed4 = computed(function () {
+    deletedFiles: computed(function () {
       return this.getFiles(STATUS_TYPES.DELETED);
-    })).property.apply(_computed4, _toConsumableArray(COMPUTED_OBSERVER)),
+    }).property(...COMPUTED_OBSERVER),
 
     /**
      * @property requestSize
      * @return {Array}
      */
-    requestSize: (_computed5 = computed(function () {
-      return get(this, 'validFiles').reduce(function (size, model) {
-        return size + model.getFileSize();
-      }, 0);
-    })).property.apply(_computed5, _toConsumableArray(COMPUTED_OBSERVER)),
+    requestSize: computed(function () {
+      return get(this, 'validFiles').reduce((size, model) => size + model.getFileSize(), 0);
+    }).property(...COMPUTED_OBSERVER),
 
     /**
      * @method getFiles
      * @param {Number} statusType
      * @return {Array}
      */
-    getFiles: function getFiles(statusType) {
-      return statusType ? this.files.filter(function (file) {
-        return file.statusType & statusType;
-      }) : this.files;
+    getFiles(statusType) {
+      return statusType ? this.files.filter(file => file.statusType & statusType) : this.files;
     },
 
     /**
@@ -406,8 +376,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @param {Model} model
      * @return {Boolean}
      */
-    isValid: function isValid(model) {
-      var _this3 = this;
+    isValid(model) {
 
       if (!(model instanceof $Ember.Object)) {
         return false;
@@ -418,29 +387,25 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
        * @param {String} mimeType
        * @return {Function}
        */
-      var validMime = function validMime(mimeType) {
-        return function () {
+      const validMime = mimeType => () => {
 
-          var anyRegExp = _this3.get('options.mimeTypes').some(function (mimeType) {
-            return mimeType instanceof RegExp;
-          });
-          var mimeTypes = get(_this3, 'options.mimeTypes');
+        const anyRegExp = this.get('options.mimeTypes').some(mimeType => mimeType instanceof RegExp);
+        const mimeTypes = get(this, 'options.mimeTypes');
 
-          if (!anyRegExp) {
+        if (!anyRegExp) {
 
-            // Simply indexOf check because none of the MIME types are regular expressions.
-            return !! ~mimeTypes.indexOf(mimeType);
-          }
+          // Simply indexOf check because none of the MIME types are regular expressions.
+          return !!~mimeTypes.indexOf(mimeType);
+        }
 
-          // Otherwise we'll need to iterate and validate individually.
-          return mimeTypes.some(function (validMimeType) {
+        // Otherwise we'll need to iterate and validate individually.
+        return mimeTypes.some(validMimeType => {
 
-            var isExact = validMimeType === mimeType;
-            var isRegExp = !!mimeType.match(validMimeType);
+          const isExact = validMimeType === mimeType;
+          const isRegExp = !!mimeType.match(validMimeType);
 
-            return isExact || isRegExp;
-          });
-        };
+          return isExact || isRegExp;
+        });
       };
 
       /**
@@ -448,34 +413,20 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
        * @param {Number} fileSize
        * @return {Function}
        */
-      var validSize = function validSize(fileSize) {
-        return function () {
-          return fileSize <= Number(get(_this3, 'options.maximumSize'));
-        };
-      };
+      const validSize = fileSize => () => fileSize <= Number(get(this, 'options.maximumSize'));
 
       /**
        * @method composeEvery
        * @param {Function} fns
        * @return {Function}
        */
-      var composeEvery = function composeEvery() {
-        for (var _len3 = arguments.length, fns = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-          fns[_key3] = arguments[_key3];
-        }
-
-        return function (model) {
-          return fns.reverse().every(function (fn) {
-            return fn(model);
-          });
-        };
-      };
+      const composeEvery = (...fns) => model => fns.reverse().every(fn => fn(model));
 
       /**
        * @method isValid
        * @type {Function}
        */
-      var isValid = composeEvery(validMime(model.getMIMEType()), validSize(model.getFileSize()));
+      const isValid = composeEvery(validMime(model.getMIMEType()), validSize(model.getFileSize()));
 
       return isValid(model);
     },
@@ -484,20 +435,18 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @method getFormData
      * @return {FormData}
      */
-    getFormData: function getFormData() {
+    getFormData() {
 
-      var formData = new $window.FormData();
-      var fieldName = this.get('options.useArray') ? 'file[]' : 'file';
-      var postData = this.get('options.requestPostData');
-      var files = get(this, 'validFiles').map(function (model) {
-        return model.file;
-      });
+      const formData = new $window.FormData();
+      const fieldName = this.get('options.useArray') ? 'file[]' : 'file';
+      const postData = this.get('options.requestPostData');
+      const files = get(this, 'validFiles').map(model => model.file);
 
-      files.forEach(function (file) {
+      files.forEach(file => {
         formData.append(fieldName, file);
       });
 
-      Object.keys(postData).forEach(function (key) {
+      Object.keys(postData).forEach(key => {
         formData.append(key, postData[key]);
       });
 
@@ -509,14 +458,13 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @param {Ember.$.ajaxSettings.xhr} uploadRequest
      * @return {void}
      */
-    addProgressListener: function addProgressListener(uploadRequest) {
-      var _this4 = this;
+    addProgressListener(uploadRequest) {
 
-      uploadRequest.addEventListener('progress', function (event) {
+      uploadRequest.addEventListener('progress', event => {
 
         if (event.lengthComputable) {
-          var percentageLoaded = event.loaded / get(_this4, 'requestSize') * 100;
-          set(_this4, 'uploadStatus.percentComplete', Math.round(percentageLoaded));
+          const percentageLoaded = event.loaded / get(this, 'requestSize') * 100;
+          set(this, 'uploadStatus.percentComplete', Math.round(percentageLoaded));
         }
       });
     },
@@ -525,32 +473,29 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @method getRequest
      * @return {Ember.$.ajax}
      */
-    getRequest: function getRequest() {
-      var _this5 = this;
+    getRequest() {
 
-      var isFunction = function isFunction(value) {
-        return typeof value === 'function';
-      };
-      var url = isFunction(get(this, 'url')) ? get(this, 'url').apply(this) : get(this, 'url');
-      var method = get(this, 'options.requestMethod') || 'POST';
-      var data = this.getFormData();
-      var headers = $Ember.merge({}, this.get('options.requestHeaders'));
+      const isFunction = value => typeof value === 'function';
+      const url = isFunction(get(this, 'url')) ? get(this, 'url').apply(this) : get(this, 'url');
+      const method = get(this, 'options.requestMethod') || 'POST';
+      const data = this.getFormData();
+      const headers = $Ember.merge({}, this.get('options.requestHeaders'));
 
       if (get(this, 'options.includeXFileSize')) {
         headers['X-File-Size'] = this.get('requestSize');
       }
 
-      var request = $Ember.$.ajax({ url: url, method: method, headers: headers, data: data, processData: false, contentType: false,
+      const request = $Ember.$.ajax({ url, method, headers, data, processData: false, contentType: false,
 
         /**
          * @method xhr
          * @return {Ember.$.ajaxSettings.xhr}
          */
-        xhr: function xhr() {
+        xhr: () => {
 
-          var xhr = $Ember.$.ajaxSettings.xhr();
-          _this5.addProgressListener(xhr.upload);
-          set(_this5, 'lastRequest', xhr);
+          const xhr = $Ember.$.ajaxSettings.xhr();
+          this.addProgressListener(xhr.upload);
+          set(this, 'lastRequest', xhr);
           return xhr;
         }
 
@@ -571,13 +516,10 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
        * @method uploadFiles
        * @return {Ember.RSVP.Promise}
        */
-      uploadFiles: function uploadFiles() {
-        var _this6 = this;
+      uploadFiles() {
 
-        var models = get(this, 'files').filter(function (file) {
-          return file.statusType & STATUS_TYPES.VALID;
-        });
-        var request = this.getRequest();
+        const models = get(this, 'files').filter(file => file.statusType & STATUS_TYPES.VALID);
+        const request = this.getRequest();
 
         set(this, 'abortedUpload', false);
         set(this, 'uploadStatus.percentComplete', 0);
@@ -590,8 +532,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
          * @param {Function} reject
          * @return {void}
          */
-        var resolver = function resolver(resolve, reject) {
-          _this6.invokeHook('promiseResolver', resolve, reject, models);
+        const resolver = (resolve, reject) => {
+          this.invokeHook('promiseResolver', resolve, reject, models);
           request.done(resolve).fail(reject);
         };
 
@@ -600,11 +542,9 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
          * @param {Object} response
          * @return {void}
          */
-        var resolved = function resolved(response) {
-          _this6.invokeHook('didUpload', response);
-          models.map(function (model) {
-            return model.setStatusType(STATUS_TYPES.UPLOADED);
-          });
+        const resolved = response => {
+          this.invokeHook('didUpload', response);
+          models.map(model => model.setStatusType(STATUS_TYPES.UPLOADED));
         };
 
         /**
@@ -613,33 +553,33 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
          * @param {String} textStatus
          * @param {Number} errorThrown
          */
-        var rejected = function rejected(request, textStatus, errorThrown) {
+        const rejected = (request, textStatus, errorThrown) => {
 
-          if (get(_this6, 'abortedUpload') !== true) {
-            set(_this6, 'uploadStatus.error', { request: request, textStatus: textStatus, errorThrown: errorThrown });
+          if (get(this, 'abortedUpload') !== true) {
+            set(this, 'uploadStatus.error', { request, textStatus, errorThrown });
           }
-          _this6.invokeHook('rejected', request, textStatus, errorThrown);
+          this.invokeHook('rejected', request, textStatus, errorThrown);
         };
 
         /**
          * @method always
          * @return {void}
          */
-        var always = function always() {
-          set(_this6, 'uploadStatus.uploading', false);
-          _this6.invokeHook('didComplete');
+        const always = () => {
+          set(this, 'uploadStatus.uploading', false);
+          this.invokeHook('didComplete');
         };
 
-        return new $Ember.RSVP.Promise(resolver).then(resolved, rejected)['finally'](always);
+        return new $Ember.RSVP.Promise(resolver).then(resolved, rejected).finally(always);
       },
 
       /**
        * @method abortUpload
        * @return {void}
        */
-      abortUpload: function abortUpload() {
+      abortUpload() {
 
-        var request = get(this, 'lastResolver');
+        const request = get(this, 'lastResolver');
 
         if (request && get(this, 'uploadStatus.uploading')) {
           set(this, 'abortedUpload', true);
@@ -654,12 +594,10 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
        * @param {Object} [mode=MIME_MODE.PUSH]
        * @return {void}
        */
-      mimeTypes: function mimeTypes(_mimeTypes) {
-        var mode = arguments.length <= 1 || arguments[1] === undefined ? MIME_MODE.PUSH : arguments[1];
-
+      mimeTypes(mimeTypes, mode = MIME_MODE.PUSH) {
         mode === MIME_MODE.SET && set(this, 'options.mimeTypes', []);
-        _mimeTypes = Array.isArray(_mimeTypes) ? _mimeTypes : [_mimeTypes];
-        var types = [].concat(_toConsumableArray(get(this, 'options.mimeTypes')), _toConsumableArray(_mimeTypes));
+        mimeTypes = Array.isArray(mimeTypes) ? mimeTypes : [mimeTypes];
+        const types = [...get(this, 'options.mimeTypes'), ...mimeTypes];
         set(this, 'options.mimeTypes', types);
       },
 
@@ -668,40 +606,25 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
        * @param {Model[]} files
        * @return {void}
        */
-      addFiles: function addFiles() {
-        var _this7 = this;
+      addFiles(...files) {
 
-        for (var _len4 = arguments.length, files = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-          files[_key4] = arguments[_key4];
-        }
+        const addedModels = files.map(model => {
 
-        var addedModels = files.map(function (model) {
-
-          var willExceedQuota = _this7.get('validFiles.length') === _this7.get('options.maximumValidFiles');
+          const willExceedQuota = this.get('validFiles.length') === this.get('options.maximumValidFiles');
 
           if (model instanceof $Ember.Object) {
-            var _ret = (function () {
 
-              var statusType = _this7.isValid(model) && !willExceedQuota ? STATUS_TYPES.VALID : STATUS_TYPES.INVALID;
-              run(function () {
-                return model.setStatusType(statusType);
-              });
-              get(_this7, 'files').pushObject(model);
-              return {
-                v: model
-              };
-            })();
-
-            if (typeof _ret === 'object') return _ret.v;
+            const statusType = this.isValid(model) && !willExceedQuota ? STATUS_TYPES.VALID : STATUS_TYPES.INVALID;
+            run(() => model.setStatusType(statusType));
+            get(this, 'files').pushObject(model);
+            return model;
           }
-        }).filter(function (model) {
-          return typeof model !== 'undefined';
-        });
+        }).filter(model => typeof model !== 'undefined');
 
-        addedModels.length && this.invokeHook.apply(this, ['didAdd'].concat(_toConsumableArray(addedModels)));
+        addedModels.length && this.invokeHook('didAdd', ...addedModels);
 
         if (this.get('options.uploadImmediately') && this.getFiles(STATUS_TYPES.VALID).length > 0) {
-          this.send.apply(this, ['uploadFiles'].concat(_toConsumableArray(addedModels)));
+          this.send('uploadFiles', ...addedModels);
         }
       },
 
@@ -710,17 +633,14 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
        * @param {FileList|Array} files
        * @return {Array}
        */
-      prepareFiles: function prepareFiles() {
-        for (var _len5 = arguments.length, files = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
-          files[_key5] = arguments[_key5];
-        }
+      prepareFiles(...files) {
 
         // Convert the FileList object into an actual array.
         files = fromArray(files);
 
-        var models = files.reduce(function (current, file) {
+        const models = files.reduce((current, file) => {
 
-          var model = Model.create({
+          const model = Model.create({
             file: file
           });
 
@@ -729,7 +649,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         }, []);
 
         // Add the files using the Droplet component.
-        this.send.apply(this, ['addFiles'].concat(_toConsumableArray(models)));
+        this.send('addFiles', ...models);
         return models;
       },
 
@@ -738,39 +658,28 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
        * @param {Model[]} files
        * @return {void}
        */
-      deleteFiles: function deleteFiles() {
-        var _this8 = this;
+      deleteFiles(...files) {
 
-        for (var _len6 = arguments.length, files = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
-          files[_key6] = arguments[_key6];
-        }
+        const deletedModels = files.map(model => {
 
-        var deletedModels = files.map(function (model) {
-
-          var contains = !! ~get(_this8, 'files').indexOf(model);
+          const contains = !!~get(this, 'files').indexOf(model);
 
           if (contains) {
             model.setStatusType(STATUS_TYPES.DELETED);
             return model;
           }
-        }).filter(function (model) {
-          return typeof model !== 'undefined';
-        });
+        }).filter(model => typeof model !== 'undefined');
 
-        deletedModels.length && this.invokeHook.apply(this, ['didDelete'].concat(_toConsumableArray(deletedModels)));
+        deletedModels.length && this.invokeHook('didDelete', ...deletedModels);
       },
 
       /**
        * @method clearFiles
        * @return {void}
        */
-      clearFiles: function clearFiles() {
-        var _this9 = this;
-
-        var files = [].concat(_toConsumableArray(this.get('validFiles')), _toConsumableArray(this.get('invalidFiles')));
-        files.forEach(function (file) {
-          return _this9.send('deleteFiles', file);
-        });
+      clearFiles() {
+        const files = [...this.get('validFiles'), ...this.get('invalidFiles')];
+        files.forEach(file => this.send('deleteFiles', file));
       }
 
     }
@@ -782,7 +691,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
    * @param {Object} event
    * @return {void}
    */
-  var squashEvent = function squashEvent(event) {
+  const squashEvent = event => {
     event.preventDefault();
     event.stopPropagation();
   };
@@ -806,7 +715,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @param {Object} event
      * @return {Array}
      */
-    drop: function drop(event) {
+    drop(event) {
       squashEvent(event);
       return this.handleFiles(event.dataTransfer.files);
     },
@@ -816,10 +725,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @param {Array} models
      * @return {Model[]}
      */
-    handleFiles: function handleFiles(models) {
-      var _DropletEventBus;
-
-      this.DropletEventBus && (_DropletEventBus = this.DropletEventBus).publish.apply(_DropletEventBus, [EVENT_NAME, this.get('ctx')].concat(_toConsumableArray(fromArray(models))));
+    handleFiles(models) {
+      this.DropletEventBus && this.DropletEventBus.publish(EVENT_NAME, this.get('ctx'), ...fromArray(models));
       return models;
     },
 
@@ -883,7 +790,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @type {File|Object} image
      * @return {Boolean}
      */
-    isImage: function isImage(image) {
+    isImage(image) {
       return !!image.type.match(/^image\//i);
     },
 
@@ -891,22 +798,21 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @method didInsertElement
      * @return {void}
      */
-    didInsertElement: function didInsertElement() {
-      var _this10 = this;
+    didInsertElement() {
 
-      var Reader = this.get('reader');
-      var reader = new Reader();
-      var image = get(this, 'image.file');
+      const Reader = this.get('reader');
+      const reader = new Reader();
+      const image = get(this, 'image.file');
 
       if (!this.isImage(image)) {
         this.destroy();
         return;
       }
 
-      reader.addEventListener('load', run.bind(this, function (event) {
+      reader.addEventListener('load', run.bind(this, event => {
 
-        if (_this10.get('isDestroyed') !== true) {
-          set(_this10, 'src', event.target.result);
+        if (this.get('isDestroyed') !== true) {
+          set(this, 'src', event.target.result);
         }
       }));
 
@@ -957,8 +863,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @method change
      * @return {void}
      */
-    change: function change() {
-      var files = this.get('element').files;
+    change() {
+      const files = this.get('element').files;
       this.handleFiles(files);
     },
 
@@ -967,10 +873,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @param {Model[]} models
      * @return {void}
      */
-    handleFiles: function handleFiles(models) {
-      var _DropletEventBus2;
-
-      this.DropletEventBus && (_DropletEventBus2 = this.DropletEventBus).publish.apply(_DropletEventBus2, [EVENT_NAME, this.get('ctx')].concat(_toConsumableArray(fromArray(models))));
+    handleFiles(models) {
+      this.DropletEventBus && this.DropletEventBus.publish(EVENT_NAME, this.get('ctx'), ...fromArray(models));
     }
 
   });

@@ -262,7 +262,7 @@
          * @return {void}
          */
         init() {
-            
+
             set(this, 'files', []);
 
             const hooks = $Ember.merge({}, this.get('hooks'));
@@ -291,7 +291,7 @@
             this._super();
 
             this.DropletEventBus && this.DropletEventBus.unsubscribe(EVENT_NAME, this);
-            
+
             const lastRequest = this.get('lastRequest');
 
             if (lastRequest) {
@@ -458,7 +458,7 @@
             });
 
             return formData;
-            
+
         },
 
         /**
@@ -564,12 +564,14 @@
                  * @param {Object} request
                  * @param {String} textStatus
                  * @param {Number} errorThrown
+                 * @return {void}
                  */
-                const rejected = (request, textStatus, errorThrown) => {
+                const rejected = ({ request, textStatus, errorThrown }) => {
 
                     if (get(this, 'abortedUpload') !== true) {
                         set(this, 'uploadStatus.error', { request, textStatus, errorThrown });
                     }
+
                     this.invokeHook('rejected', request, textStatus, errorThrown);
 
                 };
@@ -901,7 +903,7 @@
             this.DropletEventBus && this.DropletEventBus.publish(
                 EVENT_NAME, this.get('ctx'), ...fromArray(models));
         }
-        
+
     });
 
     /**
