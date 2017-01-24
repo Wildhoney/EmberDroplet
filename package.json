@@ -4,6 +4,8 @@
   "author": "Adam Timberlake",
   "dependencies": {},
   "devDependencies": {
+    "babel-preset-es2015": "^6.22.0",
+    "babel-preset-stage-0": "^6.16.0",
     "bower": "^1.4.1",
     "express": "^4.13.3",
     "gulp": "^3.9.1",

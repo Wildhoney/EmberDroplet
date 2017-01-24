@@ -1,41 +1,57 @@
+'use strict';
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 (function main($window, $Ember, $FileReader) {
 
   "use strict";
 
   // Extract the commonly accessed Ember methods.
 
-  const { Mixin, String, computed, get, set, run } = $Ember;
+  var _computed, _computed2, _computed3, _computed4, _computed5;
+
+  var Mixin = $Ember.Mixin,
+      String = $Ember.String,
+      computed = $Ember.computed,
+      get = $Ember.get,
+      set = $Ember.set,
+      run = $Ember.run;
 
   /**
    * @constant STATUS_TYPES
    * @type {Object}
    */
-  const STATUS_TYPES = { NONE: 0, VALID: 1, INVALID: 2, DELETED: 4, UPLOADED: 8, FAILED: 16 };
+
+  var STATUS_TYPES = { NONE: 0, VALID: 1, INVALID: 2, DELETED: 4, UPLOADED: 8, FAILED: 16 };
 
   /**
    * @constant REQUEST_METHODS
    * @type {{PATCH: string, POST: string, PUT: string}}
    */
-  const REQUEST_METHODS = { PATCH: 'PATCH', POST: 'POST', PUT: 'PUT' };
+  var REQUEST_METHODS = { PATCH: 'PATCH', POST: 'POST', PUT: 'PUT' };
 
   /**
    * @constant EVENT_NAME
    * @type {String}
    */
-  const EVENT_NAME = 'droplet/add-files';
+  var EVENT_NAME = 'droplet/add-files';
 
   /**
    * @method fromArray
    * @param {*} arrayLike
    * @return {Array}
    */
-  const fromArray = arrayLike => typeof Array.from === 'function' ? Array.from(arrayLike) : Array.prototype.slice.call(arrayLike);
+  var fromArray = function fromArray(arrayLike) {
+    return typeof Array.from === 'function' ? Array.from(arrayLike) : Array.prototype.slice.call(arrayLike);
+  };
 
   /**
    * @property EventBus
    * @type {Ember.Service}
    */
-  const EventBus = $Ember.Service.extend($Ember.Evented, {
+  var EventBus = $Ember.Service.extend($Ember.Evented, {
 
     /**
      * @method publish
@@ -49,7 +65,7 @@
      * @method subscribe
      * @return {void}
      */
-    subscribe: function () {
+    subscribe: function subscribe() {
       this.on.apply(this, arguments);
     },
 
@@ -57,7 +73,7 @@
      * @method unsubscribe
      * @return {void}
      */
-    unsubscribe: function () {
+    unsubscribe: function unsubscribe() {
       this.off.apply(this, arguments);
     }
 
@@ -76,9 +92,9 @@
      * @param {Object} application
      * @return {void}
      */
-    initialize: function (application) {
+    initialize: function initialize(application) {
 
-      const eventBus = EventBus.create();
+      var eventBus = EventBus.create();
 
       application.register('event-bus:current', eventBus, {
         instantiate: false
@@ -94,13 +110,13 @@
    * @property Model
    * @type {Ember.Object}
    */
-  const Model = $Ember.Object.extend({
+  var Model = $Ember.Object.extend({
 
     /**
      * @method init
      * @return {void}
      */
-    init: function () {
+    init: function init() {
       this.statusType = STATUS_TYPES.NONE;
     },
 
@@ -108,7 +124,7 @@
      * @method getMIMEType
      * @return {String}
      */
-    getMIMEType: function () {
+    getMIMEType: function getMIMEType() {
       return this.file.type || '';
     },
 
@@ -116,7 +132,7 @@
      * @method getFileSize
      * @return {Number}
      */
-    getFileSize: function () {
+    getFileSize: function getFileSize() {
       return typeof this.file.size !== 'undefined' ? this.file.size : Infinity;
     },
 
@@ -125,7 +141,7 @@
      * @param {Number} statusType
      * @return {void}
      */
-    setStatusType: function (statusType) {
+    setStatusType: function setStatusType(statusType) {
       this.set('statusType', Number(statusType));
     }
 
@@ -135,13 +151,13 @@
    * @constant MIME_MODE
    * @type {Object}
    */
-  const MIME_MODE = { PUSH: 'push', SET: 'set' };
+  var MIME_MODE = { PUSH: 'push', SET: 'set' };
 
   /**
    * @constant DEFAULT_OPTIONS
    * @type {Object}
    */
-  const DEFAULT_OPTIONS = {
+  var DEFAULT_OPTIONS = {
 
     /**
      * @property requestMethod
@@ -203,13 +219,13 @@
    * @constant COMPUTED_OBSERVER
    * @type {Array}
    */
-  const COMPUTED_OBSERVER = String.w('files.length files.@each.statusType');
+  var COMPUTED_OBSERVER = String.w('files.length files.@each.statusType');
 
   /**
    * @constant MESSAGES
    * @type {Object}
    */
-  const MESSAGES = {
+  var MESSAGES = {
     URL_REQUIRED: 'Droplet: You must specify the URL parameter when constructing your component.'
   };
 
@@ -225,7 +241,7 @@
      * @throws {Error}
      * @type {Function}
      */
-    url: () => {
+    url: function url() {
       throw new Error(MESSAGES.URL_REQUIRED);
     },
 
@@ -263,37 +279,43 @@
      * @method init
      * @return {void}
      */
-    init() {
+    init: function init() {
+      var _this = this;
 
       set(this, 'files', []);
 
-      const hooks = $Ember.merge({}, this.get('hooks'));
+      var hooks = $Ember.merge({}, this.get('hooks'));
       set(this, 'hooks', hooks);
 
-      const options = $Ember.merge({}, DEFAULT_OPTIONS);
+      var options = $Ember.merge({}, DEFAULT_OPTIONS);
       $Ember.merge(options, this.get('options'));
       set(this, 'options', options);
 
-      this.DropletEventBus && this.DropletEventBus.subscribe(EVENT_NAME, this, (ctx, ...files) => {
-        if (!ctx || ctx === this) {
-          this.send('prepareFiles', ...files);
+      this.DropletEventBus && this.DropletEventBus.subscribe(EVENT_NAME, this, function (ctx) {
+        for (var _len = arguments.length, files = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+          files[_key - 1] = arguments[_key];
+        }
+
+        if (!ctx || ctx === _this) {
+          _this.send.apply(_this, ['prepareFiles'].concat(files));
         }
       });
 
       this._super();
     },
 
+
     /**
      * @method willDestroy
      * @return {void}
      */
-    willDestroy() {
+    willDestroy: function willDestroy() {
 
       this._super();
 
       this.DropletEventBus && this.DropletEventBus.unsubscribe(EVENT_NAME, this);
 
-      const lastRequest = this.get('lastRequest');
+      var lastRequest = this.get('lastRequest');
 
       if (lastRequest) {
         delete lastRequest.upload.onprogress;
@@ -303,16 +325,26 @@
       }
     },
 
+
     /**
      * @method invokeHook
      * @param {String} name
      * @param {Array} args
      * @return {void}
      */
-    invokeHook(name, ...args) {
-      const method = get(this, 'hooks')[name] || (() => {});
-      $Ember.run(() => method.apply(this, args));
+    invokeHook: function invokeHook(name) {
+      var _this2 = this;
+
+      for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+        args[_key2 - 1] = arguments[_key2];
+      }
+
+      var method = get(this, 'hooks')[name] || function () {};
+      $Ember.run(function () {
+        return method.apply(_this2, args);
+      });
     },
+
 
     /**
      * @property uploadStatus
@@ -326,57 +358,63 @@
      * @property validFiles
      * @return {Array}
      */
-    validFiles: computed(function () {
+    validFiles: (_computed = computed(function () {
       return this.getFiles(STATUS_TYPES.VALID);
-    }).property(...COMPUTED_OBSERVER),
+    })).property.apply(_computed, _toConsumableArray(COMPUTED_OBSERVER)),
 
     /**
      * @property invalidFiles
      * @return {Array}
      */
-    invalidFiles: computed(function () {
+    invalidFiles: (_computed2 = computed(function () {
       return this.getFiles(STATUS_TYPES.INVALID);
-    }).property(...COMPUTED_OBSERVER),
+    })).property.apply(_computed2, _toConsumableArray(COMPUTED_OBSERVER)),
 
     /**
      * @property uploadedFiles
      * @return {Array}
      */
-    uploadedFiles: computed(function () {
+    uploadedFiles: (_computed3 = computed(function () {
       return this.getFiles(STATUS_TYPES.UPLOADED);
-    }).property(...COMPUTED_OBSERVER),
+    })).property.apply(_computed3, _toConsumableArray(COMPUTED_OBSERVER)),
 
     /**
      * @property deletedFiles
      * @return {Array}
      */
-    deletedFiles: computed(function () {
+    deletedFiles: (_computed4 = computed(function () {
       return this.getFiles(STATUS_TYPES.DELETED);
-    }).property(...COMPUTED_OBSERVER),
+    })).property.apply(_computed4, _toConsumableArray(COMPUTED_OBSERVER)),
 
     /**
      * @property requestSize
      * @return {Array}
      */
-    requestSize: computed(function () {
-      return get(this, 'validFiles').reduce((size, model) => size + model.getFileSize(), 0);
-    }).property(...COMPUTED_OBSERVER),
+    requestSize: (_computed5 = computed(function () {
+      return get(this, 'validFiles').reduce(function (size, model) {
+        return size + model.getFileSize();
+      }, 0);
+    })).property.apply(_computed5, _toConsumableArray(COMPUTED_OBSERVER)),
 
     /**
      * @method getFiles
      * @param {Number} statusType
      * @return {Array}
      */
-    getFiles(statusType) {
-      return statusType ? this.files.filter(file => file.statusType & statusType) : this.files;
+    getFiles: function getFiles(statusType) {
+      return statusType ? this.files.filter(function (file) {
+        return file.statusType & statusType;
+      }) : this.files;
     },
+
 
     /**
      * @method isValid
      * @param {Model} model
      * @return {Boolean}
      */
-    isValid(model) {
+    isValid: function isValid(model) {
+      var _this3 = this;
 
       if (!(model instanceof $Ember.Object)) {
         return false;
@@ -387,25 +425,29 @@
        * @param {String} mimeType
        * @return {Function}
        */
-      const validMime = mimeType => () => {
+      var validMime = function validMime(mimeType) {
+        return function () {
 
-        const anyRegExp = this.get('options.mimeTypes').some(mimeType => mimeType instanceof RegExp);
-        const mimeTypes = get(this, 'options.mimeTypes');
+          var anyRegExp = _this3.get('options.mimeTypes').some(function (mimeType) {
+            return mimeType instanceof RegExp;
+          });
+          var mimeTypes = get(_this3, 'options.mimeTypes');
 
-        if (!anyRegExp) {
+          if (!anyRegExp) {
 
-          // Simply indexOf check because none of the MIME types are regular expressions.
-          return !!~mimeTypes.indexOf(mimeType);
-        }
+            // Simply indexOf check because none of the MIME types are regular expressions.
+            return !!~mimeTypes.indexOf(mimeType);
+          }
 
-        // Otherwise we'll need to iterate and validate individually.
-        return mimeTypes.some(validMimeType => {
+          // Otherwise we'll need to iterate and validate individually.
+          return mimeTypes.some(function (validMimeType) {
 
-          const isExact = validMimeType === mimeType;
-          const isRegExp = !!mimeType.match(validMimeType);
+            var isExact = validMimeType === mimeType;
+            var isRegExp = !!mimeType.match(validMimeType);
 
-          return isExact || isRegExp;
-        });
+            return isExact || isRegExp;
+          });
+        };
       };
 
       /**
@@ -413,89 +455,112 @@
        * @param {Number} fileSize
        * @return {Function}
        */
-      const validSize = fileSize => () => fileSize <= Number(get(this, 'options.maximumSize'));
+      var validSize = function validSize(fileSize) {
+        return function () {
+          return fileSize <= Number(get(_this3, 'options.maximumSize'));
+        };
+      };
 
       /**
        * @method composeEvery
        * @param {Function} fns
        * @return {Function}
        */
-      const composeEvery = (...fns) => model => fns.reverse().every(fn => fn(model));
+      var composeEvery = function composeEvery() {
+        for (var _len3 = arguments.length, fns = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+          fns[_key3] = arguments[_key3];
+        }
+
+        return function (model) {
+          return fns.reverse().every(function (fn) {
+            return fn(model);
+          });
+        };
+      };
 
       /**
        * @method isValid
        * @type {Function}
        */
-      const isValid = composeEvery(validMime(model.getMIMEType()), validSize(model.getFileSize()));
+      var isValid = composeEvery(validMime(model.getMIMEType()), validSize(model.getFileSize()));
 
       return isValid(model);
     },
+
 
     /**
      * @method getFormData
      * @return {FormData}
      */
-    getFormData() {
+    getFormData: function getFormData() {
 
-      const formData = new $window.FormData();
-      const fieldName = this.get('options.useArray') ? 'file[]' : 'file';
-      const postData = this.get('options.requestPostData');
-      const files = get(this, 'validFiles').map(model => model.file);
+      var formData = new $window.FormData();
+      var fieldName = this.get('options.useArray') ? 'file[]' : 'file';
+      var postData = this.get('options.requestPostData');
+      var files = get(this, 'validFiles').map(function (model) {
+        return model.file;
+      });
 
-      files.forEach(file => {
+      files.forEach(function (file) {
         formData.append(fieldName, file);
       });
 
-      Object.keys(postData).forEach(key => {
+      Object.keys(postData).forEach(function (key) {
         formData.append(key, postData[key]);
       });
 
       return formData;
     },
 
+
     /**
      * @method addProgressListener
      * @param {Ember.$.ajaxSettings.xhr} uploadRequest
      * @return {void}
      */
-    addProgressListener(uploadRequest) {
+    addProgressListener: function addProgressListener(uploadRequest) {
+      var _this4 = this;
 
-      uploadRequest.addEventListener('progress', event => {
+      uploadRequest.addEventListener('progress', function (event) {
 
         if (event.lengthComputable) {
-          const percentageLoaded = event.loaded / get(this, 'requestSize') * 100;
-          set(this, 'uploadStatus.percentComplete', Math.round(percentageLoaded));
+          var percentageLoaded = event.loaded / get(_this4, 'requestSize') * 100;
+          set(_this4, 'uploadStatus.percentComplete', Math.round(percentageLoaded));
         }
       });
     },
+
 
     /**
      * @method getRequest
      * @return {Ember.$.ajax}
      */
-    getRequest() {
+    getRequest: function getRequest() {
+      var _this5 = this;
 
-      const isFunction = value => typeof value === 'function';
-      const url = isFunction(get(this, 'url')) ? get(this, 'url').apply(this) : get(this, 'url');
-      const method = get(this, 'options.requestMethod') || 'POST';
-      const data = this.getFormData();
-      const headers = $Ember.merge({}, this.get('options.requestHeaders'));
+      var isFunction = function isFunction(value) {
+        return typeof value === 'function';
+      };
+      var url = isFunction(get(this, 'url')) ? get(this, 'url').apply(this) : get(this, 'url');
+      var method = get(this, 'options.requestMethod') || 'POST';
+      var data = this.getFormData();
+      var headers = $Ember.merge({}, this.get('options.requestHeaders'));
 
       if (get(this, 'options.includeXFileSize')) {
         headers['X-File-Size'] = this.get('requestSize');
       }
 
-      const request = $Ember.$.ajax({ url, method, headers, data, processData: false, contentType: false,
+      var request = $Ember.$.ajax({ url: url, method: method, headers: headers, data: data, processData: false, contentType: false,
 
         /**
          * @method xhr
          * @return {Ember.$.ajaxSettings.xhr}
          */
-        xhr: () => {
+        xhr: function xhr() {
 
-          const xhr = $Ember.$.ajaxSettings.xhr();
-          this.addProgressListener(xhr.upload);
-          set(this, 'lastRequest', xhr);
+          var xhr = $Ember.$.ajaxSettings.xhr();
+          _this5.addProgressListener(xhr.upload);
+          set(_this5, 'lastRequest', xhr);
           return xhr;
         }
 
@@ -504,6 +569,7 @@
       set(this, 'lastResolver', request);
       return request;
     },
+
 
     /**
      * @property actions
@@ -516,10 +582,13 @@
        * @method uploadFiles
        * @return {Ember.RSVP.Promise}
        */
-      uploadFiles() {
+      uploadFiles: function uploadFiles() {
+        var _this6 = this;
 
-        const models = get(this, 'files').filter(file => file.statusType & STATUS_TYPES.VALID);
-        const request = this.getRequest();
+        var models = get(this, 'files').filter(function (file) {
+          return file.statusType & STATUS_TYPES.VALID;
+        });
+        var request = this.getRequest();
 
         set(this, 'abortedUpload', false);
         set(this, 'uploadStatus.percentComplete', 0);
@@ -532,8 +601,8 @@
          * @param {Function} reject
          * @return {void}
          */
-        const resolver = (resolve, reject) => {
-          this.invokeHook('promiseResolver', resolve, reject, models);
+        var resolver = function resolver(resolve, reject) {
+          _this6.invokeHook('promiseResolver', resolve, reject, models);
           request.done(resolve).fail(reject);
         };
 
@@ -542,9 +611,11 @@
          * @param {Object} response
          * @return {void}
          */
-        const resolved = response => {
-          this.invokeHook('didUpload', response);
-          models.map(model => model.setStatusType(STATUS_TYPES.UPLOADED));
+        var resolved = function resolved(response) {
+          _this6.invokeHook('didUpload', response);
+          models.map(function (model) {
+            return model.setStatusType(STATUS_TYPES.UPLOADED);
+          });
         };
 
         /**
@@ -552,34 +623,41 @@
          * @param {Object} request
          * @param {String} textStatus
          * @param {Number} errorThrown
+         * @return {void}
          */
-        const rejected = (request, textStatus, errorThrown) => {
+        var rejected = function rejected(_ref) {
+          var request = _ref.request,
+              textStatus = _ref.textStatus,
+              errorThrown = _ref.errorThrown;
 
-          if (get(this, 'abortedUpload') !== true) {
-            set(this, 'uploadStatus.error', { request, textStatus, errorThrown });
+
+          if (get(_this6, 'abortedUpload') !== true) {
+            set(_this6, 'uploadStatus.error', { request: request, textStatus: textStatus, errorThrown: errorThrown });
           }
-          this.invokeHook('rejected', request, textStatus, errorThrown);
+
+          _this6.invokeHook('rejected', request, textStatus, errorThrown);
         };
 
         /**
          * @method always
          * @return {void}
          */
-        const always = () => {
-          set(this, 'uploadStatus.uploading', false);
-          this.invokeHook('didComplete');
+        var always = function always() {
+          set(_this6, 'uploadStatus.uploading', false);
+          _this6.invokeHook('didComplete');
         };
 
         return new $Ember.RSVP.Promise(resolver).then(resolved, rejected).finally(always);
       },
 
+
       /**
        * @method abortUpload
        * @return {void}
        */
-      abortUpload() {
+      abortUpload: function abortUpload() {
 
-        const request = get(this, 'lastResolver');
+        var request = get(this, 'lastResolver');
 
         if (request && get(this, 'uploadStatus.uploading')) {
           set(this, 'abortedUpload', true);
@@ -588,59 +666,82 @@
         }
       },
 
+
       /**
        * @method mimeTypes
        * @param {Array} mimeTypes
        * @param {Object} [mode=MIME_MODE.PUSH]
        * @return {void}
        */
-      mimeTypes(mimeTypes, mode = MIME_MODE.PUSH) {
+      mimeTypes: function mimeTypes(_mimeTypes) {
+        var mode = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : MIME_MODE.PUSH;
+
         mode === MIME_MODE.SET && set(this, 'options.mimeTypes', []);
-        mimeTypes = Array.isArray(mimeTypes) ? mimeTypes : [mimeTypes];
-        const types = [...get(this, 'options.mimeTypes'), ...mimeTypes];
+        _mimeTypes = Array.isArray(_mimeTypes) ? _mimeTypes : [_mimeTypes];
+        var types = [].concat(_toConsumableArray(get(this, 'options.mimeTypes')), _toConsumableArray(_mimeTypes));
         set(this, 'options.mimeTypes', types);
       },
+
 
       /**
        * @method addFiles
        * @param {Model[]} files
        * @return {void}
        */
-      addFiles(...files) {
+      addFiles: function addFiles() {
+        var _this7 = this;
 
-        const addedModels = files.map(model => {
+        for (var _len4 = arguments.length, files = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+          files[_key4] = arguments[_key4];
+        }
 
-          const willExceedQuota = this.get('validFiles.length') === this.get('options.maximumValidFiles');
+        var addedModels = files.map(function (model) {
+
+          var willExceedQuota = _this7.get('validFiles.length') === _this7.get('options.maximumValidFiles');
 
           if (model instanceof $Ember.Object) {
+            var _ret = function () {
 
-            const statusType = this.isValid(model) && !willExceedQuota ? STATUS_TYPES.VALID : STATUS_TYPES.INVALID;
-            run(() => model.setStatusType(statusType));
-            get(this, 'files').pushObject(model);
-            return model;
+              var statusType = _this7.isValid(model) && !willExceedQuota ? STATUS_TYPES.VALID : STATUS_TYPES.INVALID;
+              run(function () {
+                return model.setStatusType(statusType);
+              });
+              get(_this7, 'files').pushObject(model);
+              return {
+                v: model
+              };
+            }();
+
+            if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
           }
-        }).filter(model => typeof model !== 'undefined');
+        }).filter(function (model) {
+          return typeof model !== 'undefined';
+        });
 
-        addedModels.length && this.invokeHook('didAdd', ...addedModels);
+        addedModels.length && this.invokeHook.apply(this, ['didAdd'].concat(_toConsumableArray(addedModels)));
 
         if (this.get('options.uploadImmediately') && this.getFiles(STATUS_TYPES.VALID).length > 0) {
-          this.send('uploadFiles', ...addedModels);
+          this.send.apply(this, ['uploadFiles'].concat(_toConsumableArray(addedModels)));
         }
       },
+
 
       /**
        * @method prepareFiles
        * @param {FileList|Array} files
        * @return {Array}
        */
-      prepareFiles(...files) {
+      prepareFiles: function prepareFiles() {
+        for (var _len5 = arguments.length, files = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+          files[_key5] = arguments[_key5];
+        }
 
         // Convert the FileList object into an actual array.
         files = fromArray(files);
 
-        const models = files.reduce((current, file) => {
+        var models = files.reduce(function (current, file) {
 
-          const model = Model.create({
+          var model = Model.create({
             file: file
           });
 
@@ -649,39 +750,51 @@
         }, []);
 
         // Add the files using the Droplet component.
-        this.send('addFiles', ...models);
+        this.send.apply(this, ['addFiles'].concat(_toConsumableArray(models)));
         return models;
       },
+
 
       /**
        * @method deleteFiles
        * @param {Model[]} files
        * @return {void}
        */
-      deleteFiles(...files) {
+      deleteFiles: function deleteFiles() {
+        var _this8 = this;
 
-        const deletedModels = files.map(model => {
+        for (var _len6 = arguments.length, files = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+          files[_key6] = arguments[_key6];
+        }
 
-          const contains = !!~get(this, 'files').indexOf(model);
+        var deletedModels = files.map(function (model) {
+
+          var contains = !!~get(_this8, 'files').indexOf(model);
 
           if (contains) {
             model.setStatusType(STATUS_TYPES.DELETED);
             return model;
           }
-        }).filter(model => typeof model !== 'undefined');
+        }).filter(function (model) {
+          return typeof model !== 'undefined';
+        });
 
-        deletedModels.length && this.invokeHook('didDelete', ...deletedModels);
+        deletedModels.length && this.invokeHook.apply(this, ['didDelete'].concat(_toConsumableArray(deletedModels)));
       },
+
 
       /**
        * @method clearFiles
        * @return {void}
        */
-      clearFiles() {
-        const files = [...this.get('validFiles'), ...this.get('invalidFiles')];
-        files.forEach(file => this.send('deleteFiles', file));
-      }
+      clearFiles: function clearFiles() {
+        var _this9 = this;
 
+        var files = [].concat(_toConsumableArray(this.get('validFiles')), _toConsumableArray(this.get('invalidFiles')));
+        files.forEach(function (file) {
+          return _this9.send('deleteFiles', file);
+        });
+      }
     }
 
   };
@@ -691,7 +804,7 @@
    * @param {Object} event
    * @return {void}
    */
-  const squashEvent = event => {
+  var squashEvent = function squashEvent(event) {
     event.preventDefault();
     event.stopPropagation();
   };
@@ -715,20 +828,24 @@
      * @param {Object} event
      * @return {Array}
      */
-    drop(event) {
+    drop: function drop(event) {
       squashEvent(event);
       return this.handleFiles(event.dataTransfer.files);
     },
+
 
     /**
      * @method handleFiles
      * @param {Array} models
      * @return {Model[]}
      */
-    handleFiles(models) {
-      this.DropletEventBus && this.DropletEventBus.publish(EVENT_NAME, this.get('ctx'), ...fromArray(models));
+    handleFiles: function handleFiles(models) {
+      var _DropletEventBus;
+
+      this.DropletEventBus && (_DropletEventBus = this.DropletEventBus).publish.apply(_DropletEventBus, [EVENT_NAME, this.get('ctx')].concat(_toConsumableArray(fromArray(models))));
       return models;
     },
+
 
     /**
      * @method dragEnter
@@ -790,35 +907,36 @@
      * @type {File|Object} image
      * @return {Boolean}
      */
-    isImage(image) {
+    isImage: function isImage(image) {
       return !!image.type.match(/^image\//i);
     },
+
 
     /**
      * @method didInsertElement
      * @return {void}
      */
-    didInsertElement() {
+    didInsertElement: function didInsertElement() {
+      var _this10 = this;
 
-      const Reader = this.get('reader');
-      const reader = new Reader();
-      const image = get(this, 'image.file');
+      var Reader = this.get('reader');
+      var reader = new Reader();
+      var image = get(this, 'image.file');
 
       if (!this.isImage(image)) {
         this.destroy();
         return;
       }
 
-      reader.addEventListener('load', run.bind(this, event => {
+      reader.addEventListener('load', run.bind(this, function (event) {
 
-        if (this.get('isDestroyed') !== true) {
-          set(this, 'src', event.target.result);
+        if (_this10.get('isDestroyed') !== true) {
+          set(_this10, 'src', event.target.result);
         }
       }));
 
       reader.readAsDataURL(image);
     }
-
   });
 
   /**
@@ -863,20 +981,22 @@
      * @method change
      * @return {void}
      */
-    change() {
-      const files = this.get('element').files;
+    change: function change() {
+      var files = this.get('element').files;
       this.handleFiles(files);
     },
+
 
     /**
      * @method handleFiles
      * @param {Model[]} models
      * @return {void}
      */
-    handleFiles(models) {
-      this.DropletEventBus && this.DropletEventBus.publish(EVENT_NAME, this.get('ctx'), ...fromArray(models));
-    }
+    handleFiles: function handleFiles(models) {
+      var _DropletEventBus2;
 
+      this.DropletEventBus && (_DropletEventBus2 = this.DropletEventBus).publish.apply(_DropletEventBus2, [EVENT_NAME, this.get('ctx')].concat(_toConsumableArray(fromArray(models))));
+    }
   });
 
   /**
