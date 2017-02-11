@@ -529,7 +529,8 @@
              * @return {Ember.RSVP.Promise}
              */
             uploadFiles() {
-
+                this.invokeHook('beforeUpload');
+                
                 const models  = get(this, 'files').filter(file => file.statusType & STATUS_TYPES.VALID);
                 const request = this.getRequest();
 
