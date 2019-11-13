@@ -5,6 +5,8 @@
     // Extract the commonly accessed Ember methods.
     const { Mixin, String, computed, get, set, run } = $Ember;
 
+    const mergeObjects = $Ember.assign || $Ember.merge;
+
     /**
      * @constant STATUS_TYPES
      * @type {Object}
@@ -265,14 +267,14 @@
 
             set(this, 'files', []);
 
-            const hooks = $Ember.merge({}, this.get('hooks'));
+            const hooks = mergeObjects({}, this.get('hooks'));
             set(this, 'hooks', hooks);
 
-            const options = $Ember.merge({}, DEFAULT_OPTIONS);
-            $Ember.merge(options, this.get('options'));
+            const options = mergeObjects({}, DEFAULT_OPTIONS);
+            mergeObjects(options, this.get('options'));
             set(this, 'options', options);
 
-            this.DropletEventBus && this.DropletEventBus.subscribe(EVENT_NAME, this, (ctx, ...files) => {
+            this.DropletEventBus && this.DropletEventBus.subscribe(EVENT_NAME, this, this._dropletBusAddFileHandler = (ctx, ...files) => {
                 if (!ctx || ctx === this) {
                     this.send('prepareFiles', ...files);
                 }
@@ -290,7 +292,7 @@
 
             this._super();
 
-            this.DropletEventBus && this.DropletEventBus.unsubscribe(EVENT_NAME, this);
+            this.DropletEventBus && this.DropletEventBus.unsubscribe(EVENT_NAME, this, this._dropletBusAddFileHandler);
 
             const lastRequest = this.get('lastRequest');
 
@@ -326,41 +328,41 @@
          * @property validFiles
          * @return {Array}
          */
-        validFiles: computed(function() {
+        validFiles: computed(...COMPUTED_OBSERVER, function() {
             return this.getFiles(STATUS_TYPES.VALID);
-        }).property(...COMPUTED_OBSERVER),
+        }),
 
         /**
          * @property invalidFiles
          * @return {Array}
          */
-        invalidFiles: computed(function() {
+        invalidFiles: computed(...COMPUTED_OBSERVER, function() {
             return this.getFiles(STATUS_TYPES.INVALID);
-        }).property(...COMPUTED_OBSERVER),
+        }),
 
         /**
          * @property uploadedFiles
          * @return {Array}
          */
-        uploadedFiles: computed(function() {
+        uploadedFiles: computed(...COMPUTED_OBSERVER, function() {
             return this.getFiles(STATUS_TYPES.UPLOADED);
-        }).property(...COMPUTED_OBSERVER),
+        }),
 
         /**
          * @property deletedFiles
          * @return {Array}
          */
-        deletedFiles: computed(function() {
+        deletedFiles: computed(...COMPUTED_OBSERVER, function() {
             return this.getFiles(STATUS_TYPES.DELETED);
-        }).property(...COMPUTED_OBSERVER),
+        }),
 
         /**
          * @property requestSize
          * @return {Array}
          */
-        requestSize: computed(function() {
+        requestSize: computed(...COMPUTED_OBSERVER, function() {
             return get(this, 'validFiles').reduce((size, model) => size + model.getFileSize(), 0);
-        }).property(...COMPUTED_OBSERVER),
+        }),
 
         /**
          * @method getFiles
@@ -489,7 +491,7 @@
             const url        = isFunction(get(this, 'url')) ? get(this, 'url').apply(this) : get(this, 'url');
             const method     = get(this, 'options.requestMethod') || 'POST';
             const data       = this.getFormData();
-            const headers    = $Ember.merge({}, this.get('options.requestHeaders'));
+            const headers    = mergeObjects({}, this.get('options.requestHeaders'));
 
             if (get(this, 'options.includeXFileSize')) {
                 headers['X-File-Size'] = this.get('requestSize');

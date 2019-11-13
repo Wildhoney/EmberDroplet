@@ -1,7 +1,5 @@
 'use strict';
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 (function main($window, $Ember, $FileReader) {
@@ -10,8 +8,6 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
   // Extract the commonly accessed Ember methods.
 
-  var _computed, _computed2, _computed3, _computed4, _computed5;
-
   var Mixin = $Ember.Mixin,
       String = $Ember.String,
       computed = $Ember.computed,
@@ -19,11 +15,13 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       set = $Ember.set,
       run = $Ember.run;
 
+
+  var mergeObjects = $Ember.assign || $Ember.merge;
+
   /**
    * @constant STATUS_TYPES
    * @type {Object}
    */
-
   var STATUS_TYPES = { NONE: 0, VALID: 1, INVALID: 2, DELETED: 4, UPLOADED: 8, FAILED: 16 };
 
   /**
@@ -284,14 +282,14 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
       set(this, 'files', []);
 
-      var hooks = $Ember.merge({}, this.get('hooks'));
+      var hooks = mergeObjects({}, this.get('hooks'));
       set(this, 'hooks', hooks);
 
-      var options = $Ember.merge({}, DEFAULT_OPTIONS);
-      $Ember.merge(options, this.get('options'));
+      var options = mergeObjects({}, DEFAULT_OPTIONS);
+      mergeObjects(options, this.get('options'));
       set(this, 'options', options);
 
-      this.DropletEventBus && this.DropletEventBus.subscribe(EVENT_NAME, this, function (ctx) {
+      this.DropletEventBus && this.DropletEventBus.subscribe(EVENT_NAME, this, this._dropletBusAddFileHandler = function (ctx) {
         for (var _len = arguments.length, files = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
           files[_key - 1] = arguments[_key];
         }
@@ -313,7 +311,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
       this._super();
 
-      this.DropletEventBus && this.DropletEventBus.unsubscribe(EVENT_NAME, this);
+      this.DropletEventBus && this.DropletEventBus.unsubscribe(EVENT_NAME, this, this._dropletBusAddFileHandler);
 
       var lastRequest = this.get('lastRequest');
 
@@ -358,43 +356,43 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
      * @property validFiles
      * @return {Array}
      */
-    validFiles: (_computed = computed(function () {
+    validFiles: computed.apply(undefined, _toConsumableArray(COMPUTED_OBSERVER).concat([function () {
       return this.getFiles(STATUS_TYPES.VALID);
-    })).property.apply(_computed, _toConsumableArray(COMPUTED_OBSERVER)),
+    }])),
 
     /**
      * @property invalidFiles
      * @return {Array}
      */
-    invalidFiles: (_computed2 = computed(function () {
+    invalidFiles: computed.apply(undefined, _toConsumableArray(COMPUTED_OBSERVER).concat([function () {
       return this.getFiles(STATUS_TYPES.INVALID);
-    })).property.apply(_computed2, _toConsumableArray(COMPUTED_OBSERVER)),
+    }])),
 
     /**
      * @property uploadedFiles
      * @return {Array}
      */
-    uploadedFiles: (_computed3 = computed(function () {
+    uploadedFiles: computed.apply(undefined, _toConsumableArray(COMPUTED_OBSERVER).concat([function () {
       return this.getFiles(STATUS_TYPES.UPLOADED);
-    })).property.apply(_computed3, _toConsumableArray(COMPUTED_OBSERVER)),
+    }])),
 
     /**
      * @property deletedFiles
      * @return {Array}
      */
-    deletedFiles: (_computed4 = computed(function () {
+    deletedFiles: computed.apply(undefined, _toConsumableArray(COMPUTED_OBSERVER).concat([function () {
       return this.getFiles(STATUS_TYPES.DELETED);
-    })).property.apply(_computed4, _toConsumableArray(COMPUTED_OBSERVER)),
+    }])),
 
     /**
      * @property requestSize
      * @return {Array}
      */
-    requestSize: (_computed5 = computed(function () {
+    requestSize: computed.apply(undefined, _toConsumableArray(COMPUTED_OBSERVER).concat([function () {
       return get(this, 'validFiles').reduce(function (size, model) {
         return size + model.getFileSize();
       }, 0);
-    })).property.apply(_computed5, _toConsumableArray(COMPUTED_OBSERVER)),
+    }])),
 
     /**
      * @method getFiles
@@ -544,7 +542,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       var url = isFunction(get(this, 'url')) ? get(this, 'url').apply(this) : get(this, 'url');
       var method = get(this, 'options.requestMethod') || 'POST';
       var data = this.getFormData();
-      var headers = $Ember.merge({}, this.get('options.requestHeaders'));
+      var headers = mergeObjects({}, this.get('options.requestHeaders'));
 
       if (get(this, 'options.includeXFileSize')) {
         headers['X-File-Size'] = this.get('requestSize');
@@ -702,19 +700,13 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
           var willExceedQuota = _this7.get('validFiles.length') === _this7.get('options.maximumValidFiles');
 
           if (model instanceof $Ember.Object) {
-            var _ret = function () {
 
-              var statusType = _this7.isValid(model) && !willExceedQuota ? STATUS_TYPES.VALID : STATUS_TYPES.INVALID;
-              run(function () {
-                return model.setStatusType(statusType);
-              });
-              get(_this7, 'files').pushObject(model);
-              return {
-                v: model
-              };
-            }();
-
-            if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+            var statusType = _this7.isValid(model) && !willExceedQuota ? STATUS_TYPES.VALID : STATUS_TYPES.INVALID;
+            run(function () {
+              return model.setStatusType(statusType);
+            });
+            get(_this7, 'files').pushObject(model);
+            return model;
           }
         }).filter(function (model) {
           return typeof model !== 'undefined';
